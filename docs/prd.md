@@ -20,15 +20,16 @@ either quit or never discover 90% of the tool.
 
 **Garnish** wraps a real harness in a progression system. The user starts in a
 deliberately bare harness — agent chat and nothing else — and levels up by completing
-quests that are verified against reality (config files, session transcripts, git state,
+quests that are verified against reality (live harness events, config files, git state,
 command results), not self-reported checkboxes. Completing quests unlocks the next tier
 of harness features, which physically appear in the harness as they unlock.
 
 Three properties make it work:
 
-1. **Real, not simulated.** Every quest is performed in the user's actual harness on
-   actual files. Nothing is a sandbox-only toy; graduating from Garnish means the user
-   has a fully configured, personalized harness they built themselves.
+1. **Real, not simulated.** Quests run through a real Garnish-owned Pi harness against
+   real files in a disposable sandbox first. After credits roll, `garnish eject` lets
+   the learner copy the loadout they built (config, skills, MCP setup) into a standalone
+   Pi setup if they want to leave the managed runtime.
 2. **The agent is the tutor.** The active quest is injected into the harness's own
    context, so the agent the user is learning to use is also the guide explaining the
    quest, giving hints, and celebrating completion. The tool teaches itself.
@@ -47,8 +48,8 @@ capability; `garnish status` shows the tree of what's unlocked and what's next.
    to competence, so that I learn by doing instead of drowning in docs.
 2. As a **new user**, I want the harness to start minimal and grow as I learn, so that
    I'm never staring at features I don't understand.
-3. As a **learner**, I want quests verified from what I actually did (files, commits,
-   transcripts), so that progress reflects real skill, not clicked-through checkboxes.
+3. As a **learner**, I want quests verified from what I actually did (live harness
+   events, files, commits), so that progress reflects real skill, not clicked-through checkboxes.
 4. As a **learner**, I want to ask the agent itself "what's my current quest?" and get
    help with it, so that learning happens inside the loop I'm building.
 5. As an **experienced agent user**, I want to skip or bulk-unlock levels, so that
