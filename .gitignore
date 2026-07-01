@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build/test output
+dist/
+build/
+coverage/
+.tmp/
+tmp/
+
+# Logs
+*.log
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+# Local env/secrets
+.env
+.env.*
+!.env.example
+
+# Garnish/Pi local runtime state
+.garnish/
+.omp/local/
