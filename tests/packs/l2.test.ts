@@ -8,6 +8,7 @@ import {
   type Probes,
   type Quest,
   type QuestGraph,
+  type RunCommandOptions,
   type RunCommandResult,
   type VerifierEvent,
 } from "../../src/index";
@@ -17,25 +18,26 @@ const SANDBOX = "/tmp/garnish-sandbox";
 
 type FixtureOverrides = Partial<{
   readonly existingFiles: readonly string[];
-  readonly commandResults: readonly RunCommandResult[];
+  readonly commands: Readonly<Record<string, RunCommandResult>>;
   readonly confirmations: Readonly<Record<string, boolean | undefined>>;
   readonly events: readonly VerifierEvent[];
 }>;
 
 function fixtureContext(overrides: FixtureOverrides = {}): EvaluationContext {
   const existingFiles = new Set(overrides.existingFiles ?? []);
-  let commandIndex = 0;
+  const commands = overrides.commands ?? {};
 
   const probes: Probes = {
     fileExists: (path: string) => existingFiles.has(path),
     readFile: (path: string) => {
       throw new Error(`unexpected readFile ${path}`);
     },
-    runCommand: () => {
-      const result = overrides.commandResults?.[commandIndex];
-      commandIndex += 1;
+    runCommand: (command: readonly string[] | string, options?: RunCommandOptions) => {
+      const argv = typeof command === "string" ? command : command.join(" ");
+      const key = `${options?.cwd ?? ""}|${argv}`;
+      const result = commands[key];
       if (result === undefined) {
-        throw new Error(`unexpected command ${commandIndex}`);
+        throw new Error(`unexpected command ${key}`);
       }
       return result;
     },
@@ -67,6 +69,10 @@ function event(name: string, seq: number, payload: Readonly<Record<string, unkno
 
 const ok: RunCommandResult = { exitCode: 0, stdout: "", stderr: "" };
 const failed: RunCommandResult = { exitCode: 1, stdout: "", stderr: "" };
+
+const projectLoreCommand =
+  `|sh -c test -f "$1" && grep -Eq "Project convention: every generated lore note starts with LORE:" "$1" sh ${SANDBOX}/AGENTS.md`;
+const followRuleCommand = `|sh -c test -f "$1" && grep -Eq "^LORE: .+" "$1" sh ${SANDBOX}/lore-note.txt`;
 
 let cachedGraph: QuestGraph | undefined;
 async function l2Graph(): Promise<QuestGraph> {
@@ -115,7 +121,7 @@ test("project-lore-file passes with AGENTS.md and the required convention", asyn
   const quest = await questById("project-lore-file");
   const ctx = fixtureContext({
     existingFiles: [`${SANDBOX}/AGENTS.md`],
-    commandResults: [ok],
+    commands: { [projectLoreCommand]: ok },
   });
 
   expect((await evaluateQuest(quest, ctx)).status).toBe("pass");
@@ -124,12 +130,12 @@ test("project-lore-file passes with AGENTS.md and the required convention", asyn
 test("project-lore-file fails when AGENTS.md is absent or lacks the convention", async () => {
   const quest = await questById("project-lore-file");
 
-  const noFile = fixtureContext({ commandResults: [ok] });
+  const noFile = fixtureContext({ commands: { [projectLoreCommand]: failed } });
   expect((await evaluateQuest(quest, noFile)).status).toBe("fail");
 
   const wrongLore = fixtureContext({
     existingFiles: [`${SANDBOX}/AGENTS.md`],
-    commandResults: [failed],
+    commands: { [projectLoreCommand]: failed },
   });
   expect((await evaluateQuest(quest, wrongLore)).status).toBe("fail");
 });
@@ -139,13 +145,13 @@ test("follow-a-rule passes for a successful write or edit plus generated lore ou
 
   const writePass = fixtureContext({
     events: [event("tool_result", 1, { tool: "write", success: true })],
-    commandResults: [ok],
+    commands: { [followRuleCommand]: ok },
   });
   expect((await evaluateQuest(quest, writePass)).status).toBe("pass");
 
   const editPass = fixtureContext({
     events: [event("tool_result", 2, { tool: "edit", success: true })],
-    commandResults: [ok],
+    commands: { [followRuleCommand]: ok },
   });
   expect((await evaluateQuest(quest, editPass)).status).toBe("pass");
 });
@@ -155,13 +161,13 @@ test("follow-a-rule fails without a matching tool result or matching generated o
 
   const wrongTool = fixtureContext({
     events: [event("tool_result", 1, { tool: "bash", success: true })],
-    commandResults: [ok],
+    commands: { [followRuleCommand]: ok },
   });
   expect((await evaluateQuest(quest, wrongTool)).status).toBe("fail");
 
   const wrongOutput = fixtureContext({
     events: [event("tool_result", 2, { tool: "edit", success: true })],
-    commandResults: [failed],
+    commands: { [followRuleCommand]: failed },
   });
   expect((await evaluateQuest(quest, wrongOutput)).status).toBe("fail");
 });
