@@ -47,14 +47,16 @@ relations and grouped under project milestones M0-M5 (M5 is a v2 placeholder wit
 Content-pack chain edges (L0->...->L7) are merge order only: levels share the one in-repo core
 pack and the loader rejects unknown quest ids; authoring may parallelize.
 
-Done (merged + bridge-closed), 18 of 29: LOO-116..LOO-128 (see PRs #1-#11 above/git log),
+Done (merged + bridge-closed), 20 of 29: LOO-116..LOO-128 (see PRs #1-#11 above/git log),
 LOO-129 live unlocks (PR #14), LOO-130 init wizard (PR #15), LOO-131 L1 pack + `approved`
 event matcher (PR #12), LOO-132 HUD + /quest (PR #13), LOO-135 tutor bridge (PR #16,
-live-smoke verified: "what's my quest?" answered with the real L0 checks).
-M0 + M1 complete. M2 lacks only LOO-136 scripted E2E + LOO-139 live walkthrough (HITL).
-Next unblocked: LOO-136 scripted E2E happy path, LOO-137 L2 Lore pack.
-LOO-139 (M2 exit gate) needs a human-supervised live session once LOO-136 lands.
-Everything else is Backlog until its blockers close.
+live-smoke verified: "what's my quest?" answered with the real L0 checks), LOO-136
+scripted E2E happy path (PR #18), LOO-137 L2 Lore pack (PR #17).
+M0 + M1 complete. M2 lacks only LOO-139 live walkthrough (HITL exit gate).
+Next unblocked: LOO-139 M2 live L0->L1 walkthrough, LOO-140 L3 Skill Tree pack.
+Notes: LOO-139 needs a supervised live session; host omp drifted to 16.3.0 while
+Garnish is certified for 16.2.13, so use `GARNISH_OMP_SOURCE` with a certified binary
+or run recertification before the walkthrough.
 Notes: L0 status-screen uses `command(garnish status exit=0)` (no OR in the DSL);
 deny-once is a real `event(tool_approval_resolved approved=false)` check per the spike.
 
