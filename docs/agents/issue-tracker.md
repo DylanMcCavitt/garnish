@@ -47,19 +47,19 @@ relations and grouped under project milestones M0-M5 (M5 is a v2 placeholder wit
 Content-pack chain edges (L0->...->L7) are merge order only: levels share the one in-repo core
 pack and the loader rejects unknown quest ids; authoring may parallelize.
 
-Done (merged + bridge-closed), 20 of 29: LOO-116..LOO-128 (see PRs #1-#11 above/git log),
+Done (merged + bridge-closed), 21 of 29: LOO-116..LOO-128 (see PRs #1-#11 above/git log),
 LOO-129 live unlocks (PR #14), LOO-130 init wizard (PR #15), LOO-131 L1 pack + `approved`
 event matcher (PR #12), LOO-132 HUD + /quest (PR #13), LOO-135 tutor bridge (PR #16,
 live-smoke verified: "what's my quest?" answered with the real L0 checks), LOO-136
-scripted E2E happy path (PR #18), LOO-137 L2 Lore pack (PR #17).
-M0 + M1 complete. M2 lacks only LOO-139 live walkthrough (HITL exit gate).
-Next unblocked: LOO-139 M2 live L0->L1 walkthrough, LOO-140 L3 Skill Tree pack.
-Notes: LOO-139 runtime blocker resolved 2026-07-02: host omp drifted to 16.3.0, but a
-certified 16.2.13 binary was rebuilt from npm (`@oh-my-pi/pi-coding-agent@16.2.13`,
-`bun build --compile` of `dist/cli.js`; natives placed at `~/.omp/natives/16.2.13/`).
-Set `GARNISH_OMP_SOURCE=~/.local/share/garnish/omp-source/16.2.13/omp-16.2.13` for the
-walkthrough; verified live via real `garnish init --no-launch` + `garnish doctor`
-(handshake ok 16.2.13). Only the supervised HITL session itself remains.
+scripted E2E happy path (PR #18), LOO-137 L2 Lore pack (PR #17), LOO-139 M2 exit gate
+(PR #19 — live L0->L1 walkthrough on real omp 16.2.13; evidence + 7 fixed live defects
+recorded on the issue; fallout filed as LOO-148/149/150).
+M0 + M1 + M2 complete. Next unblocked: LOO-140 L3 Skill Tree pack, LOO-148/149/150 fallout.
+Notes: certified-runtime source for walkthroughs:
+`GARNISH_OMP_SOURCE=~/.local/share/garnish/omp-source/16.2.13/omp-16.2.13` (sibling
+`pi_natives.darwin-arm64.node` required next to source AND installed binary — LOO-148;
+host omp GC prunes `~/.omp/natives/<old>`). Mint `omp token anthropic` immediately
+before launching (short TTL). Extension redeploys need a session restart (LOO-150).
 Notes: L0 status-screen uses `command(garnish status exit=0)` (no OR in the DSL);
 deny-once is a real `event(tool_approval_resolved approved=false)` check per the spike.
 
