@@ -17,10 +17,13 @@ Tracker: Linear
 
 ## Related projects
 
-- Garnish Standalone — purpose-built harness & TUI (prospect, 2026-07-02):
+- Garnish Standalone — purpose-built harness & TUI (DECIDED 2026-07-02, state: Planned):
   https://linear.app/dylanmccavitt/project/garnish-standalone-purpose-built-harness-and-tui-98f6de260a93
-  Brief: https://linear.app/dylanmccavitt/document/brief-garnish-standalone-purpose-built-harness-and-tui-2527da9a5034
-  Decision pending (tool-fluency vs craft-fluency thesis); does not change v1 scope by itself.
+  Brief + decision record: https://linear.app/dylanmccavitt/document/brief-garnish-standalone-purpose-built-harness-and-tui-2527da9a5034
+  Decision: fully own harness — own agent loop + TUI, omp dropped. Repeals ARD §1/ADR-8/9
+  for v-next. Main bus (packs, verifier, progression, gates, curriculum) carries over.
+  v1 omp-coupled work (LOO-148/149/150, adapter/extension issues) is presumed obsolete
+  pending the v1-fate call; v2 PRD/ARD via blueprint is the next planning artifact.
 
 ## GitHub
 
