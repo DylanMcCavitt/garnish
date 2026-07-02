@@ -15,7 +15,7 @@ import {
   type RuntimeEffects,
 } from "../adapter";
 import { initCommand, type InitFsEffects, type Prompter } from "./init";
-import { main, type CliDeps, type CommandOutcome, type DoctorDeps } from "./index";
+import { doctorCommand, main, usage, type CliDeps, type CommandOutcome, type DoctorDeps } from "./index";
 import { createFsEventStore, loadInstalledState } from "./state";
 
 /**
@@ -52,6 +52,23 @@ export async function runGarnish(
     }
 
     const paths = runtimePaths({ garnishRootDir: rootDir });
+    const doctor: DoctorDeps = {
+      runtimeInstalled: () => existsSync(paths.binaryPath),
+      reportedVersion: () => {
+        const result = spawnSync(paths.binaryPath, ["--version"], { encoding: "utf8" });
+        return result.status === 0 ? `${result.stdout}\n${result.stderr}`.trim() : undefined;
+      },
+      isolatedConfigPresent: () => existsSync(join(paths.agentDir, "config.yml")),
+    };
+
+    if (command === "doctor") {
+      return await doctorCommand(doctor);
+    }
+
+    if (command !== "status" && command !== "quest" && command !== "unlock" && command !== "cheat") {
+      return { text: usage(), exitCode: 2 };
+    }
+
     const installed = loadInstalledState(paths.agentDir);
     const cli: CliDeps = {
       graph: installed.graph,
@@ -60,14 +77,6 @@ export async function runGarnish(
       now: () => new Date().toISOString(),
       runtimePaths: paths,
       gateEffects: realGateEffects(),
-    };
-    const doctor: DoctorDeps = {
-      runtimeInstalled: () => existsSync(paths.binaryPath),
-      reportedVersion: () => {
-        const result = spawnSync(paths.binaryPath, ["--version"], { encoding: "utf8" });
-        return result.status === 0 ? `${result.stdout}\n${result.stderr}`.trim() : undefined;
-      },
-      isolatedConfigPresent: () => existsSync(join(paths.agentDir, "config.yml")),
     };
     return await main(argv, { cli, doctor });
   } catch (error) {
