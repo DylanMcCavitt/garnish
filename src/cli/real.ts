@@ -99,6 +99,12 @@ async function runInit(args: readonly string[], context: InitContext): Promise<C
     (noLaunch
       ? () => {}
       : async (spec: LaunchSpec) => {
+          // Hand the tty to the launched TUI: a still-open readline competes with the
+          // child for inherited stdin and starves it of keystrokes (observed live in
+          // the LOO-139 walkthrough: the omp setup wizard froze mid-flow).
+          if (context.options.prompter === undefined && "close" in prompter) {
+            (prompter as StdinPrompter).close();
+          }
           await launchInherited(spec);
         });
 

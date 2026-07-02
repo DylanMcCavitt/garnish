@@ -560,7 +560,9 @@ function eventMatches(match: EventMatch, event: VerifierEvent): boolean {
   if (event.name !== match.event) {
     return false;
   }
-  if (match.tool !== undefined && !eventStringFieldMatches(event, ["tool"], match.tool)) {
+  // Live 16.2.13 tool events carry `toolName`, not `tool` (LOO-118 capture 11,
+  // confirmed in the LOO-139 live walkthrough); fixtures may use either.
+  if (match.tool !== undefined && !eventStringFieldMatches(event, ["tool", "toolName", "tool_name"], match.tool)) {
     return false;
   }
   if (match.source !== undefined && !eventStringFieldMatches(event, ["source"], match.source)) {
@@ -575,8 +577,14 @@ function eventMatches(match: EventMatch, event: VerifierEvent): boolean {
   if (match.path !== undefined && !eventStringFieldMatches(event, ["path"], match.path)) {
     return false;
   }
-  if (match.success !== undefined && payloadValue(event, ["success"]) !== match.success) {
-    return false;
+  if (match.success !== undefined) {
+    // Live tool_result events express outcome as `isError`; `success` is fixture shorthand.
+    const success = payloadValue(event, ["success"]);
+    const isError = payloadValue(event, ["isError", "is_error"]);
+    const actual = typeof success === "boolean" ? success : typeof isError === "boolean" ? !isError : undefined;
+    if (actual !== match.success) {
+      return false;
+    }
   }
   if (match.approved !== undefined && payloadValue(event, ["approved"]) !== match.approved) {
     return false;

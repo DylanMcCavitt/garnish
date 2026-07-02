@@ -237,6 +237,56 @@ test("connect-agent does not complete without a qualifying assistant reply", asy
   expect(store.events().some((event) => event.type === "quest_completed")).toBe(false);
 });
 
+test("agent_end derives assistant turns only from non-empty assistant message content", async () => {
+  const { pi, store, handle } = makeHarness();
+
+  pi.emit(sessionStart("omp/16.2.13"));
+  pi.emit({
+    type: "agent_end",
+    sessionId: "s1",
+    messages: [
+      { role: "user", content: [{ type: "text", text: "hi" }] },
+      { role: "assistant", content: [] },
+    ],
+  });
+  await handle.evaluateNow();
+
+  expect(store.events().some((event) => event.type === "quest_completed")).toBe(false);
+
+  pi.emit({
+    type: "agent_end",
+    sessionId: "s1",
+    messages: [
+      { role: "user", content: [{ type: "text", text: "hi" }] },
+      { role: "assistant", content: [{ type: "text", text: "hello back" }] },
+    ],
+  });
+  await handle.evaluateNow();
+
+  expect(store.events().some((event) => event.type === "quest_completed" && `${event.quest_id}` === "connect-agent")).toBe(
+    true,
+  );
+});
+
+test("agent_end derives assistant turns from non-empty string assistant content", async () => {
+  const { pi, store, handle } = makeHarness();
+
+  pi.emit(sessionStart("omp/16.2.13"));
+  pi.emit({
+    type: "agent_end",
+    sessionId: "s1",
+    messages: [
+      { role: "user", content: [{ type: "text", text: "hi" }] },
+      { role: "assistant", content: "hello back" },
+    ],
+  });
+  await handle.evaluateNow();
+
+  expect(store.events().some((event) => event.type === "quest_completed" && `${event.quest_id}` === "connect-agent")).toBe(
+    true,
+  );
+});
+
 test("auto-complete latency from qualifying agent_end stays under the 10s contract", async () => {
   const { pi, store, handle, clock } = makeHarness();
 

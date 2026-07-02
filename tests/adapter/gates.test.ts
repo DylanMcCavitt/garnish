@@ -62,7 +62,6 @@ test("renderGateConfig snapshots the v1 gate diff monotonically", () => {
         "provider:cursor",
         "provider:gemini",
         "provider:github",
-        "provider:native",
         "provider:opencode",
       ],
     },
@@ -126,7 +125,6 @@ test("extension and context gates render disabledExtensions and disabledProvider
       "cursor",
       "gemini",
       "github",
-      "native",
       "opencode",
     ],
   });
@@ -172,7 +170,6 @@ test("stockParityConfig unlocks every v1 catalog surface with no locked residue"
     "provider:cursor",
     "provider:gemini",
     "provider:github",
-    "provider:native",
     "provider:opencode",
     "skill:*",
     "tool:bash",

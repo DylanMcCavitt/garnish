@@ -22,9 +22,15 @@ export interface HudExtensionContext extends Omit<PiExtensionContext, "ui"> {
 
 export type HudCommandHandler = (args: string, ctx: HudExtensionContext) => void | Promise<void>;
 
+/** Real omp expects a spec object; a bare function throws `handler is not a function` (LOO-139 live). */
+export interface HudCommandSpec {
+  readonly description: string;
+  readonly handler: HudCommandHandler;
+}
+
 export interface HudPi {
   readonly on: (event: string, handler: PiEventHandler) => void;
-  readonly registerCommand: (name: string, handler: HudCommandHandler) => void;
+  readonly registerCommand: (name: string, spec: HudCommandSpec) => void;
 }
 
 /** Themed level labels paired with functional descriptors (PRD naming rule). */
@@ -169,7 +175,9 @@ export function registerGarnishHud(pi: HudPi, deps: HudDeps): GarnishHudHandle {
     });
   }
 
-  pi.registerCommand("quest", async (args: string, ctx: HudExtensionContext) => {
+  pi.registerCommand("quest", {
+    description: "Show the Garnish quest log; `/quest check` re-verifies the active quest.",
+    handler: async (args: string, ctx: HudExtensionContext) => {
     latestCtx = ctx;
     try {
       if (args.trim() === "check") {
@@ -198,6 +206,7 @@ export function registerGarnishHud(pi: HudPi, deps: HudDeps): GarnishHudHandle {
     } catch {
       ctx.ui.notify("Garnish could not render the quest view.", "warning");
     }
+    },
   });
 
   return {

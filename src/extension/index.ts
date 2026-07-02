@@ -44,6 +44,12 @@ export interface GarnishExtensionDeps {
   readonly probes: Probes;
   readonly store: ProgressionStore;
   readonly handshake: (reportedVersion: string | undefined) => VersionHandshake;
+  /**
+   * Probes the running harness for its version. Real `session_start` events carry no
+   * `version` field (LOO-118 capture 11, confirmed live in LOO-139), so the handshake
+   * needs an out-of-band source; `event.version` still wins when present (fixtures).
+   */
+  readonly reportedVersion?: () => string | undefined;
   readonly now: () => number;
   readonly isoNow?: () => string;
   readonly paths?: Readonly<Record<string, string>>;
@@ -194,7 +200,7 @@ export function createGarnishExtension(deps: GarnishExtensionDeps): (pi: PiExten
           if (eventName === "session_start") {
             latestCtx = ctx;
             currentSessionId = typeof event.sessionId === "string" ? event.sessionId : `session-${seq + 1}`;
-            const reported = typeof event.version === "string" ? event.version : undefined;
+            const reported = typeof event.version === "string" ? event.version : deps.reportedVersion?.();
             const shake = deps.handshake(reported);
             if (shake.status === "paused") {
               pause(
@@ -272,13 +278,21 @@ function normalizePayload(event: PiExtensionEvent): Readonly<Record<string, unkn
   // Real Pi agent_end events carry `messages`, not a turn counter (LOO-118 spike).
   // Derive the count here so `min_assistant_turns` checks work against live events;
   // an explicit assistant_turns field (recorded fixtures, tests) always wins.
+  // Only non-empty replies count: a failed provider call (e.g. 401) still leaves an
+  // assistant message with empty content in the payload (observed live in LOO-139),
+  // and "connect your agent" must mean one SUCCESSFUL round trip (PRD criterion).
   if (
     payload.assistant_turns === undefined &&
     payload.assistantTurns === undefined &&
     Array.isArray(payload.messages)
   ) {
     payload.assistant_turns = payload.messages.filter(
-      (message) => isRecord(message) && message.role === "assistant",
+      (message) =>
+        isRecord(message) &&
+        message.role === "assistant" &&
+        (typeof message.content === "string"
+          ? message.content.length > 0
+          : Array.isArray(message.content) && message.content.length > 0),
     ).length;
   }
 
