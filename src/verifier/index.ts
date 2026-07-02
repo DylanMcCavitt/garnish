@@ -578,6 +578,9 @@ function eventMatches(match: EventMatch, event: VerifierEvent): boolean {
   if (match.success !== undefined && payloadValue(event, ["success"]) !== match.success) {
     return false;
   }
+  if (match.approved !== undefined && payloadValue(event, ["approved"]) !== match.approved) {
+    return false;
+  }
   if (match.exit_code !== undefined) {
     const exitCode = payloadValue(event, ["exit_code", "exitCode"]);
     if (typeof exitCode !== "number" || !matchesIntPredicate(match.exit_code, exitCode)) {

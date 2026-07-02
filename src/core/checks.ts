@@ -77,6 +77,7 @@ export const EventMatchSchema = z.strictObject({
   name: StringPredicateSchema.optional(),
   path: StringPredicateSchema.optional(),
   success: z.boolean().optional(),
+  approved: z.boolean().optional(),
   exit_code: IntPredicateSchema.optional(),
   count: IntPredicateSchema.optional(),
   min_assistant_turns: z.number().int().positive().optional(),

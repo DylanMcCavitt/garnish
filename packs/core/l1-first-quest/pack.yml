@@ -1,0 +1,13 @@
+id: l1-first-quest
+title: First Quest (Core agent loop)
+description: The first practical agent workflow — create, edit, run, explain, revert, and deny once.
+version: 0.1.0
+requires:
+  adapters: [pi]
+levels:
+  - id: first-quest
+    title: First Quest
+    description: Level 1 — core agent loop. Completing required quests unlocks project context features.
+    order: 1
+    quests: [first-file, first-edit, run-command, explain-diff, revert-change, deny-once]
+    unlocks: ["context"]
