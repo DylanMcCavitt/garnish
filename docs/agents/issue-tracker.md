@@ -21,9 +21,10 @@ Tracker: Linear
   https://linear.app/dylanmccavitt/project/garnish-standalone-purpose-built-harness-and-tui-98f6de260a93
   Brief + decision record: https://linear.app/dylanmccavitt/document/brief-garnish-standalone-purpose-built-harness-and-tui-2527da9a5034
   Decision: fully own harness — own agent loop + TUI, omp dropped. Repeals ARD §1/ADR-8/9
-  for v-next. Main bus (packs, verifier, progression, gates, curriculum) carries over.
-  v1 omp-coupled work (LOO-148/149/150, adapter/extension issues) is presumed obsolete
-  pending the v1-fate call; v2 PRD/ARD via blueprint is the next planning artifact.
+  for v-next. Evolve this repo; no fresh repo. Main bus (packs, verifier, progression,
+  gates, curriculum) carries over. v1 omp-coupled work (LOO-148/149/150,
+  adapter/extension/runtime fallout) is paused/cancelled unless v1 maintenance is
+  explicitly revived; portable pack authoring continues.
 
 ## GitHub
 
