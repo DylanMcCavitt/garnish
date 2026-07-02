@@ -4,14 +4,18 @@ import { foldEvents, type ProgressionGraph, type ProgressionState } from "../pro
 import { evaluateQuest, type Probes, type VerifierEvent } from "../verifier";
 import type { PiEventHandler, PiExtensionContext, PiExtensionEvent } from "./index";
 
-/** Structural slice of the Pi UI surface used by the HUD (spike-verified shapes). */
+/**
+ * Structural slice of the Pi UI surface used by the HUD. Real 16.2.13 signature
+ * (dist/types/extensibility/extensions/types.d.ts): content is a string array capped
+ * at 10 lines by omp, placement rides in a trailing options object (LOO-139 live —
+ * the old `{ placement, lines }` content object rendered nothing).
+ */
 export interface HudWidgetOptions {
   readonly placement: "aboveEditor" | "belowEditor";
-  readonly lines: readonly string[];
 }
 
 export interface HudUi {
-  readonly setWidget: (id: string, options: HudWidgetOptions) => void;
+  readonly setWidget: (id: string, lines: readonly string[], options?: HudWidgetOptions) => void;
   readonly setStatus: (id: string, text: string) => void;
   readonly notify: (message: string, level?: "info" | "warning" | "error") => void;
 }
@@ -133,7 +137,7 @@ export function registerGarnishHud(pi: HudPi, deps: HudDeps): GarnishHudHandle {
     lastStatusText = renderStatusLine(state, deps.graph, deps.quests, labels);
 
     try {
-      latestCtx?.ui.setWidget(WIDGET_ID, { placement: "aboveEditor", lines: lastWidgetLines });
+      latestCtx?.ui.setWidget(WIDGET_ID, lastWidgetLines, { placement: "aboveEditor" });
       latestCtx?.ui.setStatus(STATUS_ID, lastStatusText);
 
       const completedCount = state.completedQuests.length;

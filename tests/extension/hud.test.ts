@@ -94,11 +94,11 @@ class FakeHudPi implements HudPi {
   readonly ctx: HudExtensionContext = {
     hasUI: true,
     ui: {
-      setWidget: (id, options) => {
+      setWidget: (id, lines) => {
         if (this.throwOnUi) {
           throw new Error("no UI");
         }
-        this.widgets.push({ id, lines: options.lines });
+        this.widgets.push({ id, lines });
       },
       setStatus: (id, text) => {
         if (this.throwOnUi) {
