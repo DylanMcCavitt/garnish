@@ -94,6 +94,9 @@ const generatedMarker: GeneratedByGarnishMarker = {
 };
 
 export const v1GateCatalog = {
+  // `native` is deliberately NOT gated: disabling omp's native provider also disables
+  // $PI_CODING_AGENT_DIR/extensions autoload, which would lock Garnish's own extension
+  // out of the session (observed live on omp 16.2.13 during the LOO-139 walkthrough).
   "context": [
     { kind: "provider", id: "agents-md" },
     { kind: "provider", id: "claude" },
@@ -101,7 +104,6 @@ export const v1GateCatalog = {
     { kind: "provider", id: "cursor" },
     { kind: "provider", id: "gemini" },
     { kind: "provider", id: "github" },
-    { kind: "provider", id: "native" },
     { kind: "provider", id: "opencode" },
   ],
   "extensions": [{ kind: "extension", id: "extension-module:garnish-demo" }],

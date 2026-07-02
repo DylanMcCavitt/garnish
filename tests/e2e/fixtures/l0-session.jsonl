@@ -1,4 +1,4 @@
-{"type":"session_start","sessionId":"e2e-session-1","version":"omp/16.2.13"}
+{"type":"session_start","sessionId":"e2e-session-1"}
 {"type":"turn_start","sessionId":"e2e-session-1"}
 {"type":"tool_call","sessionId":"e2e-session-1","toolName":"read","input":{"path":"README.md"}}
 {"type":"tool_result","sessionId":"e2e-session-1","toolName":"read","isError":false}

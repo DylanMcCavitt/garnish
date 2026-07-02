@@ -26,9 +26,15 @@ export interface UnlockExtensionContext extends PiExtensionContext {
 
 export type UnlockCommandHandler = (args: string, ctx: UnlockExtensionContext) => void | Promise<void>;
 
+/** Real omp expects a spec object; a bare function throws `handler is not a function` (LOO-139 live). */
+export interface UnlockCommandSpec {
+  readonly description: string;
+  readonly handler: UnlockCommandHandler;
+}
+
 export interface UnlockPi {
   readonly on: (event: string, handler: PiEventHandler) => void;
-  readonly registerCommand: (name: string, handler: UnlockCommandHandler) => void;
+  readonly registerCommand: (name: string, spec: UnlockCommandSpec) => void;
 }
 
 export interface LiveUnlockDeps {
@@ -116,7 +122,9 @@ export function registerLiveUnlocks(pi: UnlockPi, deps: LiveUnlockDeps): LiveUnl
     });
   }
 
-  pi.registerCommand("unlock", async (args: string, ctx: UnlockExtensionContext) => {
+  pi.registerCommand("unlock", {
+    description: "Apply Garnish speedrun unlocks (e.g. `/unlock --level 1`).",
+    handler: async (args: string, ctx: UnlockExtensionContext) => {
     latestCtx = ctx;
     try {
       const options = parseUnlockArgs(args);
@@ -141,6 +149,7 @@ export function registerLiveUnlocks(pi: UnlockPi, deps: LiveUnlockDeps): LiveUnl
     } catch {
       ctx.ui.notify("Garnish /unlock failed; try `garnish unlock` from the CLI.", "warning");
     }
+    },
   });
 
   return {

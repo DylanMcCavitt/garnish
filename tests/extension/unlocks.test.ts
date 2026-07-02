@@ -6,7 +6,7 @@ import type { FeatureId, LevelId, ProgressionEvent, QuestId, UnlockEvent } from 
 import {
   registerLiveUnlocks,
   type LiveUnlockDeps,
-  type UnlockCommandHandler,
+  type UnlockCommandSpec,
   type UnlockExtensionContext,
   type UnlockPi,
 } from "../../src/extension";
@@ -52,7 +52,7 @@ function featureUnlock(id: FeatureId): UnlockEvent {
 
 class FakeUnlockPi implements UnlockPi {
   readonly handlers = new Map<string, PiEventHandler[]>();
-  readonly commands = new Map<string, UnlockCommandHandler>();
+  readonly commands = new Map<string, UnlockCommandSpec>();
   readonly notifications: string[] = [];
   readonly setActiveToolsCalls: Array<readonly string[]> = [];
   reloadCalls = 0;
@@ -83,8 +83,8 @@ class FakeUnlockPi implements UnlockPi {
     this.handlers.set(event, existing);
   }
 
-  registerCommand(name: string, handler: UnlockCommandHandler): void {
-    this.commands.set(name, handler);
+  registerCommand(name: string, spec: UnlockCommandSpec): void {
+    this.commands.set(name, spec);
   }
 
   emit(event: PiExtensionEvent): void {
@@ -94,11 +94,11 @@ class FakeUnlockPi implements UnlockPi {
   }
 
   async runCommand(name: string, args: string): Promise<void> {
-    const handler = this.commands.get(name);
-    if (handler === undefined) {
+    const spec = this.commands.get(name);
+    if (spec === undefined) {
       throw new Error(`command ${name} not registered`);
     }
-    await handler(args, this.ctx);
+    await spec.handler(args, this.ctx);
   }
 }
 

@@ -4,7 +4,7 @@ import { dirname, join } from "node:path";
 
 import { parse as parseYaml } from "yaml";
 
-import { handshake, runtimePaths, type GateConfigEffects } from "../adapter";
+import { handshake, parseOmpVersion, runtimePaths, type GateConfigEffects } from "../adapter";
 import { createFsEventStore, loadInstalledState } from "../cli/state";
 import type { Probes, RunCommandOptions, RunCommandResult, SkillValidity } from "../verifier";
 import { createGarnishExtension, type GarnishExtensionHandle, type PiExtensionApi } from "./index";
@@ -57,12 +57,28 @@ export default function garnishExtension(pi: GarnishPi): GarnishEntryHandle {
       readFile: (path) => (existsSync(path) ? readFileSync(path, "utf8") : undefined),
     };
 
+    // Real `session_start` events carry no `version` field (LOO-118 capture 11), so the
+    // handshake asks the RUNNING binary (process.execPath — extensions are in-process).
+    // A non-omp interpreter (tests under `bun test`) parses to nothing; fall back to the
+    // installed certified binary so hermetic runs still handshake against real output.
+    const reportedVersion = (): string | undefined => {
+      for (const binary of [process.execPath, paths.binaryPath]) {
+        const result = spawnSync(binary, ["--version"], { encoding: "utf8", timeout: 15_000 });
+        const output = `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
+        if (result.status === 0 && parseOmpVersion(output) !== undefined) {
+          return output;
+        }
+      }
+      return undefined;
+    };
+
     const core = createGarnishExtension({
       graph,
       quests,
       probes,
       store,
       handshake,
+      reportedVersion,
       now: () => Date.now(),
       paths: checkPaths,
     })(pi);

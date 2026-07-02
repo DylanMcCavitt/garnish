@@ -6,7 +6,7 @@ import {
   coreLevelLabels,
   registerGarnishHud,
   renderHudLines,
-  type HudCommandHandler,
+  type HudCommandSpec,
   type HudDeps,
   type HudExtensionContext,
   type HudPi,
@@ -85,7 +85,7 @@ const inertProbes: Probes = {
 
 class FakeHudPi implements HudPi {
   readonly handlers = new Map<string, PiEventHandler[]>();
-  readonly commands = new Map<string, HudCommandHandler>();
+  readonly commands = new Map<string, HudCommandSpec>();
   readonly widgets: Array<{ readonly id: string; readonly lines: readonly string[] }> = [];
   readonly statuses: Array<{ readonly id: string; readonly text: string }> = [];
   readonly notifications: string[] = [];
@@ -94,11 +94,11 @@ class FakeHudPi implements HudPi {
   readonly ctx: HudExtensionContext = {
     hasUI: true,
     ui: {
-      setWidget: (id, options) => {
+      setWidget: (id, lines) => {
         if (this.throwOnUi) {
           throw new Error("no UI");
         }
-        this.widgets.push({ id, lines: options.lines });
+        this.widgets.push({ id, lines });
       },
       setStatus: (id, text) => {
         if (this.throwOnUi) {
@@ -121,8 +121,8 @@ class FakeHudPi implements HudPi {
     this.handlers.set(event, existing);
   }
 
-  registerCommand(name: string, handler: HudCommandHandler): void {
-    this.commands.set(name, handler);
+  registerCommand(name: string, spec: HudCommandSpec): void {
+    this.commands.set(name, spec);
   }
 
   emit(event: PiExtensionEvent): void {
@@ -132,11 +132,11 @@ class FakeHudPi implements HudPi {
   }
 
   async runCommand(name: string, args: string): Promise<void> {
-    const handler = this.commands.get(name);
-    if (handler === undefined) {
+    const spec = this.commands.get(name);
+    if (spec === undefined) {
       throw new Error(`command ${name} not registered`);
     }
-    await handler(args, this.ctx);
+    await spec.handler(args, this.ctx);
   }
 }
 
