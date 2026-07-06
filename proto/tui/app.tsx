@@ -2,11 +2,17 @@
 import { TextAttributes } from "@opentui/core";
 import { useKeyboard, useTimeline } from "@opentui/react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { ApprovalDecision, ApprovalRequest, EventBus, GateView, Scorecard } from "../harness/types";
+import type { ApprovalDecision, EventBus, GateView, Scorecard } from "../harness/types";
 import { ApprovalModal, type ApprovalModalState, stepApprovalModal } from "./modal";
-import { decayMoments, glyphShower, momentFromEvent, type GameMoment } from "./juice";
-import { QuestLog, type QuestView } from "./questlog";
+import { decayMoments, emptyStatus, momentFromEvent, reduceStatus, TUI_BG, TUI_DIM, TUI_ORANGE, TUI_PANEL, TUI_RED, TUI_TEXT, type GameMoment, type MissionStatus, type StatusModel } from "./juice";
+import { missionLevel, QuestLog, type QuestView } from "./questlog";
 import { Transcript, emptyTranscript, reduceTranscript, type TranscriptModel } from "./transcript";
+
+export interface TuiMeta {
+  workspace: string;
+  provider: string;
+  model?: string;
+}
 
 export interface TuiAppOpts {
   bus: EventBus;
@@ -17,6 +23,7 @@ export interface TuiAppOpts {
   scorecard(): Scorecard | null;
   onExit(): void;
   approval: ApprovalController;
+  meta?: TuiMeta;
 }
 
 export interface ApprovalController {
@@ -29,11 +36,41 @@ const relevantViewEvents: Record<string, true> = {
   "turn.end": true,
   "tool.blocked": true,
   "tool.result": true,
+  "tool.approval.resolved": true,
   "file.edited": true,
   "quest.completed": true,
   "unlock.applied": true,
   error: true,
 };
+
+const statusColors: Record<MissionStatus, string> = {
+  "AWAITING INPUT": TUI_TEXT,
+  STREAMING: TUI_ORANGE,
+  "RUNNING TOOL": TUI_ORANGE,
+  "AWAITING APPROVAL": TUI_ORANGE,
+  ABORTED: TUI_RED,
+  ERROR: TUI_RED,
+};
+
+export function tokenLabel(scorecard: Scorecard | null): string {
+  const total = (scorecard?.tokens.input ?? 0) + (scorecard?.tokens.output ?? 0);
+  return total >= 1000 ? `${Math.round(total / 100) / 10}k` : `${total}`;
+}
+
+export function workspaceLabel(path: string | undefined): string {
+  if (!path) return "workspace pending";
+  if (path.length <= 42) return path;
+  return `…${path.slice(-41)}`;
+}
+
+function StatusInput({ status, input, setInput, focused }: { status: StatusModel; input: string; setInput(value: string): void; focused: boolean }) {
+  return (
+    <box style={{ border: true, height: 3, paddingLeft: 1, paddingRight: 1, flexDirection: "row", alignItems: "center", backgroundColor: TUI_PANEL }}>
+      <text fg={statusColors[status.status]} attributes={TextAttributes.BOLD}>{status.pulse ? "●" : "○"} {status.status}  </text>
+      <input focused={focused} placeholder="input field…" value={input} onInput={setInput} style={{ flexGrow: 1 }} />
+    </box>
+  );
+}
 
 export function TuiApp(opts: TuiAppOpts) {
   const [input, setInput] = useState("");
@@ -43,6 +80,7 @@ export function TuiApp(opts: TuiAppOpts) {
   const [scorecard, setScorecard] = useState<Scorecard | null>(() => opts.scorecard());
   const [modal, setModal] = useState<ApprovalModalState | null>(null);
   const [moments, setMoments] = useState<GameMoment[]>([]);
+  const [status, setStatus] = useState<StatusModel>(() => emptyStatus());
   const [frame, setFrame] = useState(0);
 
   const timeline = useTimeline({
@@ -50,13 +88,18 @@ export function TuiApp(opts: TuiAppOpts) {
     loop: true,
   });
   const timelineReady = useRef(false);
+  const lastDecay = useRef(Date.now());
   if (!timelineReady.current) {
     timeline.add({}, {
       duration: 1000,
       loop: true,
       onUpdate: () => {
         setFrame((current) => current + 1);
-        setMoments((current) => decayMoments(current));
+        const now = Date.now();
+        if (now - lastDecay.current >= 1000) {
+          lastDecay.current = now;
+          setMoments((current) => decayMoments(current));
+        }
       },
     });
     timelineReady.current = true;
@@ -67,6 +110,7 @@ export function TuiApp(opts: TuiAppOpts) {
   useEffect(() => {
     return opts.bus.subscribe((event) => {
       setTranscript((current) => reduceTranscript(current, event));
+      setStatus((current) => reduceStatus(current, event));
       const moment = momentFromEvent(event);
       if (moment) setMoments((current) => [...current.slice(-11), moment]);
       if (relevantViewEvents[event.type]) {
@@ -109,25 +153,25 @@ export function TuiApp(opts: TuiAppOpts) {
     }
   });
 
-  const shower = useMemo(() => moments.find((moment) => moment.ttl > 10), [moments]);
+  const flash = useMemo(() => moments.some((moment) => moment.ttl > 10), [moments, frame]);
+  const level = missionLevel(scorecard);
+  const provider = opts.meta?.model ? `${opts.meta.provider}/${opts.meta.model}` : opts.meta?.provider ?? "provider pending";
 
   return (
-    <box style={{ width: "100%", height: "100%", flexDirection: "column", backgroundColor: "#0B1020" }}>
-      <box style={{ height: 1, justifyContent: "space-between" }}>
-        <text fg="#F2CC60" attributes={TextAttributes.BOLD}>Garnish Standalone Prototype</text>
-        <text fg="#9CA3AF">Esc abort · Ctrl+C exit</text>
+    <box style={{ width: "100%", height: "100%", flexDirection: "column", backgroundColor: TUI_BG }}>
+      <box style={{ height: 1, flexDirection: "row", justifyContent: "space-between", backgroundColor: TUI_BG }}>
+        <text fg={TUI_ORANGE} attributes={TextAttributes.BOLD}>⁙ Garnish  {workspaceLabel(opts.meta?.workspace)}</text>
+        <text fg={TUI_DIM}>LVL {level.level} · XP {level.xp} · TOK {tokenLabel(scorecard)} · {provider}</text>
       </box>
-      {shower ? (
-        <box zIndex={10} style={{ height: 3, alignItems: "center", justifyContent: "center" }}>
-          <text fg={shower.color} attributes={TextAttributes.BOLD}>{glyphShower(shower, frame)}  {shower.line}  {glyphShower(shower, frame + 1)}</text>
+      <box style={{ flexGrow: 1, flexDirection: "row" }}>
+        <box style={{ width: "65%", flexDirection: "column" }}>
+          <Transcript model={transcript} />
         </box>
-      ) : null}
-      <box style={{ flexGrow: 1, gap: 1 }}>
-        <Transcript model={transcript} />
-        <QuestLog quest={quest} gates={gates} scorecard={scorecard} moments={moments} />
+        <QuestLog quest={quest} gates={gates} scorecard={scorecard} moments={moments} flash={flash} />
       </box>
-      <box title="Command" style={{ border: true, height: 3, paddingLeft: 1, paddingRight: 1 }}>
-        <input focused placeholder="Tell the agent what to do…" value={input} onInput={setInput} />
+      <StatusInput status={status} input={input} setInput={setInput} focused={modal === null} />
+      <box style={{ height: 1, flexDirection: "row", justifyContent: "center", backgroundColor: TUI_BG }}>
+        <text fg={TUI_DIM}>Enter Send · Esc Abort · a/p/d/r Approvals · Ctrl+C Quit</text>
       </box>
       <ApprovalModal state={modal} />
     </box>

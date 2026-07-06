@@ -1,6 +1,7 @@
 /** @jsxImportSource @opentui/react */
 import { TextAttributes } from "@opentui/core";
 import type { ApprovalDecision, ApprovalRequest, RiskTier } from "../harness/types";
+import { TUI_BG, TUI_DIM, TUI_ORANGE, TUI_RED, TUI_TEXT } from "./juice";
 
 export interface ApprovalModalState {
   request: ApprovalRequest;
@@ -39,10 +40,10 @@ export function stepApprovalModal(state: ApprovalModalState, action: ModalAction
 }
 
 export const riskColors: Record<RiskTier, string> = {
-  safe: "#55D187",
-  moderate: "#F2CC60",
+  safe: TUI_ORANGE,
+  moderate: TUI_ORANGE,
   risky: "#FF9F43",
-  critical: "#FF5C5C",
+  critical: TUI_RED,
 };
 
 export function ApprovalModal({ state }: { state: ApprovalModalState | null }) {
@@ -56,28 +57,28 @@ export function ApprovalModal({ state }: { state: ApprovalModalState | null }) {
       zIndex={20}
       style={{
         position: "absolute",
-        left: 4,
-        right: 4,
-        top: 3,
+        left: 8,
+        right: 8,
+        top: 4,
         height: 13,
         border: true,
         borderStyle: "double",
         paddingLeft: 2,
         paddingRight: 2,
         flexDirection: "column",
-        backgroundColor: "#111827",
+        backgroundColor: TUI_BG,
       }}
     >
       <text fg={riskColors[request.risk]} attributes={TextAttributes.BOLD}>{`${request.risk.toUpperCase()} · ${request.tool}`}</text>
-      <text fg="#E5E7EB">{request.command}</text>
-      <text fg="#F2CC60">{request.explanation}</text>
-      <text fg="#9CA3AF">{`Pattern: ${pattern}`}</text>
+      <text fg={TUI_TEXT}>{request.command}</text>
+      <text fg={TUI_ORANGE}>{request.explanation}</text>
+      <text fg={TUI_DIM}>{`Pattern: ${pattern}`}</text>
       {state.mode === "reason" ? (
-        <box title="Reason" style={{ border: true, height: 3 }}>
+        <box title="Reason" titleColor={TUI_DIM} style={{ border: true, height: 3 }}>
           <input focused placeholder="Why deny? Enter submits" value={state.reason} />
         </box>
       ) : (
-        <text fg="#E5E7EB">[a]pprove once  [p]attern  [d]eny  [r]eason</text>
+        <text fg={TUI_TEXT}>[a]pprove once  [p]attern  [d]eny  [r]eason</text>
       )}
     </box>
   );

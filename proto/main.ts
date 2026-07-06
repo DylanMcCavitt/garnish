@@ -28,14 +28,15 @@ const script: ScriptedTurn[] = [
   },
   { text: "README read (quest check satisfied) — and the shell is still locked; the block named the unlock that grants it. Say the word and I'll record the first edit." },
   { toolCalls: [{ name: "write", input: { path: "quest-state.yml", content: "first_edit: GARNISH_PROTO_FIRST_EDIT\n" } }] },
-  { text: "First edit recorded. Next: fix the greeter bug and prove it with an approved command — you'll get an approval modal." },
+  { text: "First edit recorded. Next: fix the greeter bug and stamp the fix — the stamp is a mutating shell command, so you'll get an approval modal." },
   {
     toolCalls: [
       { name: "edit", input: { path: "src/greet.ts", oldString: "Goodbye, ${name}!", newString: "Hello, ${name}!" } },
-      { name: "bash", input: { cmd: "grep -n 'Hello,' src/greet.ts" } },
+      { name: "bash", input: { cmd: "printf 'greeter: fixed\\n' > PROOF.yml" } },
     ],
   },
-  { text: "If you denied that one, send another message and I'll retry the proof.", toolCalls: [{ name: "bash", input: { cmd: "grep -n 'Hello,' src/greet.ts" } }] },
+  { text: "Fair call — same stamp again, your decision.", toolCalls: [{ name: "bash", input: { cmd: "printf 'greeter: fixed\\n' > PROOF.yml" } }] },
+  { text: "Stamp handled. Read-only proof next — grep is safe-tier, so your tier policy auto-allows it.", toolCalls: [{ name: "bash", input: { cmd: "grep -n 'Hello,' src/greet.ts" } }] },
   { text: "That's the whole arc — quests, blocks, approvals, unlocks, celebrations. Keep chatting or Ctrl+C out." },
 ];
 
@@ -67,6 +68,7 @@ const tui = startTui({
   gateViews: () => wired.gateViews(),
   questView: () => wired.questView(),
   scorecard: () => wired.scorecard(),
+  meta: { workspace: wired.workspace, provider: providerName, model: wired.harness.config.model },
   onExit: () => {
     tui.stop();
     wired.stop();

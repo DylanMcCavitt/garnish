@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import type { HarnessEvent, HarnessEventPayload } from "../harness/types";
-import { emptyTranscript, glyphLegend, momentFromEvent, reduceTranscript, stepApprovalModal } from "./index";
+import { emptyStatus, emptyTranscript, glyphLegend, momentFromEvent, reduceStatus, reduceTranscript, stepApprovalModal } from "./index";
 
 let seq = 0;
 function event(payload: HarnessEventPayload, parentId: string | null = null): HarnessEvent {
@@ -23,16 +23,35 @@ describe("TUI pure seams", () => {
     expect(model.assistantDraft).toBe("");
     expect(model.thinkingDraft).toBe("");
     expect(model.entries.map((entry) => entry.kind)).toEqual(["user", "thinking", "assistant", "tool", "blocked", "file"]);
-    expect(model.entries.at(-1)?.body).toBe("+ changed one line");
+    expect(model.entries.at(-1)?.body).toContain("changed one line");
   });
 
   test("maps game events to glyph legend moments", () => {
     const quest = momentFromEvent(event({ type: "quest.completed", questId: "q1", xp: 75 }));
     const unlock = momentFromEvent(event({ type: "unlock.applied", unlockId: "u1", tools: ["edit", "bash"] }));
 
-    expect(glyphLegend["quest.completed"]?.glyph).toBe("✦");
-    expect(quest?.line).toContain("XP BURST +75");
-    expect(unlock?.line).toContain("NEW VERB");
+    expect(quest?.glyph).toBe(glyphLegend["quest.completed"]?.glyph);
+    expect(quest?.line).toContain("+75");
+    expect(quest?.line).toContain("q1");
+    expect(unlock?.line).toContain("edit");
+  });
+
+  test("reduces mission status from bus events", () => {
+    let status = emptyStatus();
+    status = reduceStatus(status, event({ type: "turn.start", turn: 1 }));
+    expect(status.status).toBe("STREAMING");
+    status = reduceStatus(status, event({ type: "tool.call", callId: "c1", tool: "read", input: {} }));
+    expect(status.status).toBe("RUNNING TOOL");
+    status = reduceStatus(status, event({ type: "tool.approval.requested", callId: "c2", tool: "bash", command: "bun test ./proto/tui", risk: "moderate", explanation: "slice-only" }));
+    expect(status.status).toBe("AWAITING APPROVAL");
+    status = reduceStatus(status, event({ type: "tool.approval.resolved", callId: "c2", approved: true, mode: "once" }));
+    expect(status.status).toBe("RUNNING TOOL");
+    status = reduceStatus(status, event({ type: "tool.result", callId: "c1", tool: "read", output: "ok", isError: false }));
+    expect(status.status).toBe("STREAMING");
+    status = reduceStatus(status, event({ type: "assistant.end", message: { role: "assistant", text: "done", toolCalls: [], stopReason: "end_turn" } }));
+    expect(status.status).toBe("AWAITING INPUT");
+    status = reduceStatus(status, event({ type: "turn.end", turn: 1, stopReason: "aborted" }));
+    expect(status.status).toBe("ABORTED");
   });
 
   test("approval modal state machine resolves each keyboard path", () => {

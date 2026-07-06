@@ -34,27 +34,37 @@ function publish(payload: HarnessEventPayload, parentId?: string | null): void {
 
 const tui = startTui({
   bus,
+  meta: { workspace: process.cwd(), provider: "scripted", model: "mission-control" },
   send(text) {
+    publish({ type: "turn.start", turn: 2 });
     publish({ type: "message.user", source: "player", text });
     publish({ type: "assistant.delta", text: `Heard: ${text}. ` });
     publish({ type: "assistant.end", message: { role: "assistant", text: `Heard: ${text}.`, toolCalls: [], stopReason: "end_turn" } });
+    publish({ type: "turn.end", turn: 2, stopReason: "end_turn" });
   },
   abort() {
-    publish({ type: "error", message: "Abort requested from Esc." });
+    publish({ type: "turn.end", turn: 99, stopReason: "aborted" });
   },
   gateViews(): GateView[] {
     return [
       { tool: "read", visibility: "unlocked" },
       { tool: "edit", visibility: writeUnlocked ? "unlocked" : "tease", teaching: "Complete the first quest to unlock edits." },
-      { tool: "bash", visibility: "tease", teaching: "Needs approval pattern practice." },
+      { tool: "bash", visibility: approvals.approved > 0 ? "unlocked" : "tease", teaching: "Needs approval pattern practice." },
       { tool: "deploy", visibility: "hidden" },
     ];
   },
   questView() {
-    return { title: "Patch the beacon", checks: [{ line: "Inspect the broken file", done: true }, { line: "Approve one safe command", done: approvals.approved > 0 }, { line: "Celebrate the unlock", done: questDone }] };
+    return {
+      title: "Patch the beacon",
+      checks: [
+        { line: "Inspect the broken file", done: true },
+        { line: "Approve one safe command", done: approvals.approved > 0 },
+        { line: "Celebrate the unlock", done: questDone },
+      ],
+    };
   },
   scorecard(): Scorecard {
-    return { sessionId: "tui-dev", tokens: { input: 128, output: questDone ? 760 : 210 }, wallTimeMs: seq * 250, diffBytes: writeUnlocked ? 420 : 0, promptCount: 1, approvals, blocked };
+    return { sessionId: "tui-dev", tokens: { input: 1280, output: questDone ? 17720 : 2100 }, wallTimeMs: seq * 250, diffBytes: writeUnlocked ? 420 : 0, promptCount: 1, approvals, blocked };
   },
   onExit() {
     tui.stop();
@@ -63,15 +73,17 @@ const tui = startTui({
 });
 
 const script: Array<[number, () => void]> = [
-  [150, () => publish({ type: "session.start", workspace: process.cwd(), provider: "scripted", model: "tui-dev" })],
+  [150, () => publish({ type: "session.start", workspace: process.cwd(), provider: "scripted", model: "mission-control" })],
+  [400, () => publish({ type: "turn.start", turn: 1 })],
   [450, () => publish({ type: "message.user", source: "player", text: "Fix the beacon and teach me the gate." })],
   [800, () => publish({ type: "assistant.thinking.delta", text: "Need to inspect the quest state, then request one risky command approval." })],
   [1150, () => publish({ type: "assistant.delta", text: "I’ll inspect the beacon, then ask before running anything risky. " })],
+  [1350, () => publish({ type: "assistant.end", message: { role: "assistant", text: "I’ll inspect the beacon, then ask before running anything risky.", toolCalls: [], stopReason: "tool_use" } })],
   [1450, () => publish({ type: "tool.call", callId: "read-1", tool: "read", input: { path: "beacon.ts" } })],
   [1750, () => publish({ type: "tool.result", callId: "read-1", tool: "read", output: "export const beacon = false", isError: false })],
-  [2150, () => publish({ type: "tool.blocked", callId: "edit-1", tool: "edit", reason: "locked", teaching: "Edits unlock after you prove inspection first." })],
+  [2150, () => { blocked += 1; publish({ type: "tool.blocked", callId: "edit-1", tool: "edit", reason: "locked", teaching: "Edits unlock after you prove inspection first." }); }],
   [2550, () => {
-    const request = { callId: "bash-1", tool: "bash", command: "bun test proto/tui", risk: "moderate" as const, explanation: "Runs only the TUI smoke tests in this prototype slice.", suggestedPattern: "bun test proto/tui" };
+    const request = { callId: "bash-1", tool: "bash", command: "bun test ./proto/tui", risk: "moderate" as const, explanation: "Runs only the TUI smoke tests in this prototype slice.", suggestedPattern: "bun test ./proto/tui" };
     publish({ type: "tool.approval.requested", ...request });
     void tui.prompter(request).then((decision) => {
       if (decision.approved) approvals = { ...approvals, approved: approvals.approved + 1 };
@@ -80,11 +92,13 @@ const script: Array<[number, () => void]> = [
     });
     setTimeout(() => process.stdin.emit("data", Buffer.from("a")), 1200);
   }],
-  [4300, () => publish({ type: "tool.result", callId: "bash-1", tool: "bash", output: "1 pass, 0 fail", isError: false })],
-  [4700, () => { writeUnlocked = true; publish({ type: "unlock.applied", unlockId: "edit-tool", tools: ["edit"] }); }],
-  [5150, () => publish({ type: "file.edited", path: "beacon.ts", kind: "edit", summary: "flipped beacon to true" })],
-  [5600, () => { questDone = true; publish({ type: "quest.completed", questId: "patch-beacon", xp: 120 }); }],
-  [6100, () => publish({ type: "assistant.end", message: { role: "assistant", text: "Beacon patched. New verb unlocked.", toolCalls: [], stopReason: "end_turn" } })],
+  [4300, () => publish({ type: "tool.call", callId: "bash-1", tool: "bash", input: { cmd: "bun test ./proto/tui" } })],
+  [4600, () => publish({ type: "tool.result", callId: "bash-1", tool: "bash", output: "1 pass, 0 fail", isError: false })],
+  [5000, () => { writeUnlocked = true; publish({ type: "unlock.applied", unlockId: "edit-tool", tools: ["edit"] }); }],
+  [5450, () => publish({ type: "file.edited", path: "beacon.ts", kind: "edit", summary: "flipped beacon to true" })],
+  [5900, () => { questDone = true; publish({ type: "quest.completed", questId: "patch-beacon", xp: 120 }); }],
+  [6400, () => publish({ type: "assistant.end", message: { role: "assistant", text: "Beacon patched. New verb unlocked.", toolCalls: [], stopReason: "end_turn" } })],
+  [6650, () => publish({ type: "turn.end", turn: 1, stopReason: "end_turn" })],
 ];
 
 for (const [delay, action] of script) setTimeout(action, delay);

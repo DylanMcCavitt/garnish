@@ -2,12 +2,12 @@ import { createElement } from "react";
 import { createCliRenderer, type CliRenderer } from "@opentui/core";
 import { createRoot, type Root } from "@opentui/react";
 import type { ApprovalDecision, ApprovalPrompter, ApprovalRequest, EventBus, GateView, Scorecard } from "../harness/types";
-import { TuiApp, type ApprovalController } from "./app";
+import { TuiApp, type ApprovalController, type TuiMeta } from "./app";
 import type { ApprovalModalState } from "./modal";
 
 export type { QuestView } from "./questlog";
 export { reduceTranscript, emptyTranscript, type TranscriptModel, type TranscriptEntry } from "./transcript";
-export { glyphLegend, momentFromEvent, glyphShower, decayMoments, type GameMoment } from "./juice";
+export { glyphLegend, momentFromEvent, glyphShower, decayMoments, reduceStatus, emptyStatus, type GameMoment, type MissionStatus, type StatusModel } from "./juice";
 export { stepApprovalModal, riskColors, type ApprovalModalState } from "./modal";
 
 export interface StartTuiOpts {
@@ -18,6 +18,7 @@ export interface StartTuiOpts {
   questView(): { title: string; checks: Array<{ line: string; done: boolean }> } | null;
   scorecard(): Scorecard | null;
   onExit(): void;
+  meta?: TuiMeta;
 }
 
 interface PendingApproval {
@@ -35,6 +36,22 @@ export function startTui(opts: StartTuiOpts): { prompter: ApprovalPrompter; stop
   const publishApprovalState = () => {
     for (const subscriber of subscribers) subscriber(pending?.state ?? null);
   };
+  const unsubscribeApprovalEvents = opts.bus.subscribe((event) => {
+    if (event.type !== "tool.approval.requested") return;
+    const request: ApprovalRequest = {
+      callId: event.callId,
+      tool: event.tool,
+      command: event.command ?? "(no command supplied)",
+      risk: event.risk,
+      explanation: event.explanation,
+      suggestedPattern: pending?.state.request.callId === event.callId ? pending.state.request.suggestedPattern : undefined,
+    };
+    pending = {
+      state: { request, reason: pending?.state.request.callId === event.callId ? pending.state.reason : "", mode: "menu" },
+      resolve: pending?.state.request.callId === event.callId ? pending.resolve : () => undefined,
+    };
+    publishApprovalState();
+  });
 
   const approval: ApprovalController = {
     subscribe(fn) {
@@ -56,7 +73,7 @@ export function startTui(opts: StartTuiOpts): { prompter: ApprovalPrompter; stop
       exitOnCtrlC: false,
       clearOnShutdown: true,
       targetFps: 30,
-      backgroundColor: "#0B1020",
+      backgroundColor: "#121212",
     });
     if (stopped) {
       renderer.destroy();
@@ -74,7 +91,11 @@ export function startTui(opts: StartTuiOpts): { prompter: ApprovalPrompter; stop
   return {
     prompter(req: ApprovalRequest) {
       return new Promise<ApprovalDecision>((resolve) => {
-        pending = { state: { request: req, reason: "", mode: "menu" }, resolve };
+        if (pending?.state.request.callId === req.callId) {
+          pending = { state: { ...pending.state, request: req }, resolve };
+        } else {
+          pending = { state: { request: req, reason: "", mode: "menu" }, resolve };
+        }
         publishApprovalState();
       });
     },
@@ -86,6 +107,7 @@ export function startTui(opts: StartTuiOpts): { prompter: ApprovalPrompter; stop
       root?.unmount();
       renderer?.destroy();
       subscribers.clear();
+      unsubscribeApprovalEvents();
     },
   };
 }

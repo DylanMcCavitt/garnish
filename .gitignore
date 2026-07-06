@@ -7,6 +7,7 @@ build/
 coverage/
 .tmp/
 tmp/
+demo/
 
 # Logs
 *.log

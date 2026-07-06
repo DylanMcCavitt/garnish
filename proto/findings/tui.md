@@ -39,7 +39,7 @@ What did not work cleanly:
 - OpenTUI 0.4.3's public React docs are usable but thin for production edge cases. The prototype needed local `.d.ts` inspection for renderer config and JSX support.
 - The project tsconfig does not set `jsxImportSource`, so every `.tsx` file needs `/** @jsxImportSource @opentui/react */`. That is a small but real leak from the chosen UI backend into component files.
 - `startTui` is synchronous by contract, while `createCliRenderer()` is async. The prototype hides this by booting in the background and making `stop()` tolerate an in-flight boot. That is the largest seam mismatch.
-- The approval prompter promise and modal UI need a tiny in-memory controller outside the bus because the promise resolver is not itself an event. The request/resolved facts are still bus events, but the pending promise is local UI state.
+- The approval modal is now shown from `tool.approval.requested` bus events, while a tiny in-memory controller attaches the `ApprovalPrompter` resolver by `callId`. The request/resolved facts are still bus events, but the pending promise resolver remains local UI state.
 - Rendering without a real TTY produces degraded captured output. It is still useful for smoke evidence, but not for pixel/box-layout confidence.
 
 React vs Solid:
@@ -61,7 +61,7 @@ Leaks observed:
 
 1. Async renderer boot leaks into lifecycle semantics. A future production seam should either make `startTui` async or split `createTui()` from `start()`.
 2. JSX import source is component-local friction. If this survives the prototype, tsconfig or a TUI-local convention should own it.
-3. The approval modal cannot be purely event-reduced because a promise resolver must live somewhere. That is acceptable local UI state, but the spec should explicitly allow ephemeral UI promise state outside the event log.
+3. The approval modal can be event-shown, but not purely event-resolved, because a promise resolver must live somewhere. That is acceptable local UI state, but the spec should explicitly allow ephemeral UI promise state outside the event log.
 4. OpenTUI keyboard event names (`return`, `escape`, `ctrl`) are now normalized inside `app.tsx`; an Ink fallback would need the same internal normalization.
 
 Spec change recommended:
@@ -99,6 +99,8 @@ Juice ceiling with OpenTUI 0.4.3 looks high enough for L0/L1. The frame loop is 
 - OpenTUI includes `code`, `diff`, and `markdown` renderables, but this slice stayed mostly in-house to keep ADR-17 fallback-friendly. Future work can selectively use those renderables behind the same component boundary.
 
 ## `tui.pty.md` note — manual run evidence
+
+Standalone note also written to `proto/findings/tui.pty.md`.
 
 Command attempted:
 
@@ -138,5 +140,5 @@ OpenTUI + React + Bun held up:
 ## Verification
 
 - `bun test proto/tui` with Bun 1.3.14 treated `proto/tui` as a name filter rather than a path and failed before loading tests. Bun's own diagnostic said to use `./proto/tui` for path mode.
-- `bun test ./proto/tui` passed: 3 tests, 12 expectations.
+- `bun test ./proto/tui` passed: 3 tests, 13 expectations.
 - `bun proto/tui/dev.tsx` ran to completion for the self-driving demo; captured output showed the expected surfaces and game events.

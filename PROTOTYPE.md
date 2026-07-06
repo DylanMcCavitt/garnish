@@ -201,3 +201,14 @@ bun run proto:demo
 ### Linux sandbox warning
 
 Cursor Cloud is Linux. The prototype's Seatbelt sandbox path is macOS-specific, so the Linux VM should warn loudly that it is running without Seatbelt rather than pretending to be sandboxed. Capture the wording in the findings; do not hide it from the demo.
+
+## Real demo (mp4)
+
+Render the running demo to an mp4 when proof needs to be shareable:
+
+```sh
+bun run demo:mp4
+bun run demo:mp4:tui
+```
+
+See `.agents/skills/real-demo/SKILL.md` for the repo-standard "real demo" workflow and recording rules.
