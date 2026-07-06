@@ -23,6 +23,12 @@ Tracker: Linear
   Research spike (2026-07-02): https://linear.app/dylanmccavitt/document/research-spike-garnish-standalone-harness-architecture-2026-07-02-4a7d1435bfd3
   PRD v2 (ACCEPTED 2026-07-04): https://linear.app/dylanmccavitt/document/prd-v2-garnish-standalone-purpose-built-harness-and-tui-632ac25c9788
   ARD v2 (ACCEPTED 2026-07-04): https://linear.app/dylanmccavitt/document/ard-v2-garnish-standalone-architecture-decisions-c71d90cbecef
+  Prototype retro (2026-07-06): https://linear.app/dylanmccavitt/document/prototype-retro-garnish-standalone-map-seed-run-2026-07-06-7f955a42c984
+  — throwaway map-seed prototype of the full v2 spec on branch `prototype/garnish-standalone`
+  (never merges; demo: `bun run proto:demo` / `bun run proto`, walkthrough in `PROTOTYPE.md`,
+  Cursor Cloud-ready). All 12 demo beats pass; spec held. PRD/ARD v2 carry "Prototype
+  amendments (2026-07-06)" sections; re-scope comments posted on LOO-155/156/159/160/161/162/
+  164/165/166/170/171/173/174/179. Delete or absorb the proto/ tree once re-scopes land.
   Implementation issues (stamped 2026-07-04): 25 dependency-ordered issues LOO-155..LOO-179
   under project milestones M0-M4, wired with Linear blocked-by relations.
   - Unblocked (Todo): LOO-155 OpenTUI React/Solid spike, LOO-156 Bun+Seatbelt spike,
