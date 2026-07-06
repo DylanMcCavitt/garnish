@@ -1,0 +1,27 @@
+Most people who install a coding agent harness use it in first gear. They connect a model, ask a few chat questions, and plateau there. The powerful features, skills, context files, MCP servers, subagents, are invisible and intimidating. Garnish fixes that by turning the harness into a game.
+
+Garnish is a gamified onboarding layer for agentic coding harnesses. You start with agent chat and nothing else. You level up by completing quests that are verified against real behavior, not self-reported checkboxes. Completing quests unlocks the next tier of harness features, which physically appear in the harness as they unlock.
+
+Three properties make it work. First, quests run through a real harness against real files. Second, the agent is the tutor. The active quest is injected into the harness context, so the agent you are learning to use is also your guide. Third, feature gating keeps the surface area matched to your competence.
+
+It is built with Bun and TypeScript. Two artifacts share one core library. A thin CLI handles onboarding and status outside a session. A Pi extension runs in-process inside the harness, observing live events, rendering a HUD, and applying unlocks.
+
+The core library has five modules. Domain schemas define quests, levels, and checks using Zod with branded types. The pack loader validates curriculum files and builds the quest graph, rejecting cycles and unknown IDs. The verifier evaluates checks against live events and on-demand probes. The progression engine folds an append-only event log into state. And the Pi adapter isolates all harness-specific knowledge behind one seam.
+
+Running garnish init installs a certified Pi runtime into Garnish-owned storage. It asks three onboarding questions, scaffolds a disposable sandbox, and launches an isolated session. Your global harness config is never touched. The extension performs a startup version handshake and pauses quests if the runtime does not match.
+
+When you complete a quest, the extension observes real harness events. The verifier evaluates declarative checks against those events and on-demand file, command, and git probes. No LLM grading. Everything is deterministic. The whole path is designed for sub-ten-second feedback.
+
+Quests declare checks in a closed DSL. Nine check types cover harness events, file existence, JSON and YAML config paths, command exit codes, git state, MCP handshakes, skill validity, and user confirmation. The set only grows by architectural decision.
+
+Completing quests unlocks harness features. The gate catalog maps each feature to Pi config surfaces. Tools apply live through setActiveTools. Skills and extensions require a session reload. Unlocks are monotonic. Capabilities are only ever added, never removed.
+
+State lives in an append-only event log. A pure function folds the log into the current state, completed quests, XP, badges, and unlocked capabilities. Delete the state file and replay reconstructs everything. Crash-safe, auditable, replayable.
+
+The curriculum uses a gamer-native theme. Tutorial Island for onboarding. First Quest for the core agent loop. Lore for context management. Five more levels are planned, from Skill Tree through Loadout, The Party, and Macros, to a Final Boss capstone.
+
+The codebase is four days old. Five thousand four hundred lines of TypeScript source, four thousand eight hundred lines of tests. That near one-to-one test ratio reflects a fixture-driven proof plan. The largest file is the verifier at nine hundred thirty-six lines, the main complexity hotspot.
+
+A v2 direction is already captured. Garnish will build its own purpose-built harness and TUI, dropping the Pi dependency. The curriculum and engine survive the rewrite. The adapter and extension get replaced.
+
+Garnish teaches agentic coding craft by doing. Real harness, real quests, real verification. Earn your complexity.

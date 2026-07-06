@@ -78,13 +78,25 @@ bun run proto
 
 No API key is needed. The model is scripted; the value here is the harness/TUI feel.
 
-Expected panes:
+**It opens with the onboarding wizard** (text-mode, before the TUI): Sprig the
+mascot welcomes you, then a "pantry pass" menu lists sign-in options — omp-parity
+OAuth providers (Anthropic PKCE, OpenAI Codex device-code; Cursor/Copilot/
+Gemini/Kimi/xAI marked coming soon) plus `1) Demo Kitchen` (no account). Press
+`1` + Enter for the offline path: a fake device-code ceremony signs you in and
+completes the "Mise en place" tutorial quest via the `auth.login` event.
 
-- **Transcript pane:** player messages, streaming agent tokens, tool calls, gate teases, approvals, and verifier feedback.
-- **Quest / progression pane:** current L0/L1 objectives, completed checks, locked/unlocked capability state.
-- **Tool / event pane:** recent harness events such as `tool.called`, `tool.result`, `approval.requested`, `gate.unlocked`, and verifier completions.
-- **Approval modal:** appears when the agent asks for a gated or risky action.
-- **Scorecard / replay area:** end-of-run summary and determinism signal.
+Mission-Control layout (retro green/purple):
+
+- **Header bar:** brand + workspace + Sprig, `LVL · XP · TOK` metrics.
+- **Transcript (main, left):** flowing chat stuck to the bottom — streaming
+  tokens, tool chips, teaching blocks, sparkle/NEW-VERB celebrations inline.
+- **Right rail:** Quest (checks + `NEXT UP` hint), Verbs (skill tree with
+  teased locks), Progress Log (game moments).
+- **Bottom:** status word (`AWAITING INPUT / STREAMING / RUNNING TOOL /
+  AWAITING APPROVAL`) + input box whose placeholder tells you what to type
+  next, then a dim hotkey bar.
+- **Approval modal:** z-indexed overlay when the agent asks for a gated or
+  risky action.
 
 Keys:
 

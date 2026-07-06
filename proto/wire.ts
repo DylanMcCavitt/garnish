@@ -34,6 +34,7 @@ import { sandboxAvailability, type SandboxAvailability } from "./sandbox";
 import { createCoreTools, scaffoldWorkspace } from "./tools";
 
 export interface QuestPanelView {
+  id: string;
   title: string;
   checks: Array<{ line: string; done: boolean }>;
 }
@@ -62,6 +63,8 @@ export interface WireOptions {
   /** scratch root; a temp dir is created when omitted */
   root?: string;
   model?: string;
+  /** who the player signed in as; emitted as auth.login for tutorial checks */
+  auth?: { provider: string; method: "oauth" | "api-key" | "scripted"; account?: string };
 }
 
 export async function wireHarness(opts: WireOptions): Promise<WiredHarness> {
@@ -126,6 +129,11 @@ export async function wireHarness(opts: WireOptions): Promise<WiredHarness> {
   });
 
   sink.emit({ type: "session.start", workspace, provider: opts.provider, model: opts.model });
+  const auth = opts.auth ?? {
+    provider: opts.provider === "scripted" ? "demo-kitchen" : opts.provider,
+    method: opts.provider === "scripted" ? ("scripted" as const) : ("api-key" as const),
+  };
+  sink.emit({ type: "auth.login", provider: auth.provider, method: auth.method, account: auth.account });
 
   return {
     harness,
@@ -144,6 +152,7 @@ export async function wireHarness(opts: WireOptions): Promise<WiredHarness> {
       const state = verifier.checkStates();
       const results = state?.questId === quest.id ? state.checks : [];
       return {
+        id: quest.id,
         title: `${quest.title} (+${quest.xp} XP)`,
         checks: quest.checks.map((check, index) => ({
           line: renderCheck(check),

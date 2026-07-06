@@ -55,6 +55,7 @@ const tui = startTui({
   },
   questView() {
     return {
+      id: "patch-beacon",
       title: "Patch the beacon",
       checks: [
         { line: "Inspect the broken file", done: true },

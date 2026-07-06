@@ -14,4 +14,4 @@ checks:
   - type: event
     match: { event: file.edited, path: { contains: quest-state.yml } }
 ---
-Write or edit `{workspace}/quest-state.yml` so it contains `first_edit: GARNISH_PROTO_FIRST_EDIT`. The file check proves content and `file.edited` proves the harness surfaced the edit.
+Write or edit `{workspace}/quest-state.yml` so it contains `first_edit: GARNISH_PROTO_FIRST_EDIT`. Try `Record the first edit` when NEXT UP points here; the file check proves content and `file.edited` proves the harness surfaced the edit.

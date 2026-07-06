@@ -72,3 +72,23 @@ macOS under Seatbelt (`bun run proto:demo` → 12/12 PASS).
 - Linux run (Cursor Cloud VM is the intended venue — sandbox degrades to a
   loud warning by design).
 - Resume-from-log UX (replay determinism proven; no `garnish resume` surface).
+
+## Proto-v2 wave addendum (auth + retro theme + onboarding)
+
+- Cross-slice import drift again required an integration catch (`bun test
+  ./proto` failing while every slice passed in isolation): **bun's
+  `mock.module()` leaks partial mocks process-wide across the full test run**,
+  breaking sibling suites with "Export named X not found". Rule for v2 work:
+  design pure seams that take dependencies as arguments; never `mock.module`
+  shared modules in a multi-suite run.
+- The `theme.ts` re-point trick (keeping old TUI_* constant names aliased to
+  new tokens) let two agents recolor the whole TUI with zero file collisions —
+  worth repeating as a palette-migration pattern.
+- omp's OAuth registry ported shape-first cleanly (see
+  `proto/findings/auth-omp.md`); the offline "Demo Kitchen" mock provider is
+  what makes onboarding demoable in CI/VMs with no accounts — keep that
+  pattern for LOO-157/169.
+- Verified by frame inspection of the re-recorded mp4: wizard menu with
+  omp-parity providers, retro green/purple palette, Sprig mascot, NEXT UP
+  hints, mise-en-place quest completing off `auth.login`, celebrations with
+  purple accents. 13/13 headless beats pass (4 quests, XP 40).

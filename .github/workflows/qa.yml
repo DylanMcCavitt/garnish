@@ -1,0 +1,134 @@
+name: QA
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+      actions: read
+      id-token: write
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install project dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Install QA evidence tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y -qq imagemagick
+          npm install -g tuistory
+
+      - name: Install Droid CLI
+        run: curl -fsSL https://app.factory.ai/cli | sh
+
+      - name: Install Droid Control plugin
+        env:
+          FACTORY_API_KEY: ${{ secrets.FACTORY_API_KEY }}
+        run: |
+          "$HOME/.local/bin/droid" plugin marketplace add https://github.com/Factory-AI/factory-plugins || true
+          "$HOME/.local/bin/droid" plugin install droid-control@factory-plugins --scope user || true
+
+      - name: Run functional QA
+        id: qa
+        continue-on-error: true
+        timeout-minutes: 20
+        env:
+          CI: true
+          FACTORY_API_KEY: ${{ secrets.FACTORY_API_KEY }}
+          FACTORY_DISABLE_KEYRING: true
+        run: |
+          mkdir -p qa-results
+          "$HOME/.local/bin/droid" exec --auto high "You are running in a non-interactive CI environment. There is NO human available. Do NOT use AskUser, do NOT wait for confirmations, and do NOT pause for input. Run the qa skill for this repository. This is functional QA only, not typecheck or unit tests. Use the checked-out branch code, write evidence under qa-results/, and write the final report to qa-results/report.md." | tee qa-results/qa-output.txt
+
+      - name: Ensure QA report exists
+        if: always()
+        run: |
+          mkdir -p qa-results
+          if [ ! -f qa-results/report.md ]; then
+            {
+              echo "## QA Report"
+              echo
+              echo "| # | Test Case | App | Persona | Result | Notes |"
+              echo "| --- | --- | --- | --- | --- | --- |"
+              echo "| 1 | QA runner completed without report | qa | developer | :no_entry: BLOCKED | See raw Droid output in artifacts. |"
+              echo
+              echo "<details>"
+              echo "<summary>Screenshots & Evidence</summary>"
+              echo
+              echo '```text'
+              cat qa-results/qa-output.txt 2>/dev/null || true
+              echo '```'
+              echo
+              echo "</details>"
+            } > qa-results/report.md
+          fi
+
+      - name: Upload QA artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-results
+          path: qa-results/
+          retention-days: 14
+
+      - name: Post QA report as PR comment
+        if: always() && github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          body_file="$(mktemp)"
+          {
+            echo "<!-- qa-report -->"
+            cat qa-results/report.md
+            echo
+            echo "---"
+            echo "Artifacts: qa-results"
+            echo "Workflow run: ${RUN_URL}"
+          } > "$body_file"
+
+          existing_id="$(gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
+            --jq '.[] | select(.body | startswith("<!-- qa-report -->")) | .id' | head -n1)"
+
+          if [ -n "$existing_id" ]; then
+            gh api "repos/${GITHUB_REPOSITORY}/issues/comments/${existing_id}" \
+              --method PATCH \
+              --field body="$(cat "$body_file")"
+          else
+            gh api "repos/${GITHUB_REPOSITORY}/issues/${PR_NUMBER}/comments" \
+              --method POST \
+              --field body="$(cat "$body_file")"
+          fi
+
+      - name: Enforce required QA result
+        if: always()
+        run: |
+          if [ "${{ steps.qa.outcome }}" != "success" ]; then
+            echo "Functional QA did not complete successfully."
+            exit 1
+          fi

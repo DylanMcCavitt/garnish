@@ -15,7 +15,7 @@ export interface StartTuiOpts {
   send(text: string): void;
   abort(): void;
   gateViews(): GateView[];
-  questView(): { title: string; checks: Array<{ line: string; done: boolean }> } | null;
+  questView(): { id: string; title: string; checks: Array<{ line: string; done: boolean }> } | null;
   scorecard(): Scorecard | null;
   onExit(): void;
   meta?: TuiMeta;

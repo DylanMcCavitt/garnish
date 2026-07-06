@@ -1,0 +1,298 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:02.665
+Most people who install a coding
+
+00:00:02.665 --> 00:00:05.330
+agent harness use it in first
+
+00:00:05.330 --> 00:00:07.995
+gear. They connect a model, ask
+
+00:00:07.995 --> 00:00:10.660
+a few chat questions, and plateau
+
+00:00:10.660 --> 00:00:13.325
+there. The powerful features, skills, context
+
+00:00:13.325 --> 00:00:15.990
+files, MCP servers, subagents, are invisible
+
+00:00:15.990 --> 00:00:18.655
+and intimidating. Garnish fixes that by
+
+00:00:18.655 --> 00:00:21.320
+turning the harness into a game.
+
+00:00:21.320 --> 00:00:23.985
+Garnish is a gamified onboarding layer
+
+00:00:23.985 --> 00:00:26.650
+for agentic coding harnesses. You start
+
+00:00:26.650 --> 00:00:29.315
+with agent chat and nothing else.
+
+00:00:29.315 --> 00:00:31.980
+You level up by completing quests
+
+00:00:31.980 --> 00:00:34.645
+that are verified against real behavior,
+
+00:00:34.645 --> 00:00:37.311
+not self-reported checkboxes. Completing quests unlocks
+
+00:00:37.311 --> 00:00:39.976
+the next tier of harness features,
+
+00:00:39.976 --> 00:00:42.641
+which physically appear in the harness
+
+00:00:42.641 --> 00:00:45.306
+as they unlock. Three properties make
+
+00:00:45.306 --> 00:00:47.971
+it work. First, quests run through
+
+00:00:47.971 --> 00:00:50.636
+a real harness against real files.
+
+00:00:50.636 --> 00:00:53.301
+Second, the agent is the tutor.
+
+00:00:53.301 --> 00:00:55.966
+The active quest is injected into
+
+00:00:55.966 --> 00:00:58.631
+the harness context, so the agent
+
+00:00:58.631 --> 00:01:01.296
+you are learning to use is
+
+00:01:01.296 --> 00:01:03.961
+also your guide. Third, feature gating
+
+00:01:03.961 --> 00:01:06.626
+keeps the surface area matched to
+
+00:01:06.626 --> 00:01:09.291
+your competence. It is built with
+
+00:01:09.291 --> 00:01:11.956
+Bun and TypeScript. Two artifacts share
+
+00:01:11.956 --> 00:01:14.621
+one core library. A thin CLI
+
+00:01:14.621 --> 00:01:17.286
+handles onboarding and status outside a
+
+00:01:17.286 --> 00:01:19.951
+session. A Pi extension runs in-process
+
+00:01:19.951 --> 00:01:22.616
+inside the harness, observing live events,
+
+00:01:22.616 --> 00:01:25.281
+rendering a HUD, and applying unlocks.
+
+00:01:25.281 --> 00:01:27.946
+The core library has five modules.
+
+00:01:27.946 --> 00:01:30.611
+Domain schemas define quests, levels, and
+
+00:01:30.611 --> 00:01:33.276
+checks using Zod with branded types.
+
+00:01:33.276 --> 00:01:35.941
+The pack loader validates curriculum files
+
+00:01:35.941 --> 00:01:38.606
+and builds the quest graph, rejecting
+
+00:01:38.606 --> 00:01:41.271
+cycles and unknown IDs. The verifier
+
+00:01:41.271 --> 00:01:43.936
+evaluates checks against live events and
+
+00:01:43.936 --> 00:01:46.601
+on-demand probes. The progression engine folds
+
+00:01:46.601 --> 00:01:49.267
+an append-only event log into state.
+
+00:01:49.267 --> 00:01:51.932
+And the Pi adapter isolates all
+
+00:01:51.932 --> 00:01:54.597
+harness-specific knowledge behind one seam. Running
+
+00:01:54.597 --> 00:01:57.262
+garnish init installs a certified Pi
+
+00:01:57.262 --> 00:01:59.927
+runtime into Garnish-owned storage. It asks
+
+00:01:59.927 --> 00:02:02.592
+three onboarding questions, scaffolds a disposable
+
+00:02:02.592 --> 00:02:05.257
+sandbox, and launches an isolated session.
+
+00:02:05.257 --> 00:02:07.922
+Your global harness config is never
+
+00:02:07.922 --> 00:02:10.587
+touched. The extension performs a startup
+
+00:02:10.587 --> 00:02:13.252
+version handshake and pauses quests if
+
+00:02:13.252 --> 00:02:15.917
+the runtime does not match. When
+
+00:02:15.917 --> 00:02:18.582
+you complete a quest, the extension
+
+00:02:18.582 --> 00:02:21.247
+observes real harness events. The verifier
+
+00:02:21.247 --> 00:02:23.912
+evaluates declarative checks against those events
+
+00:02:23.912 --> 00:02:26.577
+and on-demand file, command, and git
+
+00:02:26.577 --> 00:02:29.242
+probes. No LLM grading. Everything is
+
+00:02:29.242 --> 00:02:31.907
+deterministic. The whole path is designed
+
+00:02:31.907 --> 00:02:34.572
+for sub-ten-second feedback. Quests declare checks
+
+00:02:34.572 --> 00:02:37.237
+in a closed DSL. Nine check
+
+00:02:37.237 --> 00:02:39.902
+types cover harness events, file existence,
+
+00:02:39.902 --> 00:02:42.567
+JSON and YAML config paths, command
+
+00:02:42.567 --> 00:02:45.232
+exit codes, git state, MCP handshakes,
+
+00:02:45.232 --> 00:02:47.897
+skill validity, and user confirmation. The
+
+00:02:47.897 --> 00:02:50.562
+set only grows by architectural decision.
+
+00:02:50.562 --> 00:02:53.227
+Completing quests unlocks harness features. The
+
+00:02:53.227 --> 00:02:55.892
+gate catalog maps each feature to
+
+00:02:55.892 --> 00:02:58.557
+Pi config surfaces. Tools apply live
+
+00:02:58.557 --> 00:03:01.223
+through setActiveTools. Skills and extensions require
+
+00:03:01.223 --> 00:03:03.888
+a session reload. Unlocks are monotonic.
+
+00:03:03.888 --> 00:03:06.553
+Capabilities are only ever added, never
+
+00:03:06.553 --> 00:03:09.218
+removed. State lives in an append-only
+
+00:03:09.218 --> 00:03:11.883
+event log. A pure function folds
+
+00:03:11.883 --> 00:03:14.548
+the log into the current state,
+
+00:03:14.548 --> 00:03:17.213
+completed quests, XP, badges, and unlocked
+
+00:03:17.213 --> 00:03:19.878
+capabilities. Delete the state file and
+
+00:03:19.878 --> 00:03:22.543
+replay reconstructs everything. Crash-safe, auditable, replayable.
+
+00:03:22.543 --> 00:03:25.208
+The curriculum uses a gamer-native theme.
+
+00:03:25.208 --> 00:03:27.873
+Tutorial Island for onboarding. First Quest
+
+00:03:27.873 --> 00:03:30.538
+for the core agent loop. Lore
+
+00:03:30.538 --> 00:03:33.203
+for context management. Five more levels
+
+00:03:33.203 --> 00:03:35.868
+are planned, from Skill Tree through
+
+00:03:35.868 --> 00:03:38.533
+Loadout, The Party, and Macros, to
+
+00:03:38.533 --> 00:03:41.198
+a Final Boss capstone. The codebase
+
+00:03:41.198 --> 00:03:43.863
+is four days old. Five thousand
+
+00:03:43.863 --> 00:03:46.528
+four hundred lines of TypeScript source,
+
+00:03:46.528 --> 00:03:49.193
+four thousand eight hundred lines of
+
+00:03:49.193 --> 00:03:51.858
+tests. That near one-to-one test ratio
+
+00:03:51.858 --> 00:03:54.523
+reflects a fixture-driven proof plan. The
+
+00:03:54.523 --> 00:03:57.188
+largest file is the verifier at
+
+00:03:57.188 --> 00:03:59.853
+nine hundred thirty-six lines, the main
+
+00:03:59.853 --> 00:04:02.518
+complexity hotspot. A v2 direction is
+
+00:04:02.518 --> 00:04:05.183
+already captured. Garnish will build its
+
+00:04:05.183 --> 00:04:07.848
+own purpose-built harness and TUI, dropping
+
+00:04:07.848 --> 00:04:10.514
+the Pi dependency. The curriculum and
+
+00:04:10.514 --> 00:04:13.179
+engine survive the rewrite. The adapter
+
+00:04:13.179 --> 00:04:15.844
+and extension get replaced. Garnish teaches
+
+00:04:15.844 --> 00:04:18.509
+agentic coding craft by doing. Real
+
+00:04:18.509 --> 00:04:21.174
+harness, real quests, real verification. Earn
+
+00:04:21.174 --> 00:04:22.062
+your complexity.

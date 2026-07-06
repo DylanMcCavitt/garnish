@@ -5,7 +5,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { ApprovalDecision, EventBus, GateView, Scorecard } from "../harness/types";
 import { ApprovalModal, type ApprovalModalState, stepApprovalModal } from "./modal";
 import { decayMoments, emptyStatus, momentFromEvent, reduceStatus, TUI_BG, TUI_DIM, TUI_ORANGE, TUI_PANEL, TUI_RED, TUI_TEXT, type GameMoment, type MissionStatus, type StatusModel } from "./juice";
-import { missionLevel, QuestLog, type QuestView } from "./questlog";
+import { missionLevel, questHint, QuestLog, type QuestView } from "./questlog";
+import { MASCOT_NAME, mascot } from "./sprites";
 import { Transcript, emptyTranscript, reduceTranscript, type TranscriptModel } from "./transcript";
 
 export interface TuiMeta {
@@ -63,11 +64,11 @@ export function workspaceLabel(path: string | undefined): string {
   return `…${path.slice(-41)}`;
 }
 
-function StatusInput({ status, input, setInput, focused }: { status: StatusModel; input: string; setInput(value: string): void; focused: boolean }) {
+function StatusInput({ status, input, setInput, focused, placeholder }: { status: StatusModel; input: string; setInput(value: string): void; focused: boolean; placeholder: string }) {
   return (
     <box style={{ border: true, height: 3, paddingLeft: 1, paddingRight: 1, flexDirection: "row", alignItems: "center", backgroundColor: TUI_PANEL }}>
       <text fg={statusColors[status.status]} attributes={TextAttributes.BOLD}>{status.pulse ? "●" : "○"} {status.status}  </text>
-      <input focused={focused} placeholder="input field…" value={input} onInput={setInput} style={{ flexGrow: 1 }} />
+      <input focused={focused} placeholder={placeholder} value={input} onInput={setInput} style={{ flexGrow: 1 }} />
     </box>
   );
 }
@@ -157,11 +158,23 @@ export function TuiApp(opts: TuiAppOpts) {
   const level = missionLevel(scorecard);
   const provider = opts.meta?.model ? `${opts.meta.provider}/${opts.meta.model}` : opts.meta?.provider ?? "provider pending";
 
+  const activeHint = questHint(quest);
+  const idleMascot = mascot("idle");
+
   return (
     <box style={{ width: "100%", height: "100%", flexDirection: "column", backgroundColor: TUI_BG }}>
-      <box style={{ height: 1, flexDirection: "row", justifyContent: "space-between", backgroundColor: TUI_BG }}>
-        <text fg={TUI_ORANGE} attributes={TextAttributes.BOLD}>⁙ Garnish  {workspaceLabel(opts.meta?.workspace)}</text>
-        <text fg={TUI_DIM}>LVL {level.level} · XP {level.xp} · TOK {tokenLabel(scorecard)} · {provider}</text>
+      <box style={{ height: 3, flexDirection: "row", justifyContent: "space-between", backgroundColor: TUI_BG }}>
+        <box style={{ width: 18, flexDirection: "column" }}>
+          {idleMascot.map((line, index) => <text key={`${line}:${index}`} fg={TUI_ORANGE}>{line}</text>)}
+        </box>
+        <box style={{ flexGrow: 1, flexDirection: "column" }}>
+          <text fg={TUI_ORANGE} attributes={TextAttributes.BOLD}>⁙ Garnish  {workspaceLabel(opts.meta?.workspace)} · {MASCOT_NAME} on expo</text>
+          <text fg={TUI_DIM}>NEXT UP try: {activeHint}</text>
+        </box>
+        <box style={{ width: 38, flexDirection: "column", alignItems: "flex-end" }}>
+          <text fg={TUI_DIM}>LVL {level.level} · XP {level.xp} · TOK {tokenLabel(scorecard)}</text>
+          <text fg={TUI_DIM}>{provider}</text>
+        </box>
       </box>
       <box style={{ flexGrow: 1, flexDirection: "row" }}>
         <box style={{ width: "65%", flexDirection: "column" }}>
@@ -169,7 +182,7 @@ export function TuiApp(opts: TuiAppOpts) {
         </box>
         <QuestLog quest={quest} gates={gates} scorecard={scorecard} moments={moments} flash={flash} />
       </box>
-      <StatusInput status={status} input={input} setInput={setInput} focused={modal === null} />
+      <StatusInput status={status} input={input} setInput={setInput} focused={modal === null} placeholder={`try: ${activeHint}`} />
       <box style={{ height: 1, flexDirection: "row", justifyContent: "center", backgroundColor: TUI_BG }}>
         <text fg={TUI_DIM}>Enter Send · Esc Abort · a/p/d/r Approvals · Ctrl+C Quit</text>
       </box>

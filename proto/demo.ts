@@ -82,6 +82,9 @@ function narrate(event: HarnessEvent): void {
     case "session.start":
       console.log(dim(`▶ session ${event.sessionId.slice(0, 8)} · provider=${event.provider} · workspace=${event.workspace}`));
       break;
+    case "auth.login":
+      console.log(color(6, `  ⚿ signed in · ${event.provider} (${event.method}${event.account ? ` · ${event.account}` : ""})`));
+      break;
     case "message.user":
       if (event.source === "player") console.log(`\n${bold(color(6, `▸ YOU: ${event.text}`))}`);
       break;
@@ -156,6 +159,7 @@ const card = wired.scorecard();
 const state = wired.progression.state();
 
 const beats: Array<[string, boolean]> = [
+  ["mise-en-place completed by the auth.login sign-in event", state.completedQuests.includes("mise-en-place" as never)],
   ["L0 look-around completed by first-party tool.result event", state.completedQuests.includes("look-around" as never)],
   ["locked bash produced an in-band teaching block", has((e) => e.type === "tool.blocked" && e.reason === "locked")],
   ["live unlock applied mid-session (l0-hands → write/edit)", has((e) => e.type === "unlock.applied" && e.unlockId === "l0-hands")],
@@ -163,7 +167,7 @@ const beats: Array<[string, boolean]> = [
   ["bash earned via l1-shell and gate now open", wired.gates.isUnlocked("bash")],
   ["approval denial-with-reason fed back to the model", has((e) => e.type === "tool.approval.resolved" && !e.approved && e.reason !== undefined)],
   ["approved command satisfied the L1 approval event check", state.completedQuests.includes("fix-bug-prove-it" as never)],
-  ["XP total is 35 across three quests", state.xpTotal === 35],
+  ["XP total is 40 across four quests", state.xpTotal === 40],
   ["replay is deterministic (fold twice, identical)", replayA === replayB],
   ["scorecard: 4 player prompts recorded", card.promptCount === 4],
   ["scorecard: at least 1 human approval and 1 denial", card.approvals.approved >= 1 && card.approvals.denied >= 1],

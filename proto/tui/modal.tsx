@@ -1,7 +1,8 @@
 /** @jsxImportSource @opentui/react */
 import { TextAttributes } from "@opentui/core";
 import type { ApprovalDecision, ApprovalRequest, RiskTier } from "../harness/types";
-import { TUI_BG, TUI_DIM, TUI_ORANGE, TUI_RED, TUI_TEXT } from "./juice";
+import { TUI_BG, TUI_DIM, TUI_RED, TUI_TEXT } from "./juice";
+import { theme } from "./theme";
 
 export interface ApprovalModalState {
   request: ApprovalRequest;
@@ -40,8 +41,8 @@ export function stepApprovalModal(state: ApprovalModalState, action: ModalAction
 }
 
 export const riskColors: Record<RiskTier, string> = {
-  safe: TUI_ORANGE,
-  moderate: TUI_ORANGE,
+  safe: theme.primary,
+  moderate: theme.amber,
   risky: "#FF9F43",
   critical: TUI_RED,
 };
@@ -53,7 +54,7 @@ export function ApprovalModal({ state }: { state: ApprovalModalState | null }) {
   return (
     <box
       title="Approval needed"
-      titleColor={riskColors[request.risk]}
+      titleColor={theme.accent}
       zIndex={20}
       style={{
         position: "absolute",
@@ -71,10 +72,10 @@ export function ApprovalModal({ state }: { state: ApprovalModalState | null }) {
     >
       <text fg={riskColors[request.risk]} attributes={TextAttributes.BOLD}>{`${request.risk.toUpperCase()} · ${request.tool}`}</text>
       <text fg={TUI_TEXT}>{request.command}</text>
-      <text fg={TUI_ORANGE}>{request.explanation}</text>
+      <text fg={theme.accent}>{request.explanation}</text>
       <text fg={TUI_DIM}>{`Pattern: ${pattern}`}</text>
       {state.mode === "reason" ? (
-        <box title="Reason" titleColor={TUI_DIM} style={{ border: true, height: 3 }}>
+        <box title="Reason" titleColor={theme.accent} style={{ border: true, height: 3 }}>
           <input focused placeholder="Why deny? Enter submits" value={state.reason} />
         </box>
       ) : (

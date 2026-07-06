@@ -9,7 +9,7 @@ levels:
     title: Tutorial Island (proto)
     description: L0 proves event checks against the standalone taxonomy.
     order: 0
-    quests: [look-around]
+    quests: [mise-en-place, look-around]
     unlocks: [l0-hands]
   - id: first-steps
     title: First Steps (proto)

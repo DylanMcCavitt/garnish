@@ -1,0 +1,2942 @@
+[
+  {
+    "text": "Most",
+    "start": 0,
+    "end": 0.2
+  },
+  {
+    "text": "people",
+    "start": 0.4,
+    "end": 0.74
+  },
+  {
+    "text": "who",
+    "start": 0.74,
+    "end": 0.96
+  },
+  {
+    "text": "install",
+    "start": 0.96,
+    "end": 1.48
+  },
+  {
+    "text": "a",
+    "start": 1.48,
+    "end": 1.53
+  },
+  {
+    "text": "coding",
+    "start": 1.66,
+    "end": 1.99
+  },
+  {
+    "text": "agent",
+    "start": 1.99,
+    "end": 2.36
+  },
+  {
+    "text": "harness",
+    "start": 2.45,
+    "end": 2.78
+  },
+  {
+    "text": "use",
+    "start": 2.82,
+    "end": 3.03
+  },
+  {
+    "text": "it",
+    "start": 3.08,
+    "end": 3.23
+  },
+  {
+    "text": "in",
+    "start": 3.23,
+    "end": 3.36
+  },
+  {
+    "text": "first",
+    "start": 3.46,
+    "end": 3.91
+  },
+  {
+    "text": "gear.",
+    "start": 3.91,
+    "end": 4.36
+  },
+  {
+    "text": "They",
+    "start": 4.36,
+    "end": 4.56
+  },
+  {
+    "text": "connect",
+    "start": 4.76,
+    "end": 5.27
+  },
+  {
+    "text": "a",
+    "start": 5.27,
+    "end": 5.35
+  },
+  {
+    "text": "model,",
+    "start": 5.35,
+    "end": 5.89
+  },
+  {
+    "text": "ask",
+    "start": 6.02,
+    "end": 6.18
+  },
+  {
+    "text": "a",
+    "start": 6.18,
+    "end": 6.26
+  },
+  {
+    "text": "few",
+    "start": 6.26,
+    "end": 6.51
+  },
+  {
+    "text": "chat",
+    "start": 6.51,
+    "end": 6.84
+  },
+  {
+    "text": "questions,",
+    "start": 6.84,
+    "end": 7.72
+  },
+  {
+    "text": "and",
+    "start": 7.72,
+    "end": 7.94
+  },
+  {
+    "text": "plateau",
+    "start": 7.94,
+    "end": 8.41
+  },
+  {
+    "text": "there.",
+    "start": 8.71,
+    "end": 9.04
+  },
+  {
+    "text": "The",
+    "start": 9.04,
+    "end": 9.25
+  },
+  {
+    "text": "powerful",
+    "start": 9.44,
+    "end": 10.03
+  },
+  {
+    "text": "features,",
+    "start": 10.03,
+    "end": 10.93
+  },
+  {
+    "text": "skills,",
+    "start": 10.93,
+    "end": 11.65
+  },
+  {
+    "text": "context",
+    "start": 11.65,
+    "end": 12.28
+  },
+  {
+    "text": "files,",
+    "start": 12.28,
+    "end": 12.92
+  },
+  {
+    "text": "MCP",
+    "start": 12.92,
+    "end": 13.1
+  },
+  {
+    "text": "servers,",
+    "start": 13.4,
+    "end": 14.3
+  },
+  {
+    "text": "sub-agents,",
+    "start": 14.3,
+    "end": 15.56
+  },
+  {
+    "text": "are",
+    "start": 15.56,
+    "end": 15.7
+  },
+  {
+    "text": "invisible",
+    "start": 15.84,
+    "end": 16.23
+  },
+  {
+    "text": "and",
+    "start": 16.24,
+    "end": 16.44
+  },
+  {
+    "text": "intimidating.",
+    "start": 16.64,
+    "end": 17.72
+  },
+  {
+    "text": "Garnish",
+    "start": 17.72,
+    "end": 18.22
+  },
+  {
+    "text": "fixes",
+    "start": 18.22,
+    "end": 18.58
+  },
+  {
+    "text": "that",
+    "start": 18.58,
+    "end": 18.81
+  },
+  {
+    "text": "by",
+    "start": 18.95,
+    "end": 19.01
+  },
+  {
+    "text": "turning",
+    "start": 19.01,
+    "end": 19.52
+  },
+  {
+    "text": "the",
+    "start": 19.52,
+    "end": 19.73
+  },
+  {
+    "text": "harness",
+    "start": 19.73,
+    "end": 20.24
+  },
+  {
+    "text": "into",
+    "start": 20.24,
+    "end": 20.5
+  },
+  {
+    "text": "a",
+    "start": 20.54,
+    "end": 20.6
+  },
+  {
+    "text": "game.",
+    "start": 20.6,
+    "end": 21.08
+  },
+  {
+    "text": "Garnish",
+    "start": 21.16,
+    "end": 21.66
+  },
+  {
+    "text": "is",
+    "start": 21.66,
+    "end": 21.8
+  },
+  {
+    "text": "a",
+    "start": 21.8,
+    "end": 21.87
+  },
+  {
+    "text": "gamified",
+    "start": 21.87,
+    "end": 22.44
+  },
+  {
+    "text": "onboarding",
+    "start": 22.44,
+    "end": 23.15
+  },
+  {
+    "text": "layer",
+    "start": 23.15,
+    "end": 23.51
+  },
+  {
+    "text": "for",
+    "start": 23.51,
+    "end": 23.72
+  },
+  {
+    "text": "a",
+    "start": 23.72,
+    "end": 23.79
+  },
+  {
+    "text": "gente",
+    "start": 23.79,
+    "end": 24.15
+  },
+  {
+    "text": "coding",
+    "start": 24.15,
+    "end": 24.51
+  },
+  {
+    "text": "harnesses.",
+    "start": 24.62,
+    "end": 25.22
+  },
+  {
+    "text": "You",
+    "start": 25.52,
+    "end": 25.72
+  },
+  {
+    "text": "start",
+    "start": 25.92,
+    "end": 26.04
+  },
+  {
+    "text": "with",
+    "start": 26.12,
+    "end": 26.39
+  },
+  {
+    "text": "agent",
+    "start": 26.39,
+    "end": 26.61
+  },
+  {
+    "text": "chat",
+    "start": 26.75,
+    "end": 27.04
+  },
+  {
+    "text": "and",
+    "start": 27.04,
+    "end": 27.26
+  },
+  {
+    "text": "nothing",
+    "start": 27.26,
+    "end": 27.76
+  },
+  {
+    "text": "else.",
+    "start": 27.77,
+    "end": 28.3
+  },
+  {
+    "text": "You",
+    "start": 28.32,
+    "end": 28.52
+  },
+  {
+    "text": "level",
+    "start": 28.72,
+    "end": 28.84
+  },
+  {
+    "text": "up",
+    "start": 28.92,
+    "end": 29.02
+  },
+  {
+    "text": "by",
+    "start": 29.02,
+    "end": 29.16
+  },
+  {
+    "text": "completing",
+    "start": 29.16,
+    "end": 29.85
+  },
+  {
+    "text": "quests",
+    "start": 29.98,
+    "end": 30.29
+  },
+  {
+    "text": "that",
+    "start": 30.29,
+    "end": 30.56
+  },
+  {
+    "text": "are",
+    "start": 30.56,
+    "end": 30.78
+  },
+  {
+    "text": "verified",
+    "start": 30.78,
+    "end": 31.35
+  },
+  {
+    "text": "against",
+    "start": 31.35,
+    "end": 31.85
+  },
+  {
+    "text": "real",
+    "start": 31.85,
+    "end": 32.13
+  },
+  {
+    "text": "behavior,",
+    "start": 32.13,
+    "end": 32.81
+  },
+  {
+    "text": "not",
+    "start": 32.9,
+    "end": 33.05
+  },
+  {
+    "text": "self-reported",
+    "start": 33.05,
+    "end": 33.74
+  },
+  {
+    "text": "check",
+    "start": 33.97,
+    "end": 34.62
+  },
+  {
+    "text": "boxes.",
+    "start": 34.62,
+    "end": 35.68
+  },
+  {
+    "text": "Completing",
+    "start": 35.69,
+    "end": 36.2
+  },
+  {
+    "text": "quests",
+    "start": 36.29,
+    "end": 36.61
+  },
+  {
+    "text": "unlocks",
+    "start": 36.61,
+    "end": 37.02
+  },
+  {
+    "text": "the",
+    "start": 37.02,
+    "end": 37.19
+  },
+  {
+    "text": "next",
+    "start": 37.19,
+    "end": 37.42
+  },
+  {
+    "text": "tier",
+    "start": 37.42,
+    "end": 37.65
+  },
+  {
+    "text": "of",
+    "start": 37.65,
+    "end": 37.76
+  },
+  {
+    "text": "harness",
+    "start": 37.76,
+    "end": 38.17
+  },
+  {
+    "text": "features,",
+    "start": 38.17,
+    "end": 38.71
+  },
+  {
+    "text": "which",
+    "start": 38.76,
+    "end": 39.04
+  },
+  {
+    "text": "physically",
+    "start": 39.04,
+    "end": 39.63
+  },
+  {
+    "text": "appear",
+    "start": 39.63,
+    "end": 39.74
+  },
+  {
+    "text": "in",
+    "start": 40.04,
+    "end": 40.17
+  },
+  {
+    "text": "the",
+    "start": 40.17,
+    "end": 40.26
+  },
+  {
+    "text": "harnesses",
+    "start": 40.26,
+    "end": 40.84
+  },
+  {
+    "text": "they",
+    "start": 40.85,
+    "end": 41.04
+  },
+  {
+    "text": "unlock.",
+    "start": 41.24,
+    "end": 41.93
+  },
+  {
+    "text": "Three",
+    "start": 42.09,
+    "end": 42.28
+  },
+  {
+    "text": "properties",
+    "start": 42.48,
+    "end": 43.16
+  },
+  {
+    "text": "make",
+    "start": 43.16,
+    "end": 43.45
+  },
+  {
+    "text": "it",
+    "start": 43.45,
+    "end": 43.59
+  },
+  {
+    "text": "work.",
+    "start": 43.59,
+    "end": 44.12
+  },
+  {
+    "text": "First,",
+    "start": 44.13,
+    "end": 44.63
+  },
+  {
+    "text": "quests",
+    "start": 44.63,
+    "end": 45.07
+  },
+  {
+    "text": "run",
+    "start": 45.07,
+    "end": 45.21
+  },
+  {
+    "text": "through",
+    "start": 45.35,
+    "end": 45.8
+  },
+  {
+    "text": "a",
+    "start": 45.8,
+    "end": 45.87
+  },
+  {
+    "text": "real",
+    "start": 45.87,
+    "end": 46.16
+  },
+  {
+    "text": "harness",
+    "start": 46.16,
+    "end": 46.67
+  },
+  {
+    "text": "against",
+    "start": 46.67,
+    "end": 47.15
+  },
+  {
+    "text": "real",
+    "start": 47.2,
+    "end": 47.47
+  },
+  {
+    "text": "files.",
+    "start": 47.47,
+    "end": 48.12
+  },
+  {
+    "text": "Second,",
+    "start": 48.12,
+    "end": 48.8
+  },
+  {
+    "text": "the",
+    "start": 48.8,
+    "end": 49.05
+  },
+  {
+    "text": "agent",
+    "start": 49.05,
+    "end": 49.47
+  },
+  {
+    "text": "is",
+    "start": 49.47,
+    "end": 49.64
+  },
+  {
+    "text": "the",
+    "start": 49.64,
+    "end": 49.89
+  },
+  {
+    "text": "tutor.",
+    "start": 49.89,
+    "end": 50.6
+  },
+  {
+    "text": "The",
+    "start": 50.6,
+    "end": 50.8
+  },
+  {
+    "text": "active",
+    "start": 51,
+    "end": 51.23
+  },
+  {
+    "text": "quest",
+    "start": 51.23,
+    "end": 51.58
+  },
+  {
+    "text": "is",
+    "start": 51.58,
+    "end": 51.69
+  },
+  {
+    "text": "injected",
+    "start": 51.83,
+    "end": 52.28
+  },
+  {
+    "text": "into",
+    "start": 52.28,
+    "end": 52.56
+  },
+  {
+    "text": "the",
+    "start": 52.56,
+    "end": 52.77
+  },
+  {
+    "text": "harness",
+    "start": 52.77,
+    "end": 53.26
+  },
+  {
+    "text": "context,",
+    "start": 53.26,
+    "end": 53.89
+  },
+  {
+    "text": "so",
+    "start": 53.89,
+    "end": 53.96
+  },
+  {
+    "text": "the",
+    "start": 54.06,
+    "end": 54.24
+  },
+  {
+    "text": "agent",
+    "start": 54.24,
+    "end": 54.59
+  },
+  {
+    "text": "you",
+    "start": 54.59,
+    "end": 54.66
+  },
+  {
+    "text": "are",
+    "start": 54.95,
+    "end": 55.01
+  },
+  {
+    "text": "learning",
+    "start": 55.01,
+    "end": 55.6
+  },
+  {
+    "text": "to",
+    "start": 55.6,
+    "end": 55.76
+  },
+  {
+    "text": "use",
+    "start": 55.76,
+    "end": 56.02
+  },
+  {
+    "text": "is",
+    "start": 56.05,
+    "end": 56.22
+  },
+  {
+    "text": "also",
+    "start": 56.22,
+    "end": 56.56
+  },
+  {
+    "text": "your",
+    "start": 56.65,
+    "end": 56.94
+  },
+  {
+    "text": "guide.",
+    "start": 56.94,
+    "end": 57.57
+  },
+  {
+    "text": "Third,",
+    "start": 57.69,
+    "end": 58.17
+  },
+  {
+    "text": "feature-gating",
+    "start": 58.17,
+    "end": 59.15
+  },
+  {
+    "text": "keeps",
+    "start": 59.15,
+    "end": 59.5
+  },
+  {
+    "text": "the",
+    "start": 59.5,
+    "end": 59.71
+  },
+  {
+    "text": "surface",
+    "start": 59.71,
+    "end": 60.2
+  },
+  {
+    "text": "area",
+    "start": 60.2,
+    "end": 60.46
+  },
+  {
+    "text": "matched",
+    "start": 60.5,
+    "end": 60.97
+  },
+  {
+    "text": "to",
+    "start": 60.97,
+    "end": 61.04
+  },
+  {
+    "text": "your",
+    "start": 61.14,
+    "end": 61.33
+  },
+  {
+    "text": "competence.",
+    "start": 61.45,
+    "end": 62.36
+  },
+  {
+    "text": "It",
+    "start": 62.37,
+    "end": 62.5
+  },
+  {
+    "text": "is",
+    "start": 62.5,
+    "end": 62.57
+  },
+  {
+    "text": "built",
+    "start": 62.75,
+    "end": 63
+  },
+  {
+    "text": "with",
+    "start": 63,
+    "end": 63.29
+  },
+  {
+    "text": "fun",
+    "start": 63.29,
+    "end": 63.45
+  },
+  {
+    "text": "and",
+    "start": 63.59,
+    "end": 63.71
+  },
+  {
+    "text": "typescript.",
+    "start": 63.71,
+    "end": 64.68
+  },
+  {
+    "text": "Two",
+    "start": 64.68,
+    "end": 64.88
+  },
+  {
+    "text": "artifacts",
+    "start": 65.08,
+    "end": 65.53
+  },
+  {
+    "text": "share",
+    "start": 65.53,
+    "end": 65.77
+  },
+  {
+    "text": "one",
+    "start": 65.91,
+    "end": 66.09
+  },
+  {
+    "text": "core",
+    "start": 66.09,
+    "end": 66.37
+  },
+  {
+    "text": "library,",
+    "start": 66.37,
+    "end": 67.01
+  },
+  {
+    "text": "a",
+    "start": 67.01,
+    "end": 67.04
+  },
+  {
+    "text": "thin",
+    "start": 67.13,
+    "end": 67.36
+  },
+  {
+    "text": "clay",
+    "start": 67.36,
+    "end": 67.64
+  },
+  {
+    "text": "handles",
+    "start": 67.64,
+    "end": 68.03
+  },
+  {
+    "text": "onboarding",
+    "start": 68.14,
+    "end": 68.74
+  },
+  {
+    "text": "and",
+    "start": 69.03,
+    "end": 69.06
+  },
+  {
+    "text": "status",
+    "start": 69.06,
+    "end": 69.49
+  },
+  {
+    "text": "outside",
+    "start": 69.6,
+    "end": 70.03
+  },
+  {
+    "text": "a",
+    "start": 70.05,
+    "end": 70.12
+  },
+  {
+    "text": "session,",
+    "start": 70.12,
+    "end": 70.79
+  },
+  {
+    "text": "a",
+    "start": 70.82,
+    "end": 70.9
+  },
+  {
+    "text": "pi",
+    "start": 70.9,
+    "end": 71.06
+  },
+  {
+    "text": "extension",
+    "start": 71.06,
+    "end": 71.77
+  },
+  {
+    "text": "runs",
+    "start": 71.77,
+    "end": 72.09
+  },
+  {
+    "text": "in",
+    "start": 72.09,
+    "end": 72.22
+  },
+  {
+    "text": "process",
+    "start": 72.26,
+    "end": 72.77
+  },
+  {
+    "text": "inside",
+    "start": 72.81,
+    "end": 73.27
+  },
+  {
+    "text": "the",
+    "start": 73.27,
+    "end": 73.51
+  },
+  {
+    "text": "harness,",
+    "start": 73.51,
+    "end": 74.11
+  },
+  {
+    "text": "observing",
+    "start": 74.4,
+    "end": 74.85
+  },
+  {
+    "text": "live",
+    "start": 74.96,
+    "end": 75.24
+  },
+  {
+    "text": "events,",
+    "start": 75.24,
+    "end": 75.95
+  },
+  {
+    "text": "rendering",
+    "start": 76.03,
+    "end": 76.4
+  },
+  {
+    "text": "a",
+    "start": 76.41,
+    "end": 76.5
+  },
+  {
+    "text": "HUD,",
+    "start": 76.5,
+    "end": 76.92
+  },
+  {
+    "text": "and",
+    "start": 77,
+    "end": 77.31
+  },
+  {
+    "text": "applying",
+    "start": 77.31,
+    "end": 78.13
+  },
+  {
+    "text": "unlocks.",
+    "start": 78.13,
+    "end": 79.18
+  },
+  {
+    "text": "The",
+    "start": 79.2,
+    "end": 79.41
+  },
+  {
+    "text": "core",
+    "start": 79.6,
+    "end": 79.72
+  },
+  {
+    "text": "library",
+    "start": 79.8,
+    "end": 80.29
+  },
+  {
+    "text": "has",
+    "start": 80.43,
+    "end": 80.61
+  },
+  {
+    "text": "five",
+    "start": 80.61,
+    "end": 80.94
+  },
+  {
+    "text": "modules,",
+    "start": 80.94,
+    "end": 81.68
+  },
+  {
+    "text": "domain",
+    "start": 81.68,
+    "end": 82.18
+  },
+  {
+    "text": "schemas",
+    "start": 82.18,
+    "end": 82.76
+  },
+  {
+    "text": "define",
+    "start": 82.76,
+    "end": 83.25
+  },
+  {
+    "text": "quests,",
+    "start": 83.56,
+    "end": 83.92
+  },
+  {
+    "text": "levels,",
+    "start": 83.92,
+    "end": 84.57
+  },
+  {
+    "text": "and",
+    "start": 84.57,
+    "end": 84.64
+  },
+  {
+    "text": "checks",
+    "start": 84.89,
+    "end": 85.4
+  },
+  {
+    "text": "using",
+    "start": 85.4,
+    "end": 85.76
+  },
+  {
+    "text": "Zod",
+    "start": 85.77,
+    "end": 85.97
+  },
+  {
+    "text": "with",
+    "start": 86.16,
+    "end": 86.28
+  },
+  {
+    "text": "branded",
+    "start": 86.36,
+    "end": 86.85
+  },
+  {
+    "text": "types.",
+    "start": 86.98,
+    "end": 87.64
+  },
+  {
+    "text": "The",
+    "start": 87.65,
+    "end": 87.84
+  },
+  {
+    "text": "pack",
+    "start": 87.84,
+    "end": 88.11
+  },
+  {
+    "text": "loader",
+    "start": 88.11,
+    "end": 88.52
+  },
+  {
+    "text": "validates",
+    "start": 88.52,
+    "end": 89.13
+  },
+  {
+    "text": "curriculum",
+    "start": 89.13,
+    "end": 89.81
+  },
+  {
+    "text": "files",
+    "start": 89.82,
+    "end": 90.16
+  },
+  {
+    "text": "and",
+    "start": 90.16,
+    "end": 90.36
+  },
+  {
+    "text": "builds",
+    "start": 90.36,
+    "end": 90.77
+  },
+  {
+    "text": "the",
+    "start": 90.77,
+    "end": 90.97
+  },
+  {
+    "text": "quest",
+    "start": 90.97,
+    "end": 91.28
+  },
+  {
+    "text": "graph,",
+    "start": 91.41,
+    "end": 91.7
+  },
+  {
+    "text": "rejecting",
+    "start": 92,
+    "end": 92.45
+  },
+  {
+    "text": "cycles",
+    "start": 92.56,
+    "end": 93.06
+  },
+  {
+    "text": "and",
+    "start": 93.12,
+    "end": 93.33
+  },
+  {
+    "text": "unknown",
+    "start": 93.52,
+    "end": 94.09
+  },
+  {
+    "text": "IDs.",
+    "start": 94.09,
+    "end": 94.65
+  },
+  {
+    "text": "The",
+    "start": 94.68,
+    "end": 94.88
+  },
+  {
+    "text": "verifier",
+    "start": 95.08,
+    "end": 95.43
+  },
+  {
+    "text": "evaluates",
+    "start": 95.46,
+    "end": 96.11
+  },
+  {
+    "text": "checks",
+    "start": 96.11,
+    "end": 96.54
+  },
+  {
+    "text": "against",
+    "start": 96.54,
+    "end": 97.04
+  },
+  {
+    "text": "live",
+    "start": 97.04,
+    "end": 97.33
+  },
+  {
+    "text": "events",
+    "start": 97.33,
+    "end": 97.71
+  },
+  {
+    "text": "and",
+    "start": 97.76,
+    "end": 97.97
+  },
+  {
+    "text": "on-demand",
+    "start": 97.97,
+    "end": 98.61
+  },
+  {
+    "text": "probes.",
+    "start": 98.61,
+    "end": 99.32
+  },
+  {
+    "text": "The",
+    "start": 99.33,
+    "end": 99.52
+  },
+  {
+    "text": "progression",
+    "start": 99.52,
+    "end": 100.27
+  },
+  {
+    "text": "engine",
+    "start": 100.27,
+    "end": 100.67
+  },
+  {
+    "text": "folds",
+    "start": 100.67,
+    "end": 101.01
+  },
+  {
+    "text": "and",
+    "start": 101.01,
+    "end": 101.21
+  },
+  {
+    "text": "append",
+    "start": 101.21,
+    "end": 101.61
+  },
+  {
+    "text": "only",
+    "start": 101.61,
+    "end": 101.88
+  },
+  {
+    "text": "event",
+    "start": 101.88,
+    "end": 102.22
+  },
+  {
+    "text": "log",
+    "start": 102.22,
+    "end": 102.42
+  },
+  {
+    "text": "into",
+    "start": 102.42,
+    "end": 102.68
+  },
+  {
+    "text": "state,",
+    "start": 102.78,
+    "end": 103.16
+  },
+  {
+    "text": "and",
+    "start": 103.16,
+    "end": 103.36
+  },
+  {
+    "text": "the",
+    "start": 103.36,
+    "end": 103.39
+  },
+  {
+    "text": "pi",
+    "start": 103.68,
+    "end": 103.69
+  },
+  {
+    "text": "adapter",
+    "start": 103.69,
+    "end": 104.13
+  },
+  {
+    "text": "isolates",
+    "start": 104.24,
+    "end": 104.75
+  },
+  {
+    "text": "all",
+    "start": 104.88,
+    "end": 105.08
+  },
+  {
+    "text": "harness",
+    "start": 105.28,
+    "end": 105.67
+  },
+  {
+    "text": "specific",
+    "start": 105.67,
+    "end": 106.3
+  },
+  {
+    "text": "knowledge",
+    "start": 106.3,
+    "end": 107.01
+  },
+  {
+    "text": "behind",
+    "start": 107.01,
+    "end": 107.49
+  },
+  {
+    "text": "one",
+    "start": 107.49,
+    "end": 107.73
+  },
+  {
+    "text": "seam.",
+    "start": 107.73,
+    "end": 108.24
+  },
+  {
+    "text": "Running",
+    "start": 108.33,
+    "end": 108.78
+  },
+  {
+    "text": "garnish",
+    "start": 108.78,
+    "end": 109.23
+  },
+  {
+    "text": "in",
+    "start": 109.23,
+    "end": 109.36
+  },
+  {
+    "text": "it",
+    "start": 109.36,
+    "end": 109.41
+  },
+  {
+    "text": "installs",
+    "start": 109.55,
+    "end": 110.01
+  },
+  {
+    "text": "a",
+    "start": 110.01,
+    "end": 110.07
+  },
+  {
+    "text": "certified",
+    "start": 110.07,
+    "end": 110.66
+  },
+  {
+    "text": "pi",
+    "start": 110.66,
+    "end": 110.79
+  },
+  {
+    "text": "runtime",
+    "start": 110.79,
+    "end": 111.25
+  },
+  {
+    "text": "into",
+    "start": 111.25,
+    "end": 111.51
+  },
+  {
+    "text": "garnish-owned",
+    "start": 111.51,
+    "end": 112.35
+  },
+  {
+    "text": "storage.",
+    "start": 112.35,
+    "end": 113.08
+  },
+  {
+    "text": "It",
+    "start": 113.09,
+    "end": 113.22
+  },
+  {
+    "text": "asks",
+    "start": 113.22,
+    "end": 113.51
+  },
+  {
+    "text": "three",
+    "start": 113.51,
+    "end": 113.87
+  },
+  {
+    "text": "onboarding",
+    "start": 113.87,
+    "end": 114.58
+  },
+  {
+    "text": "questions.",
+    "start": 114.58,
+    "end": 115.44
+  },
+  {
+    "text": "Link",
+    "start": 115.48,
+    "end": 115.68
+  },
+  {
+    "text": "affords",
+    "start": 115.87,
+    "end": 116.33
+  },
+  {
+    "text": "a",
+    "start": 116.33,
+    "end": 116.41
+  },
+  {
+    "text": "disposable",
+    "start": 116.41,
+    "end": 117.2
+  },
+  {
+    "text": "sandbox,",
+    "start": 117.2,
+    "end": 117.84
+  },
+  {
+    "text": "and",
+    "start": 117.93,
+    "end": 118.13
+  },
+  {
+    "text": "launches",
+    "start": 118.13,
+    "end": 118.76
+  },
+  {
+    "text": "an",
+    "start": 118.76,
+    "end": 118.84
+  },
+  {
+    "text": "isolated",
+    "start": 118.94,
+    "end": 119.53
+  },
+  {
+    "text": "session.",
+    "start": 119.84,
+    "end": 120.29
+  },
+  {
+    "text": "Your",
+    "start": 120.4,
+    "end": 120.61
+  },
+  {
+    "text": "global",
+    "start": 120.8,
+    "end": 121.1
+  },
+  {
+    "text": "harness",
+    "start": 121.1,
+    "end": 121.49
+  },
+  {
+    "text": "config",
+    "start": 121.62,
+    "end": 121.93
+  },
+  {
+    "text": "is",
+    "start": 122.06,
+    "end": 122.15
+  },
+  {
+    "text": "never",
+    "start": 122.15,
+    "end": 122.5
+  },
+  {
+    "text": "touched.",
+    "start": 122.5,
+    "end": 123.24
+  },
+  {
+    "text": "The",
+    "start": 123.25,
+    "end": 123.44
+  },
+  {
+    "text": "extension",
+    "start": 123.44,
+    "end": 124.04
+  },
+  {
+    "text": "performs",
+    "start": 124.04,
+    "end": 124.58
+  },
+  {
+    "text": "a",
+    "start": 124.58,
+    "end": 124.64
+  },
+  {
+    "text": "startup",
+    "start": 124.64,
+    "end": 125.11
+  },
+  {
+    "text": "version",
+    "start": 125.11,
+    "end": 125.58
+  },
+  {
+    "text": "handshake",
+    "start": 125.58,
+    "end": 126.18
+  },
+  {
+    "text": "and",
+    "start": 126.18,
+    "end": 126.38
+  },
+  {
+    "text": "pauses",
+    "start": 126.38,
+    "end": 126.78
+  },
+  {
+    "text": "quests",
+    "start": 126.78,
+    "end": 127.18
+  },
+  {
+    "text": "if",
+    "start": 127.18,
+    "end": 127.29
+  },
+  {
+    "text": "the",
+    "start": 127.3,
+    "end": 127.31
+  },
+  {
+    "text": "runtime",
+    "start": 127.6,
+    "end": 128.04
+  },
+  {
+    "text": "does",
+    "start": 128.05,
+    "end": 128.24
+  },
+  {
+    "text": "not",
+    "start": 128.44,
+    "end": 128.74
+  },
+  {
+    "text": "match.",
+    "start": 128.74,
+    "end": 129.56
+  },
+  {
+    "text": "When",
+    "start": 129.56,
+    "end": 129.77
+  },
+  {
+    "text": "you",
+    "start": 129.95,
+    "end": 130.05
+  },
+  {
+    "text": "complete",
+    "start": 130.05,
+    "end": 130.61
+  },
+  {
+    "text": "a",
+    "start": 130.61,
+    "end": 130.66
+  },
+  {
+    "text": "quest,",
+    "start": 130.79,
+    "end": 131.09
+  },
+  {
+    "text": "the",
+    "start": 131.22,
+    "end": 131.38
+  },
+  {
+    "text": "extension",
+    "start": 131.38,
+    "end": 131.92
+  },
+  {
+    "text": "observes",
+    "start": 132.01,
+    "end": 132.57
+  },
+  {
+    "text": "real",
+    "start": 132.57,
+    "end": 132.85
+  },
+  {
+    "text": "harness",
+    "start": 132.85,
+    "end": 133.19
+  },
+  {
+    "text": "events.",
+    "start": 133.33,
+    "end": 134.04
+  },
+  {
+    "text": "The",
+    "start": 134.04,
+    "end": 134.24
+  },
+  {
+    "text": "verifier",
+    "start": 134.44,
+    "end": 134.85
+  },
+  {
+    "text": "evaluates",
+    "start": 134.85,
+    "end": 135.52
+  },
+  {
+    "text": "declarative",
+    "start": 135.52,
+    "end": 136.34
+  },
+  {
+    "text": "checks",
+    "start": 136.34,
+    "end": 136.78
+  },
+  {
+    "text": "against",
+    "start": 136.81,
+    "end": 137.31
+  },
+  {
+    "text": "those",
+    "start": 137.31,
+    "end": 137.67
+  },
+  {
+    "text": "events",
+    "start": 137.67,
+    "end": 138.09
+  },
+  {
+    "text": "and",
+    "start": 138.09,
+    "end": 138.4
+  },
+  {
+    "text": "on-demand",
+    "start": 138.4,
+    "end": 139.02
+  },
+  {
+    "text": "file,",
+    "start": 139.02,
+    "end": 139.46
+  },
+  {
+    "text": "command,",
+    "start": 139.46,
+    "end": 140.1
+  },
+  {
+    "text": "and",
+    "start": 140.2,
+    "end": 140.41
+  },
+  {
+    "text": "get",
+    "start": 140.59,
+    "end": 140.7
+  },
+  {
+    "text": "probes.",
+    "start": 140.7,
+    "end": 141.48
+  },
+  {
+    "text": "No",
+    "start": 141.48,
+    "end": 141.68
+  },
+  {
+    "text": "LLM",
+    "start": 141.87,
+    "end": 142
+  },
+  {
+    "text": "grading.",
+    "start": 142.08,
+    "end": 143.32
+  },
+  {
+    "text": "Everything",
+    "start": 143.33,
+    "end": 143.84
+  },
+  {
+    "text": "is",
+    "start": 143.92,
+    "end": 143.94
+  },
+  {
+    "text": "deterministic.",
+    "start": 143.94,
+    "end": 144.8
+  },
+  {
+    "text": "The",
+    "start": 144.8,
+    "end": 145
+  },
+  {
+    "text": "whole",
+    "start": 145.2,
+    "end": 145.32
+  },
+  {
+    "text": "path",
+    "start": 145.4,
+    "end": 145.69
+  },
+  {
+    "text": "is",
+    "start": 145.69,
+    "end": 145.84
+  },
+  {
+    "text": "designed",
+    "start": 145.84,
+    "end": 146.33
+  },
+  {
+    "text": "for",
+    "start": 146.46,
+    "end": 146.66
+  },
+  {
+    "text": "sub-ten-second",
+    "start": 146.66,
+    "end": 147.69
+  },
+  {
+    "text": "feedback.",
+    "start": 147.69,
+    "end": 148.45
+  },
+  {
+    "text": "Quests",
+    "start": 148.57,
+    "end": 149.01
+  },
+  {
+    "text": "declare",
+    "start": 149.01,
+    "end": 149.54
+  },
+  {
+    "text": "checks",
+    "start": 149.54,
+    "end": 149.99
+  },
+  {
+    "text": "in",
+    "start": 149.99,
+    "end": 150.09
+  },
+  {
+    "text": "a",
+    "start": 150.09,
+    "end": 150.22
+  },
+  {
+    "text": "closed",
+    "start": 150.22,
+    "end": 150.66
+  },
+  {
+    "text": "DSL-9",
+    "start": 150.66,
+    "end": 151.17
+  },
+  {
+    "text": "check",
+    "start": 151.17,
+    "end": 151.54
+  },
+  {
+    "text": "types",
+    "start": 151.54,
+    "end": 151.91
+  },
+  {
+    "text": "cover",
+    "start": 151.91,
+    "end": 152.2
+  },
+  {
+    "text": "harness",
+    "start": 152.33,
+    "end": 152.62
+  },
+  {
+    "text": "events,",
+    "start": 152.92,
+    "end": 153.37
+  },
+  {
+    "text": "file",
+    "start": 153.48,
+    "end": 153.79
+  },
+  {
+    "text": "existence,",
+    "start": 153.79,
+    "end": 155.08
+  },
+  {
+    "text": "JSON",
+    "start": 155.09,
+    "end": 155.28
+  },
+  {
+    "text": "and",
+    "start": 155.48,
+    "end": 155.78
+  },
+  {
+    "text": "YAML",
+    "start": 155.78,
+    "end": 156.17
+  },
+  {
+    "text": "config",
+    "start": 156.31,
+    "end": 156.78
+  },
+  {
+    "text": "paths,",
+    "start": 156.78,
+    "end": 157.44
+  },
+  {
+    "text": "command",
+    "start": 157.53,
+    "end": 158.18
+  },
+  {
+    "text": "exit",
+    "start": 158.18,
+    "end": 158.58
+  },
+  {
+    "text": "codes,",
+    "start": 158.58,
+    "end": 159.14
+  },
+  {
+    "text": "get",
+    "start": 159.44,
+    "end": 159.58
+  },
+  {
+    "text": "state,",
+    "start": 159.66,
+    "end": 160.28
+  },
+  {
+    "text": "MCP",
+    "start": 160.28,
+    "end": 160.51
+  },
+  {
+    "text": "handshakes,",
+    "start": 160.77,
+    "end": 161.74
+  },
+  {
+    "text": "skill",
+    "start": 161.88,
+    "end": 162.32
+  },
+  {
+    "text": "validity,",
+    "start": 162.32,
+    "end": 163.32
+  },
+  {
+    "text": "and",
+    "start": 163.32,
+    "end": 163.52
+  },
+  {
+    "text": "user",
+    "start": 163.71,
+    "end": 163.84
+  },
+  {
+    "text": "confirmation.",
+    "start": 163.92,
+    "end": 165
+  },
+  {
+    "text": "The",
+    "start": 165,
+    "end": 165.2
+  },
+  {
+    "text": "set",
+    "start": 165.4,
+    "end": 165.44
+  },
+  {
+    "text": "only",
+    "start": 165.44,
+    "end": 165.73
+  },
+  {
+    "text": "grows",
+    "start": 165.73,
+    "end": 166.09
+  },
+  {
+    "text": "by",
+    "start": 166.23,
+    "end": 166.24
+  },
+  {
+    "text": "architectural",
+    "start": 166.24,
+    "end": 167.18
+  },
+  {
+    "text": "decision,",
+    "start": 167.22,
+    "end": 167.93
+  },
+  {
+    "text": "completing",
+    "start": 167.93,
+    "end": 168.63
+  },
+  {
+    "text": "quests",
+    "start": 168.77,
+    "end": 169.06
+  },
+  {
+    "text": "on",
+    "start": 169.06,
+    "end": 169.36
+  },
+  {
+    "text": "locks",
+    "start": 169.36,
+    "end": 169.62
+  },
+  {
+    "text": "harness",
+    "start": 169.62,
+    "end": 170.14
+  },
+  {
+    "text": "features.",
+    "start": 170.14,
+    "end": 171.04
+  },
+  {
+    "text": "The",
+    "start": 171.04,
+    "end": 171.25
+  },
+  {
+    "text": "gate",
+    "start": 171.44,
+    "end": 171.56
+  },
+  {
+    "text": "catalog",
+    "start": 171.64,
+    "end": 172.13
+  },
+  {
+    "text": "maps",
+    "start": 172.26,
+    "end": 172.53
+  },
+  {
+    "text": "each",
+    "start": 172.53,
+    "end": 172.86
+  },
+  {
+    "text": "feature",
+    "start": 172.86,
+    "end": 173.4
+  },
+  {
+    "text": "to",
+    "start": 173.49,
+    "end": 173.6
+  },
+  {
+    "text": "pi-config",
+    "start": 173.6,
+    "end": 174.34
+  },
+  {
+    "text": "surfaces.",
+    "start": 174.34,
+    "end": 175.1
+  },
+  {
+    "text": "Tools",
+    "start": 175.33,
+    "end": 175.52
+  },
+  {
+    "text": "apply",
+    "start": 175.72,
+    "end": 176.02
+  },
+  {
+    "text": "live-throughset",
+    "start": 176.02,
+    "end": 177.07
+  },
+  {
+    "text": "active",
+    "start": 177.07,
+    "end": 177.49
+  },
+  {
+    "text": "tools.",
+    "start": 177.49,
+    "end": 178.05
+  },
+  {
+    "text": "Skills",
+    "start": 178.09,
+    "end": 178.28
+  },
+  {
+    "text": "and",
+    "start": 178.48,
+    "end": 178.6
+  },
+  {
+    "text": "extensions",
+    "start": 178.68,
+    "end": 179.35
+  },
+  {
+    "text": "require",
+    "start": 179.35,
+    "end": 179.82
+  },
+  {
+    "text": "a",
+    "start": 179.82,
+    "end": 179.88
+  },
+  {
+    "text": "session",
+    "start": 179.88,
+    "end": 180.35
+  },
+  {
+    "text": "reload.",
+    "start": 180.35,
+    "end": 181
+  },
+  {
+    "text": "Unlocks",
+    "start": 181.01,
+    "end": 181.52
+  },
+  {
+    "text": "are",
+    "start": 181.6,
+    "end": 181.84
+  },
+  {
+    "text": "monotonic.",
+    "start": 181.84,
+    "end": 182.88
+  },
+  {
+    "text": "Capabilities",
+    "start": 182.88,
+    "end": 183.82
+  },
+  {
+    "text": "are",
+    "start": 183.82,
+    "end": 183.97
+  },
+  {
+    "text": "only",
+    "start": 184.1,
+    "end": 184.36
+  },
+  {
+    "text": "ever",
+    "start": 184.36,
+    "end": 184.67
+  },
+  {
+    "text": "added,",
+    "start": 184.67,
+    "end": 185.21
+  },
+  {
+    "text": "never",
+    "start": 185.21,
+    "end": 185.6
+  },
+  {
+    "text": "removed.",
+    "start": 185.6,
+    "end": 186.44
+  },
+  {
+    "text": "State",
+    "start": 186.44,
+    "end": 186.64
+  },
+  {
+    "text": "lives",
+    "start": 186.83,
+    "end": 187.08
+  },
+  {
+    "text": "in",
+    "start": 187.08,
+    "end": 187.19
+  },
+  {
+    "text": "an",
+    "start": 187.22,
+    "end": 187.34
+  },
+  {
+    "text": "append-only",
+    "start": 187.34,
+    "end": 187.97
+  },
+  {
+    "text": "event",
+    "start": 188.1,
+    "end": 188.37
+  },
+  {
+    "text": "log.",
+    "start": 188.37,
+    "end": 188.8
+  },
+  {
+    "text": "A",
+    "start": 188.81,
+    "end": 188.88
+  },
+  {
+    "text": "pure",
+    "start": 188.88,
+    "end": 189.22
+  },
+  {
+    "text": "function",
+    "start": 189.22,
+    "end": 189.89
+  },
+  {
+    "text": "folds",
+    "start": 190.02,
+    "end": 190.33
+  },
+  {
+    "text": "the",
+    "start": 190.46,
+    "end": 190.6
+  },
+  {
+    "text": "log",
+    "start": 190.6,
+    "end": 190.86
+  },
+  {
+    "text": "into",
+    "start": 190.86,
+    "end": 191.16
+  },
+  {
+    "text": "the",
+    "start": 191.25,
+    "end": 191.46
+  },
+  {
+    "text": "current",
+    "start": 191.46,
+    "end": 192.06
+  },
+  {
+    "text": "state,",
+    "start": 192.06,
+    "end": 192.66
+  },
+  {
+    "text": "completed",
+    "start": 192.66,
+    "end": 193.44
+  },
+  {
+    "text": "quests,",
+    "start": 193.44,
+    "end": 194.13
+  },
+  {
+    "text": "XP,",
+    "start": 194.13,
+    "end": 194.47
+  },
+  {
+    "text": "badges,",
+    "start": 194.49,
+    "end": 195.24
+  },
+  {
+    "text": "and",
+    "start": 195.24,
+    "end": 195.25
+  },
+  {
+    "text": "unlocked",
+    "start": 195.25,
+    "end": 195.94
+  },
+  {
+    "text": "capabilities.",
+    "start": 195.94,
+    "end": 197.28
+  },
+  {
+    "text": "Delete",
+    "start": 197.29,
+    "end": 197.48
+  },
+  {
+    "text": "the",
+    "start": 197.68,
+    "end": 197.8
+  },
+  {
+    "text": "state",
+    "start": 197.88,
+    "end": 198.19
+  },
+  {
+    "text": "file",
+    "start": 198.19,
+    "end": 198.37
+  },
+  {
+    "text": "and",
+    "start": 198.51,
+    "end": 198.64
+  },
+  {
+    "text": "replay",
+    "start": 198.64,
+    "end": 199.03
+  },
+  {
+    "text": "reconstructs",
+    "start": 199.03,
+    "end": 199.81
+  },
+  {
+    "text": "everything.",
+    "start": 199.81,
+    "end": 200.64
+  },
+  {
+    "text": "Push-safe,",
+    "start": 200.72,
+    "end": 201.56
+  },
+  {
+    "text": "auditable,",
+    "start": 201.56,
+    "end": 202.4
+  },
+  {
+    "text": "replayable.",
+    "start": 202.4,
+    "end": 203.44
+  },
+  {
+    "text": "The",
+    "start": 203.44,
+    "end": 203.64
+  },
+  {
+    "text": "curriculum",
+    "start": 203.84,
+    "end": 204.43
+  },
+  {
+    "text": "uses",
+    "start": 204.43,
+    "end": 204.73
+  },
+  {
+    "text": "a",
+    "start": 204.73,
+    "end": 204.8
+  },
+  {
+    "text": "gamer",
+    "start": 204.8,
+    "end": 205.18
+  },
+  {
+    "text": "native",
+    "start": 205.18,
+    "end": 205.62
+  },
+  {
+    "text": "theme,",
+    "start": 205.66,
+    "end": 206.17
+  },
+  {
+    "text": "tutorial",
+    "start": 206.17,
+    "end": 206.78
+  },
+  {
+    "text": "island",
+    "start": 206.78,
+    "end": 207.24
+  },
+  {
+    "text": "for",
+    "start": 207.24,
+    "end": 207.47
+  },
+  {
+    "text": "onboarding,",
+    "start": 207.47,
+    "end": 208.38
+  },
+  {
+    "text": "first",
+    "start": 208.38,
+    "end": 208.76
+  },
+  {
+    "text": "quest",
+    "start": 208.76,
+    "end": 209.2
+  },
+  {
+    "text": "for",
+    "start": 209.2,
+    "end": 209.3
+  },
+  {
+    "text": "the",
+    "start": 209.32,
+    "end": 209.52
+  },
+  {
+    "text": "core",
+    "start": 209.72,
+    "end": 209.84
+  },
+  {
+    "text": "agent",
+    "start": 209.93,
+    "end": 210.25
+  },
+  {
+    "text": "loop,",
+    "start": 210.25,
+    "end": 210.71
+  },
+  {
+    "text": "lower",
+    "start": 210.71,
+    "end": 211.1
+  },
+  {
+    "text": "for",
+    "start": 211.1,
+    "end": 211.33
+  },
+  {
+    "text": "context",
+    "start": 211.33,
+    "end": 211.88
+  },
+  {
+    "text": "management,",
+    "start": 211.88,
+    "end": 212.82
+  },
+  {
+    "text": "five",
+    "start": 212.82,
+    "end": 213.13
+  },
+  {
+    "text": "more",
+    "start": 213.13,
+    "end": 213.38
+  },
+  {
+    "text": "levels",
+    "start": 213.68,
+    "end": 213.91
+  },
+  {
+    "text": "are",
+    "start": 213.91,
+    "end": 214.13
+  },
+  {
+    "text": "planned,",
+    "start": 214.24,
+    "end": 214.75
+  },
+  {
+    "text": "from",
+    "start": 215.01,
+    "end": 215.1
+  },
+  {
+    "text": "skill",
+    "start": 215.1,
+    "end": 215.18
+  },
+  {
+    "text": "tree",
+    "start": 215.28,
+    "end": 215.48
+  },
+  {
+    "text": "through",
+    "start": 215.68,
+    "end": 216.2
+  },
+  {
+    "text": "loadout,",
+    "start": 216.2,
+    "end": 216.81
+  },
+  {
+    "text": "the",
+    "start": 216.94,
+    "end": 217.19
+  },
+  {
+    "text": "party,",
+    "start": 217.19,
+    "end": 217.77
+  },
+  {
+    "text": "and",
+    "start": 217.77,
+    "end": 218.01
+  },
+  {
+    "text": "macros,",
+    "start": 218.05,
+    "end": 218.64
+  },
+  {
+    "text": "to",
+    "start": 218.74,
+    "end": 218.84
+  },
+  {
+    "text": "a",
+    "start": 218.84,
+    "end": 218.92
+  },
+  {
+    "text": "final",
+    "start": 218.92,
+    "end": 219.33
+  },
+  {
+    "text": "boss",
+    "start": 219.33,
+    "end": 219.67
+  },
+  {
+    "text": "capstone.",
+    "start": 219.67,
+    "end": 220.67
+  },
+  {
+    "text": "The",
+    "start": 220.68,
+    "end": 220.89
+  },
+  {
+    "text": "code",
+    "start": 221.07,
+    "end": 221.33
+  },
+  {
+    "text": "base",
+    "start": 221.33,
+    "end": 221.7
+  },
+  {
+    "text": "is",
+    "start": 221.7,
+    "end": 221.77
+  },
+  {
+    "text": "four",
+    "start": 221.9,
+    "end": 222.21
+  },
+  {
+    "text": "days",
+    "start": 222.34,
+    "end": 222.62
+  },
+  {
+    "text": "old,",
+    "start": 222.62,
+    "end": 223.04
+  },
+  {
+    "text": "5,400",
+    "start": 223.13,
+    "end": 224.31
+  },
+  {
+    "text": "lines",
+    "start": 224.45,
+    "end": 224.74
+  },
+  {
+    "text": "of",
+    "start": 224.74,
+    "end": 225.04
+  },
+  {
+    "text": "TypeScript",
+    "start": 225.04,
+    "end": 225.96
+  },
+  {
+    "text": "source,",
+    "start": 225.96,
+    "end": 226.7
+  },
+  {
+    "text": "4,800",
+    "start": 226.7,
+    "end": 227.99
+  },
+  {
+    "text": "lines",
+    "start": 228,
+    "end": 228.47
+  },
+  {
+    "text": "of",
+    "start": 228.47,
+    "end": 228.65
+  },
+  {
+    "text": "tests,",
+    "start": 228.65,
+    "end": 229.36
+  },
+  {
+    "text": "at",
+    "start": 229.37,
+    "end": 229.5
+  },
+  {
+    "text": "near",
+    "start": 229.5,
+    "end": 229.79
+  },
+  {
+    "text": "one-to-one",
+    "start": 229.79,
+    "end": 230.45
+  },
+  {
+    "text": "test",
+    "start": 230.59,
+    "end": 230.78
+  },
+  {
+    "text": "ratio",
+    "start": 230.78,
+    "end": 231.14
+  },
+  {
+    "text": "reflects",
+    "start": 231.14,
+    "end": 231.72
+  },
+  {
+    "text": "a",
+    "start": 231.72,
+    "end": 231.81
+  },
+  {
+    "text": "fixture-driven",
+    "start": 231.81,
+    "end": 232.71
+  },
+  {
+    "text": "proof",
+    "start": 232.82,
+    "end": 233.15
+  },
+  {
+    "text": "plan.",
+    "start": 233.15,
+    "end": 233.71
+  },
+  {
+    "text": "The",
+    "start": 233.72,
+    "end": 233.93
+  },
+  {
+    "text": "largest",
+    "start": 234.12,
+    "end": 234.64
+  },
+  {
+    "text": "file",
+    "start": 234.64,
+    "end": 235.01
+  },
+  {
+    "text": "is",
+    "start": 235.01,
+    "end": 235.19
+  },
+  {
+    "text": "the",
+    "start": 235.19,
+    "end": 235.46
+  },
+  {
+    "text": "verifier",
+    "start": 235.46,
+    "end": 236.19
+  },
+  {
+    "text": "at",
+    "start": 236.19,
+    "end": 236.37
+  },
+  {
+    "text": "936",
+    "start": 236.37,
+    "end": 237.19
+  },
+  {
+    "text": "lines.",
+    "start": 237.19,
+    "end": 237.78
+  },
+  {
+    "text": "The",
+    "start": 238,
+    "end": 238.2
+  },
+  {
+    "text": "main",
+    "start": 238.4,
+    "end": 238.52
+  },
+  {
+    "text": "complexity",
+    "start": 238.6,
+    "end": 239.35
+  },
+  {
+    "text": "hotspot.",
+    "start": 239.35,
+    "end": 240.16
+  },
+  {
+    "text": "A",
+    "start": 240.17,
+    "end": 240.25
+  },
+  {
+    "text": "V2",
+    "start": 240.25,
+    "end": 240.6
+  },
+  {
+    "text": "direction",
+    "start": 240.6,
+    "end": 241.25
+  },
+  {
+    "text": "is",
+    "start": 241.39,
+    "end": 241.57
+  },
+  {
+    "text": "already",
+    "start": 241.57,
+    "end": 242.19
+  },
+  {
+    "text": "captured.",
+    "start": 242.19,
+    "end": 243.19
+  },
+  {
+    "text": "Garnish",
+    "start": 243.2,
+    "end": 243.64
+  },
+  {
+    "text": "will",
+    "start": 243.64,
+    "end": 243.89
+  },
+  {
+    "text": "build",
+    "start": 243.89,
+    "end": 244.2
+  },
+  {
+    "text": "its",
+    "start": 244.2,
+    "end": 244.29
+  },
+  {
+    "text": "own",
+    "start": 244.43,
+    "end": 244.58
+  },
+  {
+    "text": "purpose-built",
+    "start": 244.58,
+    "end": 245.38
+  },
+  {
+    "text": "harness",
+    "start": 245.42,
+    "end": 245.83
+  },
+  {
+    "text": "and",
+    "start": 245.83,
+    "end": 245.98
+  },
+  {
+    "text": "2E,",
+    "start": 246.02,
+    "end": 246.39
+  },
+  {
+    "text": "dropping",
+    "start": 246.39,
+    "end": 246.83
+  },
+  {
+    "text": "the",
+    "start": 246.98,
+    "end": 247.08
+  },
+  {
+    "text": "pi-dependency.",
+    "start": 247.08,
+    "end": 248.16
+  },
+  {
+    "text": "The",
+    "start": 248.17,
+    "end": 248.35
+  },
+  {
+    "text": "curriculum",
+    "start": 248.35,
+    "end": 249
+  },
+  {
+    "text": "and",
+    "start": 249,
+    "end": 249.19
+  },
+  {
+    "text": "engine",
+    "start": 249.19,
+    "end": 249.58
+  },
+  {
+    "text": "survive",
+    "start": 249.58,
+    "end": 250.03
+  },
+  {
+    "text": "the",
+    "start": 250.03,
+    "end": 250.22
+  },
+  {
+    "text": "rewrite.",
+    "start": 250.22,
+    "end": 250.89
+  },
+  {
+    "text": "The",
+    "start": 250.92,
+    "end": 251.12
+  },
+  {
+    "text": "adapter",
+    "start": 251.32,
+    "end": 251.73
+  },
+  {
+    "text": "and",
+    "start": 251.73,
+    "end": 251.97
+  },
+  {
+    "text": "extension",
+    "start": 251.97,
+    "end": 252.7
+  },
+  {
+    "text": "get",
+    "start": 252.7,
+    "end": 252.94
+  },
+  {
+    "text": "replaced.",
+    "start": 252.94,
+    "end": 253.88
+  },
+  {
+    "text": "Garnish",
+    "start": 253.88,
+    "end": 254.37
+  },
+  {
+    "text": "teaches",
+    "start": 254.37,
+    "end": 254.87
+  },
+  {
+    "text": "a",
+    "start": 254.87,
+    "end": 254.94
+  },
+  {
+    "text": "gente",
+    "start": 254.94,
+    "end": 255.29
+  },
+  {
+    "text": "coating",
+    "start": 255.29,
+    "end": 255.79
+  },
+  {
+    "text": "craft",
+    "start": 255.79,
+    "end": 256.15
+  },
+  {
+    "text": "by",
+    "start": 256.15,
+    "end": 256.24
+  },
+  {
+    "text": "doing.",
+    "start": 256.33,
+    "end": 257.04
+  },
+  {
+    "text": "Real",
+    "start": 257.04,
+    "end": 257.24
+  },
+  {
+    "text": "harness,",
+    "start": 257.44,
+    "end": 258.08
+  },
+  {
+    "text": "real",
+    "start": 258.08,
+    "end": 258.4
+  },
+  {
+    "text": "quests,",
+    "start": 258.4,
+    "end": 259.04
+  },
+  {
+    "text": "real",
+    "start": 259.04,
+    "end": 259.36
+  },
+  {
+    "text": "verification,",
+    "start": 259.36,
+    "end": 260.4
+  },
+  {
+    "text": "earn",
+    "start": 260.5,
+    "end": 260.69
+  },
+  {
+    "text": "your",
+    "start": 260.81,
+    "end": 261.1
+  },
+  {
+    "text": "complexity.",
+    "start": 261.4,
+    "end": 262.02
+  }
+]

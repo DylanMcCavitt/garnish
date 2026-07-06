@@ -61,7 +61,7 @@ class MemorySink implements EventSink {
 test("proto/game packs load through the v1 loader and reject unknown ids", async () => {
   const graphs = await loadProtoQuestGraphs(defaultQuestPackDir());
   expect(graphs.map((graph) => `${graph.pack.id}`)).toEqual(["l0-tutorial-proto", "l1-first-quest-proto"]);
-  expect(graphs[0]?.questNodes["look-around"]?.checks[0]).toMatchObject({ type: "event", match: { event: "tool.result" } });
+  expect(graphs[0]?.questNodes["mise-en-place"]?.checks[0]).toMatchObject({ type: "event", match: { event: "auth.login" } });
 
   const badPack = mkdtempSync(join(tmpdir(), "garnish-bad-pack-"));
   writeFileSync(
@@ -126,12 +126,18 @@ test("proto/game first-party events complete L0 once, fold progression, and feed
   });
   await verifier.settled();
 
+  expect(verifier.activeQuest()?.id).toBe("mise-en-place");
+  sink.emit({ type: "auth.login", provider: "demo-kitchen", method: "scripted" });
+  sink.emit({ type: "turn.end", turn: 0, stopReason: "end_turn" });
+  await verifier.settled();
+
+  expect(completions).toEqual(["mise-en-place"]);
   expect(verifier.activeQuest()?.id).toBe("look-around");
   sink.emit({ type: "tool.result", callId: "read-1", tool: "read", output: "README", isError: false });
   sink.emit({ type: "turn.end", turn: 1, stopReason: "end_turn" });
   await verifier.settled();
 
-  expect(completions).toEqual(["look-around"]);
+  expect(completions).toEqual(["mise-en-place", "look-around"]);
   expect(verifier.activeQuest()?.id).toBe("first-edit");
 
   const tutor = createTutorProvider({ verifier });
@@ -144,8 +150,8 @@ test("proto/game first-party events complete L0 once, fold progression, and feed
   sink.emit({ type: "file.edited", path: join(workspace, "quest-state.yml"), kind: "write", summary: "set first edit marker" });
   await verifier.settled();
 
-  expect(completions).toEqual(["look-around", "first-edit"]);
-  expect(progression.state().completedQuests).toEqual(["first-edit", "look-around"] as never);
+  expect(completions).toEqual(["mise-en-place", "look-around", "first-edit"]);
+  expect(progression.state().completedQuests).toEqual(["first-edit", "look-around", "mise-en-place"] as never);
   expect(progression.unlockedIds()).toEqual(new Set(["l0-hands", "l1-shell"]));
   expect(unlocks).toEqual([
     { id: "l0-hands", tools: ["write", "edit"] },
@@ -155,7 +161,7 @@ test("proto/game first-party events complete L0 once, fold progression, and feed
 
   sink.emit({ type: "file.edited", path: join(workspace, "quest-state.yml"), kind: "write", summary: "replay duplicate marker" });
   await verifier.settled();
-  expect(completions).toEqual(["look-around", "first-edit"]);
+  expect(completions).toEqual(["mise-en-place", "look-around", "first-edit"]);
   expect(unlocks).toHaveLength(2);
 
   mkdirSync(join(workspace, "src"), { recursive: true });
@@ -164,7 +170,7 @@ test("proto/game first-party events complete L0 once, fold progression, and feed
   sink.emit({ type: "turn.end", turn: 2, stopReason: "end_turn" });
   await verifier.settled();
 
-  expect(completions).toEqual(["look-around", "first-edit", "fix-bug-prove-it"]);
-  expect(progression.state().xpTotal).toBe(35);
+  expect(completions).toEqual(["mise-en-place", "look-around", "first-edit", "fix-bug-prove-it"]);
+  expect(progression.state().xpTotal).toBe(40);
   verifier.stop();
 });

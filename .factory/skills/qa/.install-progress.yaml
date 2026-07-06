@@ -1,0 +1,15 @@
+version: 1
+project: Garnish
+answers:
+  default_target: Current Mac checkout
+  critical_flows: Use as-is
+  imagemagick: Enable in CI/config
+  workflow: Add required PR workflow
+detected:
+  apps:
+    - garnish-cli
+    - garnish-pi-extension
+    - garnish-quest-engine
+  no_browser_or_native_desktop_surface: true
+  package_manager: bun
+  test_runner: bun test

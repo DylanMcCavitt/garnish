@@ -1,6 +1,7 @@
 import { readFileSync, statSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
+import { getStoredAuth } from "../auth";
 
 type Provider = "anthropic" | "openai";
 
@@ -17,6 +18,10 @@ const fileKeyByProvider: Record<Provider, string> = {
 export function resolveAuth(provider: Provider): { apiKey: string } | null {
   const envKey = process.env[envByProvider[provider]];
   if (envKey) return { apiKey: envKey };
+
+  const oauthProvider = provider === "openai" ? "openai-codex" : provider;
+  const oauth = getStoredAuth(oauthProvider);
+  if (oauth) return { apiKey: oauth.token };
 
   const path = process.env.GARNISH_PROTO_AUTH_FILE ?? join(homedir(), ".config", "garnish", "auth.json");
   let stat: { mode: number; isFile(): boolean };

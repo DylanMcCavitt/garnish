@@ -1,0 +1,117 @@
+project: Garnish
+imagemagick: true
+
+environments:
+  local:
+    type: local-checkout
+    working_directory: /Users/dylanmccavitt/projects/garnish
+    restrictions:
+      - Use isolated temporary directories for GARNISH_ROOT, PI_CODING_AGENT_DIR, HOME, and OMP_AUTH_BROKER_SNAPSHOT_CACHE.
+      - Never write test state to the user's real ~/.garnish, ~/.omp, or project checkout except qa-results/.
+  managed_droid_computer:
+    type: managed-cloud-checkout
+    setup:
+      - Create in Factory App: Settings -> Droid Computers -> Create.
+      - Open a session on the computer and clone this repository.
+      - Install Bun, tuistory, agent-browser, cua-driver if native desktop testing is needed, and ImageMagick.
+    restrictions:
+      - Use the checked-out branch code.
+      - Treat native desktop and browser tools as available capabilities only; this repo currently has no web or native desktop app surface.
+
+default_target: local
+
+auth:
+  method: env-var-reference
+  provider: custom
+  notes:
+    - Garnish stores provider env var references only.
+    - Supported provider refs are ANTHROPIC_API_KEY, OPENAI_API_KEY, or other:<ENV_VAR>.
+
+personas:
+  - name: developer
+    description: Developer using Garnish from a terminal checkout.
+    credentials_source: none
+    test_focus:
+      - first-run setup
+      - doctor/status/quest command behavior
+      - progression and unlock behavior
+      - Pi/OMP extension harness behavior
+    cannot_do:
+      - leak raw provider API keys into generated config
+      - mutate real user Pi/OMP or Garnish state during QA
+
+apps:
+  garnish-cli:
+    path_patterns:
+      - src/bin.ts
+      - src/cli/**
+      - src/adapter/**
+      - src/core/**
+      - src/loader/**
+      - src/progression/**
+      - src/verifier/**
+      - packs/core/**
+      - tests/cli/**
+      - tests/e2e/**
+    skill: qa-garnish-cli
+    test_tool: tuistory
+    install_command: bun install --frozen-lockfile
+    build_command: bun run typecheck
+    run_command: bun run garnish
+  garnish-pi-extension:
+    path_patterns:
+      - src/extension/**
+      - src/adapter/**
+      - src/cli/init.ts
+      - packs/core/**
+      - tests/extension/**
+      - tests/e2e/**
+    skill: qa-garnish-pi-extension
+    test_tool: tuistory
+    install_command: bun install --frozen-lockfile
+    build_command: bun run typecheck
+  garnish-quest-engine:
+    path_patterns:
+      - src/core/**
+      - src/loader/**
+      - src/progression/**
+      - src/verifier/**
+      - packs/core/**
+      - tests/core/**
+      - tests/loader/**
+      - tests/progression/**
+      - tests/verifier/**
+      - tests/packs/**
+    skill: qa-garnish-quest-engine
+    test_tool: tuistory
+    install_command: bun install --frozen-lockfile
+    build_command: bun run typecheck
+
+feature_flags:
+  provider: none
+  notes:
+    - Garnish has progression/capability gates, not a feature flag service.
+    - Gate features include context, extensions, mcp, skills, subagents, tool:bash, tool:file, and tool:shell.
+
+integrations:
+  pi_omp:
+    provider: Pi/OMP
+    certified_version: 16.2.13
+    hermetic_env:
+      - GARNISH_ROOT
+      - GARNISH_OMP_SOURCE
+      - PI_CODING_AGENT_DIR
+      - OMP_AUTH_BROKER_SNAPSHOT_CACHE
+      - HOME
+  github_actions:
+    provider: GitHub Actions
+  factory_droid:
+    provider: Factory Droid
+    required_secret: FACTORY_API_KEY
+
+cleanup:
+  auto_cleanup: true
+  strategy: temporary-directories
+  instructions: Remove per-run temp directories and qa-results artifacts after evidence is collected. Never clean user-owned untracked files.
+
+failure_learning: suggest_in_report

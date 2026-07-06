@@ -1,0 +1,20 @@
+{
+  "status": "ready",
+  "sizeBytes": 5554060,
+  "contentType": "video/mp4",
+  "generatedAt": "2026-07-04T09:28:00.000Z",
+  "durationSeconds": 262,
+  "captionTracks": [
+    {
+      "language": "en",
+      "label": "English",
+      "sizeBytes": 6935,
+      "contentType": "text/vtt"
+    }
+  ],
+  "warnings": [
+    "Brand guide assets could not be downloaded (404); used fallback text-based Factory logo treatment with correct Geist/Geist Mono font stacks.",
+    "TTS generated via macOS say command (Samantha voice, rate 150) as local fallback; Kokoro and edge-tts were not available.",
+    "Whisper transcription timed out during model download; captions generated with proportional word-level timing instead."
+  ]
+}

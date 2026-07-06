@@ -1,12 +1,13 @@
 import type { HarnessEvent, HarnessEventType } from "../harness/types";
+import { theme } from "./theme";
 
-export const TUI_BG = "#121212";
-export const TUI_PANEL = "#161616";
-export const TUI_BORDER = "#2A2A2A";
-export const TUI_DIM = "#7A7A7A";
-export const TUI_TEXT = "#E6E6E6";
-export const TUI_ORANGE = "#FF8A1F";
-export const TUI_RED = "#FF5C5C";
+export const TUI_BG = theme.bg;
+export const TUI_PANEL = theme.panel;
+export const TUI_BORDER = theme.border;
+export const TUI_DIM = theme.dim;
+export const TUI_TEXT = theme.text;
+export const TUI_ORANGE = theme.primary;
+export const TUI_RED = theme.red;
 
 export interface GameMoment {
   id: string;
@@ -35,12 +36,13 @@ export const emptyStatus = (): StatusModel => ({
 });
 
 export const glyphLegend: Partial<Record<HarnessEventType, { glyph: string; color: string; label: string }>> = {
-  "quest.completed": { glyph: "★", color: TUI_ORANGE, label: "Quest" },
-  "unlock.applied": { glyph: "🔓", color: TUI_ORANGE, label: "Unlock" },
-  "tool.blocked": { glyph: "⛔", color: TUI_RED, label: "Blocked" },
-  "file.edited": { glyph: "Δ", color: TUI_ORANGE, label: "File" },
-  "tool.approval.resolved": { glyph: "✔", color: TUI_ORANGE, label: "Approval" },
-  error: { glyph: "!", color: TUI_RED, label: "Error" },
+  "quest.completed": { glyph: "★", color: theme.primary, label: "Quest" },
+  "unlock.applied": { glyph: "⌘", color: theme.primary, label: "Unlock" },
+  "tool.blocked": { glyph: "!", color: theme.red, label: "Blocked" },
+  "file.edited": { glyph: "Δ", color: theme.primary, label: "File" },
+  "tool.approval.resolved": { glyph: "✔", color: theme.accent, label: "Approval" },
+  "auth.login": { glyph: "⚿", color: theme.accent, label: "Auth" },
+  error: { glyph: "!", color: theme.red, label: "Error" },
 };
 
 function visibleStatus(model: Omit<StatusModel, "status">): MissionStatus {
@@ -89,6 +91,8 @@ export function momentFromEvent(event: HarnessEvent): GameMoment | null {
       return { id: event.id, glyph: legend.glyph, color: legend.color, line: `quest complete · +${event.xp} XP · ${event.questId}`, ttl: 18 };
     case "unlock.applied":
       return { id: event.id, glyph: legend.glyph, color: legend.color, line: `verb unlocked · ${event.tools.join(", ")}`, ttl: 16 };
+    case "auth.login":
+      return { id: event.id, glyph: legend.glyph, color: legend.color, line: `signed in · ${event.provider}`, ttl: 10 };
     case "tool.blocked":
       return { id: event.id, glyph: legend.glyph, color: legend.color, line: `block taught · ${event.teaching}`, ttl: 10 };
     case "file.edited":
@@ -97,7 +101,7 @@ export function momentFromEvent(event: HarnessEvent): GameMoment | null {
       return {
         id: event.id,
         glyph: event.approved ? "✔" : "✖",
-        color: event.approved ? TUI_ORANGE : TUI_RED,
+        color: event.approved ? theme.accent : theme.red,
         line: `${event.approved ? "approved" : "denied"} · ${event.mode}`,
         ttl: 8,
       };

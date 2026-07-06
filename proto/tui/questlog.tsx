@@ -3,7 +3,19 @@ import { TextAttributes } from "@opentui/core";
 import type { GateView, Scorecard } from "../harness/types";
 import { TUI_DIM, TUI_ORANGE, TUI_PANEL, TUI_RED, TUI_TEXT, type GameMoment } from "./juice";
 
+export const HINTS: Record<string, string> = {
+  "mise-en-place": "What's my quest?",
+  "look-around": "Look around",
+  "first-edit": "Record the first edit",
+  "fix-bug-prove-it": "Fix the greeter and prove it",
+};
+
+export function questHint(quest: QuestView | null): string {
+  return quest === null ? "What's my quest?" : HINTS[quest.id] ?? "What's my quest?";
+}
+
 export interface QuestView {
+  id: string;
   title: string;
   checks: Array<{ line: string; done: boolean }>;
 }
@@ -41,6 +53,7 @@ export function QuestLog({ quest, gates, scorecard, moments, flash }: { quest: Q
                 {check.done ? "☑" : "☐"} {check.line}
               </text>
             ))}
+            <text fg={TUI_DIM}>NEXT UP {questHint(quest)}</text>
           </>
         ) : (
           <text fg={TUI_DIM}>No active quest</text>

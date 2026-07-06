@@ -2,6 +2,8 @@
 import { TextAttributes } from "@opentui/core";
 import type { HarnessEvent } from "../harness/types";
 import { TUI_DIM, TUI_ORANGE, TUI_RED, TUI_TEXT } from "./juice";
+import { MASCOT_NAME, unlockBanner, xpBurst } from "./sprites";
+import { theme } from "./theme";
 
 export type TranscriptEntryKind =
   | "user"
@@ -64,7 +66,7 @@ export function reduceTranscript(model: TranscriptModel, event: HarnessEvent): T
         kind: "user",
         title: `PLAYER · ${event.source}`,
         body: event.text,
-        tone: "accent",
+        tone: event.source === "player" ? "accent" : "normal",
       });
     case "assistant.delta":
       return { ...model, assistantDraft: model.assistantDraft + event.text };
@@ -85,7 +87,7 @@ export function reduceTranscript(model: TranscriptModel, event: HarnessEvent): T
       next = pushEntry(next, {
         id: event.id,
         kind: "assistant",
-        title: "ASSISTANT",
+        title: `${MASCOT_NAME} ^`,
         body,
       });
       return { ...next, assistantDraft: "", thinkingDraft: "" };
@@ -145,16 +147,16 @@ export function reduceTranscript(model: TranscriptModel, event: HarnessEvent): T
       return pushEntry(model, {
         id: event.id,
         kind: "celebration",
-        title: "★ QUEST COMPLETE",
-        body: `${event.questId} · +${event.xp} XP`,
+        title: `${xpBurst(1)} QUEST COMPLETE`,
+        body: `${xpBurst(2)} ${event.questId} · +${event.xp} XP`,
         tone: "accent",
       });
     case "unlock.applied":
       return pushEntry(model, {
         id: event.id,
         kind: "celebration",
-        title: "🔓 NEW VERB",
-        body: event.tools.join(", "),
+        title: `${xpBurst(0)} NEW VERB`,
+        body: unlockBanner(event.tools).join("\n"),
         tone: "accent",
       });
     case "error":
@@ -167,6 +169,14 @@ export function reduceTranscript(model: TranscriptModel, event: HarnessEvent): T
         body: `${event.provider}${event.model ? `/${event.model}` : ""} in ${event.workspace}`,
         tone: "dim",
       });
+    case "auth.login":
+      return pushEntry(model, {
+        id: event.id,
+        kind: "system",
+        title: "AUTH",
+        body: `signed in · ${event.provider}${event.account ? ` · ${event.account}` : ""}`,
+        tone: "accent",
+      });
     default:
       return model;
   }
@@ -176,9 +186,9 @@ const colors: Record<NonNullable<TranscriptEntry["tone"]>, string> = {
   normal: TUI_TEXT,
   dim: TUI_DIM,
   good: TUI_ORANGE,
-  warn: TUI_ORANGE,
+  warn: theme.amber,
   bad: TUI_RED,
-  accent: TUI_ORANGE,
+  accent: theme.accent,
 };
 
 function prefix(entry: TranscriptEntry): string {
@@ -202,7 +212,7 @@ export function Transcript({ model }: { model: TranscriptModel }) {
     live.push({ id: "thinking-live", kind: "thinking", title: "thinking…", body: preview(model.thinkingDraft, 120), tone: "dim" });
   }
   if (model.assistantDraft) {
-    live.push({ id: "assistant-live", kind: "assistant", title: "ASSISTANT STREAM", body: model.assistantDraft, tone: "normal" });
+    live.push({ id: "assistant-live", kind: "assistant", title: `${MASCOT_NAME} ^ STREAM`, body: model.assistantDraft, tone: "normal" });
   }
   const rows = [...model.entries, ...live].slice(-30);
 

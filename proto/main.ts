@@ -5,15 +5,17 @@
  *   bun proto/main.ts --live        real provider (env key; anthropic default)
  *   bun proto/main.ts --live --provider openai
  */
-import type { ApprovalDecision, ApprovalRequest, ScriptedTurn, StreamFn } from "./harness/types";
+import { getStoredAuth } from "./auth";
+import type { ApprovalDecision, ApprovalRequest, ProviderName, ScriptedTurn, StreamFn } from "./harness/types";
 import { scriptedStream } from "./harness/scripted";
+import { runOnboarding } from "./onboarding";
 import { anthropicStream, openaiStream, resolveAuth } from "./providers";
 import { startTui } from "./tui";
 import { wireHarness } from "./wire";
 
 const args = new Set(Bun.argv.slice(2));
 const live = args.has("--live");
-const provider = args.has("--provider=openai") || (Bun.argv.includes("--provider") && Bun.argv[Bun.argv.indexOf("--provider") + 1] === "openai") ? "openai" : "anthropic";
+let provider: "anthropic" | "openai" = args.has("--provider=openai") || (Bun.argv.includes("--provider") && Bun.argv[Bun.argv.indexOf("--provider") + 1] === "openai") ? "openai" : "anthropic";
 
 // The scripted model ignores what you type and advances the L0→L1 story one
 // beat per message — good enough to feel the game surfaces without a key.
@@ -40,8 +42,13 @@ const script: ScriptedTurn[] = [
   { text: "That's the whole arc — quests, blocks, approvals, unlocks, celebrations. Keep chatting or Ctrl+C out." },
 ];
 
+const onboarding = await runOnboarding();
+if (live && (onboarding.authProvider === "anthropic" || onboarding.authProvider === "openai") && getStoredAuth(onboarding.authProvider) !== null) {
+  provider = onboarding.authProvider;
+}
+
 let streamFn: StreamFn;
-let providerName: "anthropic" | "openai" | "scripted" = "scripted";
+let providerName: ProviderName = "scripted";
 if (live) {
   const auth = resolveAuth(provider);
   if (auth === null) {
@@ -59,7 +66,7 @@ let tuiPrompter: ((req: ApprovalRequest) => Promise<ApprovalDecision>) | null = 
 const prompter = (req: ApprovalRequest): Promise<ApprovalDecision> =>
   tuiPrompter ? tuiPrompter(req) : Promise.resolve({ approved: false, mode: "deny", reason: "UI not ready" });
 
-const wired = await wireHarness({ streamFn, provider: providerName, prompter });
+const wired = await wireHarness({ streamFn, provider: providerName, prompter, auth: { provider: onboarding.authProvider, method: onboarding.method, account: onboarding.account } });
 
 const tui = startTui({
   bus: wired.sink.bus,

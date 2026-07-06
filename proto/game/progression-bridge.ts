@@ -20,7 +20,7 @@ const PROTO_GRAPH: ProgressionGraph = {
     {
       id: "tutorial-island" as never,
       order: 0,
-      quests: ["look-around"] as never,
+      quests: ["mise-en-place", "look-around"] as never,
       unlocks: ["l0-hands"] as never,
     },
     {
@@ -37,6 +37,7 @@ const PROTO_GRAPH: ProgressionGraph = {
     },
   ],
   quests: [
+    { id: "mise-en-place" as never, level: "tutorial-island" as never, required: true, xp: 5 },
     { id: "look-around" as never, level: "tutorial-island" as never, required: true, xp: 5 },
     { id: "first-edit" as never, level: "first-steps" as never, required: true, xp: 10 },
     { id: "fix-bug-prove-it" as never, level: "first-quest" as never, required: true, xp: 20 },
