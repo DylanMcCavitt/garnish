@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import type { HarnessEvent, HarnessEventPayload, MachineKind } from "../../../harness/types";
 import { FACTORY_RESEARCH_TRACK, FACTORY_VARIANT_PLAN, type FactoryState, type PowerState, type TaskItem, type WorkMode } from "../../../factory/types";
-import { deriveStage, emptyFactoryHud, factoryFloor, hudFromFactoryState, nextActionHint, powerMeter, queueStripLine, reduceFactoryHud, touchSeriesLine } from "./model";
+import { agentsPaneView, circuitPaneView, deriveStage, emptyFactoryHud, factoryFloor, hiddenFactoryNewsTabs, hudFromFactoryState, initialFactoryDeckState, inventoryPaneView, nextActionHint, powerMeter, queueStripLine, reduceFactoryHud, settingsPaneView, skillsPaneView, stepDeck, touchSeriesLine } from "./model";
 
 let seq = 0;
 function event(payload: HarnessEventPayload): HarnessEvent {
@@ -208,5 +208,97 @@ describe("factory TUI model", () => {
     expect(hourZero.nodes.find((node) => node.id === "ore")?.detail).toBe("7 raw");
     expect(hourZero.nodes.find((node) => node.id === "miner")?.detail).toBe("locked · research red-1");
     expect(hourZero.nodes.find((node) => node.id === "ship")?.detail).toBe("0 shipped · red ×0");
+  });
+
+  test("stepDeck handles tabs and collapses only when the input is empty", () => {
+    let deck = initialFactoryDeckState;
+
+    deck = stepDeck(deck, "2", true);
+    expect(deck).toMatchObject({ active: "inventory", collapsed: false });
+
+    deck = stepDeck(deck, "2", true);
+    expect(deck.collapsed).toBe(true);
+
+    deck = stepDeck(deck, "2", true);
+    expect(deck.collapsed).toBe(false);
+
+    deck = stepDeck(deck, "]", true);
+    expect(deck.active).toBe("skills");
+
+    deck = stepDeck(deck, "[", true);
+    expect(deck.active).toBe("inventory");
+
+    deck = stepDeck(deck, "\\", true);
+    expect(deck.collapsed).toBe(true);
+
+    deck = stepDeck(deck, "\\", true);
+    expect(deck.collapsed).toBe(false);
+
+    deck = stepDeck(deck, "-", true);
+    expect(deck.queueCollapsed).toBe(true);
+
+    deck = stepDeck(deck, "0", true);
+    expect(deck.transcriptCollapsed).toBe(true);
+
+    expect(stepDeck(deck, "6", false)).toBe(deck);
+  });
+
+  test("pane view models expose inventory skills agents circuit and settings data", () => {
+    const state = factoryState({
+      items: [
+        { ...taskItem("item-1", "shipped", "hand"), touches: 4 },
+        taskItem("item-2", "in-progress", "agent"),
+        taskItem("item-3", "queued"),
+      ],
+      currentItemId: "item-2",
+      machines: [
+        { id: "bare-agent", kind: "bare-agent", label: "burner agent", artifact: ".garnish/machines/bare-agent.md" },
+        { id: "routing-belt", kind: "routing-belt", label: "routing belt" },
+        { id: "skill:greeter-fix", kind: "skill", label: "Skill: greeter-fix", artifact: ".garnish/skills/greeter-fix.md" },
+        { id: "policy:circuit", kind: "policy-circuit", label: "Policy Circuit", artifact: ".garnish/policies/circuit.txt" },
+      ],
+      shippedCount: 1,
+      touchSeries: [{ itemId: "item-1", touches: 4 }],
+    });
+    const artifacts: Record<string, string> = {
+      ".garnish/skills/greeter-fix.md": Array.from({ length: 12 }, (_, index) => `skill line ${index + 1}`).join("\n"),
+      ".garnish/policies/circuit.txt": "# policy\nallow read *\nallow write src/**\n",
+    };
+    const readArtifact = (path: string) => artifacts[path] ?? null;
+
+    const inventory = inventoryPaneView(state);
+    expect(inventory.sciencePacks.red).toBe(1);
+    expect(inventory.oreRemaining).toBe(6);
+    expect(inventory.shipped).toEqual([{ itemId: "item-1", title: "item-1 ore", status: "shipped", mode: "hand", touches: 4 }]);
+    expect(inventory.inProgress[0]?.itemId).toBe("item-2");
+    expect(inventory.queued[0]?.itemId).toBe("item-3");
+
+    const skills = skillsPaneView(state, readArtifact);
+    expect(skills).toHaveLength(1);
+    expect(skills[0]?.label).toBe("greeter-fix");
+    expect(skills[0]?.artifact.lines).toHaveLength(10);
+
+    const agents = agentsPaneView(state, "RUNNING TOOL", "openai", "gpt-test");
+    expect(agents.providerModel).toBe("openai/gpt-test");
+    expect(agents.currentItemId).toBe("item-2");
+    expect(agents.machines.map((machine) => machine.kind)).toEqual(["bare-agent", "routing-belt"]);
+
+    const circuit = circuitPaneView(state, readArtifact);
+    expect(circuit.patternCount).toBe(2);
+    expect(circuit.machines[0]?.label).toBe("Policy Circuit");
+
+    expect(settingsPaneView([["world", "alpha"], ["", "drop"], ["model", "gpt-test"]])).toEqual([["world", "alpha"], ["model", "gpt-test"]]);
+  });
+
+  test("hidden factory news dots follow collapsed unseen events", () => {
+    const events = [
+      event({ type: "item.enqueued", itemId: "item-1", familyId: "greeter-bug", variantId: "flat-greeting", title: "item-1" }),
+      event({ type: "machine.built", machineId: "skill:greeter-fix", kind: "skill", label: "Skill: greeter-fix" }),
+      event({ type: "machine.built", machineId: "policy:circuit", kind: "policy-circuit", label: "Policy Circuit" }),
+    ];
+
+    expect(hiddenFactoryNewsTabs("skills", events, 1, true)).toEqual({ floor: true, circuit: true });
+    expect(hiddenFactoryNewsTabs("skills", events, 1, false)).toEqual({});
+    expect(hiddenFactoryNewsTabs("skills", events, events.length, true)).toEqual({});
   });
 });

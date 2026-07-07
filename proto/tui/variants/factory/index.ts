@@ -1,15 +1,25 @@
-import { createElement } from "react";
+import { createElement, useEffect, useMemo, useState } from "react";
 import { createCliRenderer, type CliRenderer } from "@opentui/core";
 import { createRoot, type Root } from "@opentui/react";
 import type { ApprovalDecision, ApprovalPrompter, ApprovalRequest } from "../../../harness/types";
 import type { FactoryState } from "../../../factory/types";
+import type { WorldSlot } from "../../../factory/menu";
 import type { StartTuiOpts } from "../../index";
 import { FactoryApp, type ApprovalController } from "./app";
+import { MenuScreen, type MenuWorlds } from "./menu-screen";
 import type { ApprovalModalState } from "../../modal";
 
 export type FactoryTuiOpts = StartTuiOpts & {
   onCommand(line: string): boolean;
   factoryState(): FactoryState;
+  readArtifact(path: string): string | null;
+  settingsView(): Array<[string, string]>;
+  worlds: {
+    list(): WorldSlot[];
+    create(name: string): { root: string; name: string };
+    select(world: { root: string; name: string }): void;
+  };
+  initialScreen: "menu" | "factory";
 };
 
 interface PendingApproval {
@@ -17,11 +27,44 @@ interface PendingApproval {
   resolve(decision: ApprovalDecision): void;
 }
 
-export function startTui(opts: FactoryTuiOpts): { prompter: ApprovalPrompter; stop(): void } {
+export interface FactoryTuiHandle {
+  prompter: ApprovalPrompter;
+  stop(): void;
+  showFactory(): void;
+}
+
+function RootApp(props: { opts: FactoryTuiOpts; approval: ApprovalController; screen: "menu" | "factory"; registerShowFactory(fn: () => void): void }) {
+  const [screen, setScreen] = useState<"menu" | "factory">(props.screen);
+
+  useEffect(() => {
+    props.registerShowFactory(() => setScreen("factory"));
+    return () => props.registerShowFactory(() => {
+      // Replaced by the next mounted RootApp; startTui keeps the requested screen separately.
+    });
+  }, [props]);
+
+  const worlds = useMemo<MenuWorlds>(() => ({
+    list: props.opts.worlds.list,
+    create: props.opts.worlds.create,
+    select(world) {
+      props.opts.worlds.select(world);
+      setScreen("factory");
+    },
+  }), [props.opts.worlds]);
+
+  if (screen === "menu") return createElement(MenuScreen, { worlds, onQuit: props.opts.onExit });
+  return createElement(FactoryApp, { ...props.opts, approval: props.approval });
+}
+
+export function startTui(opts: FactoryTuiOpts): FactoryTuiHandle {
   let renderer: CliRenderer | null = null;
   let root: Root | null = null;
   let stopped = false;
   let pending: PendingApproval | null = null;
+  let requestedScreen: "menu" | "factory" = opts.initialScreen;
+  let showFactoryScreen = () => {
+    requestedScreen = "factory";
+  };
   const subscribers = new Set<(state: ApprovalModalState | null) => void>();
 
   const publishApprovalState = () => {
@@ -72,7 +115,13 @@ export function startTui(opts: FactoryTuiOpts): { prompter: ApprovalPrompter; st
       return;
     }
     root = createRoot(renderer);
-    root.render(createElement(FactoryApp, { ...opts, approval }));
+    const registerShowFactory = (fn: () => void) => {
+      showFactoryScreen = () => {
+        requestedScreen = "factory";
+        fn();
+      };
+    };
+    root.render(createElement(RootApp, { opts, approval, screen: requestedScreen, registerShowFactory }));
   };
 
   void boot().catch((error) => {
@@ -90,6 +139,9 @@ export function startTui(opts: FactoryTuiOpts): { prompter: ApprovalPrompter; st
         }
         publishApprovalState();
       });
+    },
+    showFactory() {
+      showFactoryScreen();
     },
     stop() {
       stopped = true;

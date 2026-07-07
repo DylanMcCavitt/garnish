@@ -6,8 +6,9 @@ import { afterEach, describe, expect, test } from "bun:test";
 
 import { scriptedStream } from "../harness/scripted";
 import type { ApprovalDecision } from "../harness/types";
+import { initialMenuState, stepMenu } from "../tui/variants/factory/menu-screen";
 import { GREETER_BUG_FAMILY } from "./ore";
-import { listWorldSlots, parseWorldMenuChoice, renderWorldMenu, slugWorldName } from "./menu";
+import { listWorldSlots, parseWorldMenuChoice, renderWorldSlot, slugWorldName } from "./menu";
 import { wireFactory } from "./wire";
 
 const tempRoots: string[] = [];
@@ -63,10 +64,9 @@ describe("factory world menu", () => {
       { slug: "beta-lab", name: "beta-lab", fresh: false },
       { slug: "zz-corrupt", name: "zz-corrupt", fresh: true },
     ]);
-    expect(renderWorldMenu(slots, now)).toContain("1) demo-kitchen — 7 shipped · red ×7 · 4 machines · 2m ago");
-    expect(renderWorldMenu(slots, now)).toContain("2) beta-lab — 2 shipped · red ×2 · 1 machines · 2h ago");
-    expect(renderWorldMenu(slots, now)).toContain("3) zz-corrupt — fresh world —");
-    expect(renderWorldMenu(slots, now)).toContain("n) new world\nq) quit");
+    expect(renderWorldSlot(slots[0]!, 0, now)).toBe("1) demo-kitchen — 7 shipped · red ×7 · 4 machines · 2m ago");
+    expect(renderWorldSlot(slots[1]!, 1, now)).toBe("2) beta-lab — 2 shipped · red ×2 · 1 machines · 2h ago");
+    expect(renderWorldSlot(slots[2]!, 2, now)).toBe("3) zz-corrupt — fresh world —");
   });
 
   test("parses digit, new-world, and quit choices", () => {
@@ -76,6 +76,38 @@ describe("factory world menu", () => {
     expect(parseWorldMenuChoice("n", 2)).toEqual({ type: "new" });
     expect(parseWorldMenuChoice("Q", 2)).toEqual({ type: "quit" });
     expect(parseWorldMenuChoice("", 2)).toBeNull();
+  });
+
+  test("stepMenu moves selection, jumps by digit, and selects on enter", () => {
+    let step = stepMenu(initialMenuState(3), { type: "down" });
+    expect(step).toEqual({ state: { mode: "select", selected: 1, slotCount: 3, nameInput: "" }, action: null });
+
+    step = stepMenu(step.state, { type: "up" });
+    expect(step.state.selected).toBe(0);
+
+    step = stepMenu(step.state, { type: "digit", value: 3 });
+    expect(step.state.selected).toBe(2);
+    expect(step.action).toBeNull();
+
+    step = stepMenu(step.state, { type: "enter" });
+    expect(step.action).toEqual({ type: "select", index: 2 });
+  });
+
+  test("stepMenu creates inline-named worlds and escape cancels naming", () => {
+    let step = stepMenu(initialMenuState(2), { type: "new" });
+    expect(step.state.mode).toBe("name");
+
+    step = stepMenu(step.state, { type: "char", value: "R" });
+    step = stepMenu(step.state, { type: "char", value: "e" });
+    step = stepMenu(step.state, { type: "char", value: "d" });
+    step = stepMenu(step.state, { type: "backspace" });
+    step = stepMenu(step.state, { type: "enter" });
+    expect(step.action).toEqual({ type: "create", name: "Re" });
+    expect(step.state).toEqual({ mode: "select", selected: 0, slotCount: 2, nameInput: "" });
+
+    step = stepMenu(step.state, { type: "new" });
+    step = stepMenu(step.state, { type: "escape" });
+    expect(step).toEqual({ state: { mode: "select", selected: 0, slotCount: 2, nameInput: "" }, action: null });
   });
 
   test("wire writes world.json summary after hand-shipping one item", async () => {

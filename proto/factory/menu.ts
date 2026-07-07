@@ -1,8 +1,5 @@
 import { mkdirSync, readdirSync, readFileSync } from "node:fs";
-import { createInterface } from "node:readline/promises";
 import { join } from "node:path";
-
-import { PIXEL_SPRITES } from "../tui/pixel-sprites";
 
 export interface WorldSummary {
   name: string;
@@ -81,58 +78,7 @@ export function renderWorldSlot(slot: WorldSlot, index: number, now = Date.now()
   return `${index + 1}) ${summary.name} — ${summary.shipped} shipped · red ×${summary.science.red} · ${summary.machines.length} machines · ${formatRelativeTime(summary.updatedAt, now)}`;
 }
 
-export function renderWorldMenu(slots: readonly WorldSlot[], now = Date.now()): string {
-  return [
-    "GARNISH · FACTORY",
-    ...PIXEL_SPRITES.sprigIdle.ansi,
-    "",
-    "World slots",
-    ...(slots.length === 0 ? ["— fresh world —"] : slots.map((slot, index) => renderWorldSlot(slot, index, now))),
-    "n) new world",
-    "q) quit",
-  ].join("\n");
-}
-
-export async function runWorldMenu(opts: { saveRoot: string }): Promise<{ root: string; name: string } | null> {
-  const rl = createInterface({ input: process.stdin, output: process.stdout, terminal: process.stdin.isTTY === true });
-  const lines = rl[Symbol.asyncIterator]();
-
-  async function readLine(prompt: string): Promise<string | null> {
-    process.stdout.write(prompt);
-    const next = await lines.next();
-    if (next.done === true) return null;
-    return next.value;
-  }
-
-  try {
-    for (;;) {
-      const slots = listWorldSlots(opts.saveRoot);
-      console.log(renderWorldMenu(slots));
-      const answer = await readLine("Pick a world › ");
-      if (answer === null) return null;
-      const choice = parseWorldMenuChoice(answer, slots.length);
-      if (choice === null) {
-        console.log("That world is not on the belt. Pick a listed number, n, or q.");
-        continue;
-      }
-      if (choice.type === "quit") return null;
-      if (choice.type === "select") {
-        const slot = slots[choice.index];
-        if (slot === undefined) continue;
-        return { root: slot.root, name: slot.name };
-      }
-
-      const defaultName = `world-${slots.length + 1}`;
-      const nameAnswer = await readLine(`Name this world (${defaultName}) › `);
-      if (nameAnswer === null) return null;
-      return worldRoot(opts.saveRoot, nameAnswer.trim().length === 0 ? defaultName : nameAnswer);
-    }
-  } finally {
-    rl.close();
-  }
-}
-
-function readWorldSummary(path: string): WorldSummary | null {
+export function readWorldSummary(path: string): WorldSummary | null {
   try {
     const parsed = JSON.parse(readFileSync(path, "utf8")) as Partial<WorldSummary>;
     if (typeof parsed.name !== "string") return null;

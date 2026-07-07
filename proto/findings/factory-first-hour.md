@@ -167,3 +167,67 @@ grilling pass before v3 is stamped.
 Wave evidence: `tsc` clean · 94 tests / 0 fail · 13/13 + 16/16 beats ·
 re-recorded mp4s frame-verified (menu slots + Sprig banner, SPRIG boot tip,
 /mine hint, six machine sprites on the floor, brownout banner + meter).
+
+## Proto #5.1 addendum (sprites redone, TUI launcher, collapsible pane deck)
+
+Founder verdict on #5: sprites still god-awful and too big; menu should BE the
+TUI (game-launcher, centered); every pane collapsible; panes for inventory /
+skills / agents / circuit / settings. All landed; this wave also burned three
+deep OpenTUI lessons worth graduating.
+
+What shipped:
+
+- **Sprites, regenerated under an adversarial judge loop.** Same codex-imagegen
+  pipeline, but: FLAT ≤4 colors, no dither, bold silhouette brief; baked sizes
+  shrunk 16→10/8/6 so nodes stop dominating the pane; per-sprite
+  generate→bake→roundtrip-render→judge (accept ≥7/10) with an independent
+  strict-scorer + refuter panel on the composite. First pass left orePatch 4/10
+  ("blobby"), circuitPole 5/10 ("generic pole"), minerDrill without a drill —
+  one targeted regen round (discrete rock lumps + glints; combinator BOX with
+  lamps; explicit downward drill bit) brought all three to PASS ("none would
+  embarrass a demo"). Judge-panel lesson: score CONCEPT-readability separately
+  from cleanliness — labels carry semantics at 10px, silhouettes carry identity.
+- **Launcher menu inside the TUI.** Single renderer: RootApp opens on a
+  centered MenuScreen (Sprig, title, subtitle, world slots, n/name-input/q,
+  pure `stepMenu` state machine) and swaps to the factory screen on world
+  select; `--world` bypass kept for tapes/CI. main.ts late-binds all
+  factory-dependent opts behind proxies until the world is wired.
+- **Collapsible pane deck** (Expedition pattern, factory content): tabs
+  FLOOR/INV/SKILL/AGENT/CIRC/SET on digits (input-empty gating), `\` deck
+  collapse to a 5-col initial rail with news dots, `-` queue strip toggle,
+  `0` transcript→"Feed +N" rail (the mission-control inversion — deck becomes
+  the main view). Active pane also named in the box title
+  (`PANE DECK · INV [2/6]`). Every state frame-verified in the recording, and
+  the whole key surface proven in a scripted PTY probe.
+
+OpenTUI lessons (all found by PTY key-tracing after mp4 frames caught the
+symptoms; tests were green throughout):
+
+1. **Keys are dual-channel.** `useKeyboard` AND the focused `<input>` both
+   receive every key. Bare hotkeys with an always-focused input REQUIRE
+   swallowing the char at the input side; Expedition has the same latent bug.
+2. **The input widget is only prop-synced on value CHANGE.** Silently ignoring
+   a char in `onInput` leaves it in the widget's internal buffer (state ""
+   while the widget holds "23…"). Fix: accept the char, then clear on a
+   separate flush (16ms) so the prop transition forces a widget reset.
+3. **A single styled `<text>` line can silently render blank** where sibling
+   texts paint (tab bar as one bold accent node: invisible; as a row of
+   per-tab nodes: fine). Cause unestablished — budget says stop at the working
+   structure + a title-channel fallback. Also: `PaneBoundary`
+   (componentDidCatch) now wraps deck pages — a crashing pane degrades to a
+   red line instead of killing the React root; boundary log stayed empty all
+   wave.
+
+Verification-method note: mp4 frame inspection finds THAT something is wrong;
+a scripted PTY probe with a key/state trace finds WHY. The pair is the proto's
+full verification loop now — keep both for v3 work.
+
+Cosmetics accepted: deck stays 40% wide when the transcript is railed (could
+expand); belt-dot animation still uncatchable in stills; VHS tape gotcha —
+`Type "\"` is a broken string (backslash escapes the quote), use `Type '\'`.
+
+Wave evidence: `tsc` clean · 99 tests / 0 fail · 13/13 + 16/16 beats · PTY
+probe all-pass on tabs/collapse/rails/typing · final mp4 frame-verified
+(centered launcher, compact sprites on the floor chain, labeled deck title
+`PANE DECK · FLOOR [1/6]`, full tab bar, Deck rail `F I S A C ⚙`, Feed rail
+`+75`, brownout banner intact).

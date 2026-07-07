@@ -348,3 +348,209 @@ export function miniMapModel(hud: FactoryHudState): FactoryMiniMapModel {
     sciencePacks: { ...hud.sciencePacks },
   };
 }
+
+export type FactoryDeckTabId = "floor" | "inventory" | "skills" | "agents" | "circuit" | "settings";
+
+export interface FactoryDeckTab {
+  id: FactoryDeckTabId;
+  number: string;
+  label: string;
+  initial: string;
+}
+
+export const factoryDeckTabs: FactoryDeckTab[] = [
+  { id: "floor", number: "1", label: "FLOOR", initial: "F" },
+  { id: "inventory", number: "2", label: "INV", initial: "I" },
+  { id: "skills", number: "3", label: "SKILL", initial: "S" },
+  { id: "agents", number: "4", label: "AGENT", initial: "A" },
+  { id: "circuit", number: "5", label: "CIRC", initial: "C" },
+  { id: "settings", number: "6", label: "SET", initial: "⚙" },
+];
+
+export interface FactoryDeckState {
+  active: FactoryDeckTabId;
+  collapsed: boolean;
+  queueCollapsed: boolean;
+  transcriptCollapsed: boolean;
+}
+
+export const initialFactoryDeckState: FactoryDeckState = {
+  active: "floor",
+  collapsed: false,
+  queueCollapsed: false,
+  transcriptCollapsed: false,
+};
+
+function nextFactoryTab(current: FactoryDeckTabId, delta: number): FactoryDeckTabId {
+  const index = factoryDeckTabs.findIndex((tab) => tab.id === current);
+  return factoryDeckTabs[(index + delta + factoryDeckTabs.length) % factoryDeckTabs.length]!.id;
+}
+
+export function stepDeck(state: FactoryDeckState, key: string, inputEmpty: boolean): FactoryDeckState {
+  if (!inputEmpty) return state;
+  if (key === "-") return { ...state, queueCollapsed: !state.queueCollapsed };
+  if (key === "0") return { ...state, transcriptCollapsed: !state.transcriptCollapsed };
+  if (key === "\\") return { ...state, collapsed: !state.collapsed };
+  if (key === "]") return { ...state, active: nextFactoryTab(state.active, 1), collapsed: false };
+  if (key === "[") return { ...state, active: nextFactoryTab(state.active, -1), collapsed: false };
+
+  const numbered = factoryDeckTabs.find((tab) => tab.number === key);
+  if (!numbered) return state;
+  if (numbered.id === state.active) return { ...state, collapsed: !state.collapsed };
+  return { ...state, active: numbered.id, collapsed: false };
+}
+
+export function hiddenFactoryNewsTabs(active: FactoryDeckTabId, events: HarnessEvent[], previousEventCount: number, wasCollapsed: boolean): Partial<Record<FactoryDeckTabId, true>> {
+  if (!wasCollapsed || events.length <= previousEventCount) return {};
+  const newest = events.slice(previousEventCount);
+  const news: Partial<Record<FactoryDeckTabId, true>> = {};
+  for (const event of newest) {
+    switch (event.type) {
+      case "item.enqueued":
+      case "item.started":
+      case "item.shipped":
+      case "touch.recorded":
+        news.inventory = true;
+        news.floor = true;
+        break;
+      case "machine.built":
+        news.floor = true;
+        if (event.kind === "skill") news.skills = true;
+        else if (event.kind === "policy-circuit") news.circuit = true;
+        else news.agents = true;
+        break;
+      case "research.completed":
+        news.skills = true;
+        news.agents = true;
+        news.circuit = true;
+        break;
+      case "shift.started":
+      case "shift.ended":
+      case "power.brownout":
+      case "assistant.end":
+        news.floor = true;
+        news.agents = true;
+        break;
+      default:
+        break;
+    }
+  }
+  delete news[active];
+  return news;
+}
+
+export interface InventoryPaneItem {
+  itemId: string;
+  title: string;
+  status: ItemStatus;
+  mode: WorkMode | null;
+  touches: number;
+}
+
+export interface InventoryPaneView {
+  sciencePacks: Record<string, number>;
+  oreRemaining: number;
+  queuedOre: number;
+  shipped: InventoryPaneItem[];
+  inProgress: InventoryPaneItem[];
+  queued: InventoryPaneItem[];
+}
+
+function paneItem(item: FactoryState["items"][number]): InventoryPaneItem {
+  return {
+    itemId: item.id,
+    title: item.title,
+    status: item.status,
+    mode: item.mode,
+    touches: item.touches,
+  };
+}
+
+export function inventoryPaneView(state: FactoryState): InventoryPaneView {
+  const shipped = state.items.filter((item) => item.status === "shipped").map(paneItem);
+  const queued = state.items.filter((item) => item.status === "queued").map(paneItem);
+  const inProgress = state.items.filter((item) => item.status === "in-progress").map(paneItem);
+  const scienceRed = Math.max(state.shippedCount, state.touchSeries.length, shipped.length);
+  return {
+    sciencePacks: { red: scienceRed },
+    oreRemaining: Math.max(0, FACTORY_VARIANT_PLAN.length - scienceRed),
+    queuedOre: queued.length,
+    shipped,
+    inProgress,
+    queued,
+  };
+}
+
+export interface ArtifactPreview {
+  path: string | null;
+  lines: string[];
+  missing: boolean;
+}
+
+function artifactPreview(path: string | undefined, readArtifact: (path: string) => string | null, maxLines = 10): ArtifactPreview {
+  if (!path) return { path: null, lines: [], missing: true };
+  const content = readArtifact(path);
+  if (content === null) return { path, lines: [], missing: true };
+  return { path, lines: content.split(/\r?\n/).slice(0, maxLines), missing: false };
+}
+
+export interface SkillPaneMachine {
+  id: string;
+  label: string;
+  artifact: ArtifactPreview;
+}
+
+export function skillsPaneView(state: FactoryState, readArtifact: (path: string) => string | null): SkillPaneMachine[] {
+  return state.machines
+    .filter((machine) => machine.kind === "skill")
+    .map((machine) => ({
+      id: machine.id,
+      label: machine.label.replace(/^skill:\s*/i, ""),
+      artifact: artifactPreview(machine.artifact, readArtifact),
+    }));
+}
+
+export interface AgentsPaneView {
+  missionStatus: MissionStatus;
+  providerModel: string;
+  currentItemId: string | null;
+  machines: Array<{ id: string; kind: MachineKind; label: string; artifact: string | null }>;
+}
+
+export function agentsPaneView(state: FactoryState, missionStatus: MissionStatus, provider: string | undefined, model: string | undefined): AgentsPaneView {
+  const providerModel = model ? `${provider ?? "provider"}/${model}` : provider ?? "provider pending";
+  return {
+    missionStatus,
+    providerModel,
+    currentItemId: state.currentItemId,
+    machines: state.machines
+      .filter((machine) => machine.kind === "bare-agent" || machine.kind === "routing-belt")
+      .map((machine) => ({ id: machine.id, kind: machine.kind, label: machine.label, artifact: machine.artifact ?? null })),
+  };
+}
+
+export interface CircuitPaneView {
+  artifact: ArtifactPreview;
+  patternCount: number;
+  machines: Array<{ id: string; label: string; artifact: string | null }>;
+}
+
+export function circuitPaneView(state: FactoryState, readArtifact: (path: string) => string | null): CircuitPaneView {
+  const policyPath = ".garnish/policies/circuit.txt";
+  const artifact = artifactPreview(policyPath, readArtifact, 12);
+  const rules = artifact.lines.filter((line) => {
+    const trimmed = line.trim();
+    return trimmed.length > 0 && !trimmed.startsWith("#");
+  });
+  return {
+    artifact,
+    patternCount: rules.length,
+    machines: state.machines
+      .filter((machine) => machine.kind === "policy-circuit")
+      .map((machine) => ({ id: machine.id, label: machine.label, artifact: machine.artifact ?? null })),
+  };
+}
+
+export function settingsPaneView(rows: Array<[string, string]>): Array<[string, string]> {
+  return rows.filter(([label]) => label.trim().length > 0);
+}

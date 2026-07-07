@@ -17,8 +17,7 @@ Enter
 # video-game startup: world-select menu (fresh save -> create a world)
 Sleep 4s
 Type "n"
-Enter
-Sleep 2s
+Sleep 1s
 Type "demo-kitchen"
 Enter
 Sleep 6s
@@ -105,4 +104,26 @@ Sleep 10s
 Type "/end"
 Enter
 Sleep 6s
+
+# pane deck tour: inventory / skills / agents / circuit / settings, then collapse rails
+Type "2"
+Sleep 2s
+Type "3"
+Sleep 2s
+Type "4"
+Sleep 2s
+Type "5"
+Sleep 2s
+Type "6"
+Sleep 2s
+Type "1"
+Sleep 2s
+Type '\'
+Sleep 4s
+Type '\'
+Sleep 2s
+Type "0"
+Sleep 4s
+Type "0"
+Sleep 3s
 Ctrl+C
