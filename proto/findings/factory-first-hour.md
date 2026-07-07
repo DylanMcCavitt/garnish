@@ -231,3 +231,68 @@ probe all-pass on tabs/collapse/rails/typing · final mp4 frame-verified
 (centered launcher, compact sprites on the floor chain, labeled deck title
 `PANE DECK · FLOOR [1/6]`, full tab bar, Deck rail `F I S A C ⚙`, Feed rail
 `+75`, brownout banner intact).
+
+## Proto #5.2 addendum (hand-authored glyphs, visual overhaul, 3 onboarding flows)
+
+Founder verdict on #5.1: sprites still crap (smaller, simpler), TUI boring/bland,
+chat ugly — and a process complaint that landed: the integrator was shipping
+visuals on subagent self-scores without personally reviewing rendered output.
+**Process change (permanent): every visual change renders to a review sheet or
+frame and the integrator judges it personally before it lands; agent/judge
+scores are input, never acceptance.** This wave ran 4 personal glyph review
+rounds and 2 feed rounds before anything shipped.
+
+What shipped:
+
+- **Machine sprites → hand-authored char-art glyphs** (`machine-glyphs.ts`):
+  the imagegen→downscale pipeline is DEAD for icons (128px art nearest-neighbored
+  to 10px is a mush generator by construction). Glyphs are now authored as
+  character grids (≤8px wide, 2-3 cell rows, 2-3 theme colors) baked by
+  `glyphFromArt` into the same PixelSprite shape. Review loop results:
+  belt/ship/circuit passed round 1; bolt+miner redrawn (round 2); assembler
+  redrawn as in→out ports + gear core (round 3, marginal pass — ports carry the
+  story at this size); ore split into discrete lumps + glint (round 4).
+  Lesson: at ≤10px, silhouettes carry identity and labels carry semantics —
+  judge those separately, and single-color icons (bolt) are legitimate.
+- **Theme + feed overhaul**: `factory-theme.ts` (near-black bg, copper/amber/
+  cyan/green/purple accents) + `feed.tsx` replacing the base transcript render:
+  role badges (YOU cyan / SPRIG copper / BELT purple / TOOL boxed / SYS dim),
+  one-line tool cards (`⚙ edit src/ore/… +22/-14`), approval lines (`⚿ approved
+  · pattern …` amber), colored gutters, turn spacing. Round-2 fix from my
+  review: SYSTEM: lines were masquerading as SPRIG — now routed to dim SYS
+  badges with the prefix stripped; redundant title echoes dropped.
+- **Three onboarding/first-level prototypes** (`--flow`, each with its own tape
+  + mp4), one pedagogy each, all frame-verified PASS:
+  - `foreman` — explicit instruction: 3 SPRIG dialogue cards, amber
+    `OBJECTIVE · hand-fix item-1 · expect 4 touches` banner, FOREMAN-voiced
+    hints. Teaches by orders; zero ambiguity; risk: feels like a tutorial.
+  - `cold` — environmental discovery: one dark card ("Automate yourself out of
+    the loop." · [Enter] clock in), one terse boot line, the HINT row and
+    locked-machine teases do ALL teaching. Factorio-honest; risk: some players
+    need more.
+  - `ghost` — show the destination: 12s fake HOUR-10 mission control (all-✓
+    queue, TOUCHES/ITEM 0 0 0, "belt pulled item-41 · no player input",
+    "zero-touch ships are ordinary now") then "REWINDING TO HOUR 0 …" into the
+    bare harness. Sells the why before the how; risk: front-loads spectacle.
+  Kill-or-crown question for the founder: which comprehension model fits the
+  game — orders, discovery, or destination? (Mix-and-match is cheap: flows are
+  ~150-line self-contained modules against one FactoryFlow interface.)
+
+New engine-room lessons:
+
+- **Screen-transition signals must not stomp UI-owned states**: wireWorld's
+  "world ready" callback fired ms after world select and killed the intro card;
+  fix = the signal may only advance menu→factory, never intro→factory (the
+  intro's done() owns that). Generalize for v3: async-ready signals and
+  UI navigation are separate state machines.
+- **PTY diff-fragmentation is a false-negative machine**: greping OpenTUI's
+  cell-diff stream for contiguous strings reports MISSING for text that is on
+  screen. The reliable probe is SIGWINCH → full repaint → grep. (Burned twice;
+  now standard in the probe kit.)
+- VHS: `Type "\"` is a broken string; use `Type '\'` (re-learned, now in the
+  tape header comments).
+
+Wave evidence: `tsc` clean · 99 tests / 0 fail · 13/13 + 16/16 beats · glyph
+sheet + feed frames personally reviewed (4+2 rounds) · three flow mp4s
+(demo/garnish-flow-{foreman,cold,ghost}.mp4) + full-arc factory tapes
+re-recorded and spot-verified.

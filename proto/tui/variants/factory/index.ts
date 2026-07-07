@@ -8,12 +8,15 @@ import type { StartTuiOpts } from "../../index";
 import { FactoryApp, type ApprovalController } from "./app";
 import { MenuScreen, type MenuWorlds } from "./menu-screen";
 import type { ApprovalModalState } from "../../modal";
+import { theme } from "./factory-theme";
+import type { FactoryFlow } from "./flows/types";
 
 export type FactoryTuiOpts = StartTuiOpts & {
   onCommand(line: string): boolean;
   factoryState(): FactoryState;
   readArtifact(path: string): string | null;
   settingsView(): Array<[string, string]>;
+  flow: FactoryFlow;
   worlds: {
     list(): WorldSlot[];
     create(name: string): { root: string; name: string };
@@ -33,11 +36,19 @@ export interface FactoryTuiHandle {
   showFactory(): void;
 }
 
+function worldLabel(path: string | undefined): string {
+  if (!path) return "factory-world";
+  return path.split("/").filter(Boolean).at(-1) ?? "factory-world";
+}
+
 function RootApp(props: { opts: FactoryTuiOpts; approval: ApprovalController; screen: "menu" | "factory"; registerShowFactory(fn: () => void): void }) {
-  const [screen, setScreen] = useState<"menu" | "factory">(props.screen);
+  const [screen, setScreen] = useState<"menu" | "intro" | "factory">(props.screen);
+  const [introWorldName, setIntroWorldName] = useState(() => worldLabel(props.opts.meta?.workspace));
 
   useEffect(() => {
-    props.registerShowFactory(() => setScreen("factory"));
+    // "world is wired" signal: may not stomp an active intro card — the intro's
+    // done() owns that transition (proto #5.2: wiring completes in milliseconds).
+    props.registerShowFactory(() => setScreen((current) => (current === "intro" ? current : "factory")));
     return () => props.registerShowFactory(() => {
       // Replaced by the next mounted RootApp; startTui keeps the requested screen separately.
     });
@@ -48,11 +59,13 @@ function RootApp(props: { opts: FactoryTuiOpts; approval: ApprovalController; sc
     create: props.opts.worlds.create,
     select(world) {
       props.opts.worlds.select(world);
-      setScreen("factory");
+      setIntroWorldName(world.name);
+      setScreen(props.opts.flow.Intro ? "intro" : "factory");
     },
-  }), [props.opts.worlds]);
+  }), [props.opts.worlds, props.opts.flow.Intro]);
 
   if (screen === "menu") return createElement(MenuScreen, { worlds, onQuit: props.opts.onExit });
+  if (screen === "intro" && props.opts.flow.Intro) return createElement(props.opts.flow.Intro, { worldName: introWorldName, done: () => setScreen("factory") });
   return createElement(FactoryApp, { ...props.opts, approval: props.approval });
 }
 
@@ -108,7 +121,7 @@ export function startTui(opts: FactoryTuiOpts): FactoryTuiHandle {
       exitOnCtrlC: false,
       clearOnShutdown: true,
       targetFps: 30,
-      backgroundColor: "#0D0D0E",
+      backgroundColor: theme.bg,
     });
     if (stopped) {
       renderer.destroy();

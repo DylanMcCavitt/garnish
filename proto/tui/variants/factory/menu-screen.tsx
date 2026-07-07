@@ -6,7 +6,7 @@ import type { WorldSlot } from "../../../factory/menu";
 import { renderWorldSlot } from "../../../factory/menu";
 import { PixelSpriteView } from "../../pixel";
 import { PIXEL_SPRITES } from "../../pixel-sprites";
-import { theme } from "../../theme";
+import { theme } from "./factory-theme";
 
 export type MenuMode = "select" | "name";
 
@@ -118,9 +118,9 @@ function menuKeyFromOpenTui(key: { name: string; raw: string; ctrl?: boolean; me
 function SlotRow(props: { slot: WorldSlot; index: number; selected: boolean; now: number }) {
   const fresh = props.slot.summary === null;
   return (
-    <box style={{ height: 1, flexDirection: "row", paddingLeft: 1, paddingRight: 1, backgroundColor: props.selected ? theme.accent : undefined }}>
+    <box style={{ height: 1, flexDirection: "row", paddingLeft: 1, paddingRight: 1, backgroundColor: props.selected ? theme.amber : undefined }}>
       <text
-        fg={props.selected ? theme.bg : fresh ? theme.dim : theme.primary}
+        fg={props.selected ? theme.bg : fresh ? theme.dim : theme.text}
         attributes={props.selected ? TextAttributes.BOLD : fresh ? TextAttributes.DIM : undefined}
       >
         {renderWorldSlot(props.slot, props.index, props.now)}
@@ -131,9 +131,9 @@ function SlotRow(props: { slot: WorldSlot; index: number; selected: boolean; now
 
 function NameInputRow({ value }: { value: string }) {
   return (
-    <box style={{ height: 3, border: true, borderColor: theme.accent, flexDirection: "row", alignItems: "center", paddingLeft: 1, paddingRight: 1 }}>
+    <box style={{ height: 3, border: true, borderColor: theme.copper, flexDirection: "row", alignItems: "center", paddingLeft: 1, paddingRight: 1, backgroundColor: theme.panelAlt }}>
       <text fg={theme.amber} attributes={TextAttributes.BOLD}>Name this world › </text>
-      <text fg={theme.primary}>{value.length === 0 ? "_" : `${value}_`}</text>
+      <text fg={theme.text}>{value.length === 0 ? "_" : `${value}_`}</text>
     </box>
   );
 }
@@ -180,11 +180,11 @@ export function MenuScreen(props: { worlds: MenuWorlds; onQuit(): void }) {
           <PixelSpriteView sprite={PIXEL_SPRITES.sprigIdle} />
         </box>
         <box style={{ height: 2, flexDirection: "column", alignItems: "center" }}>
-          <text fg={theme.primary} attributes={TextAttributes.BOLD}>GARNISH · FACTORY</text>
-          <text fg={theme.dim}>a factory game about automating yourself out of the loop</text>
+          <text fg={theme.copper} attributes={TextAttributes.BOLD}>GARNISH · FACTORY</text>
+          <text fg={theme.cyan}>a factory game about automating yourself out of the loop</text>
         </box>
         <box style={{ height: 1 }} />
-        <box style={{ flexDirection: "column", border: true, borderColor: theme.border, paddingLeft: 1, paddingRight: 1 }}>
+        <box style={{ flexDirection: "column", border: true, borderColor: theme.grid, paddingLeft: 1, paddingRight: 1, backgroundColor: theme.panelAlt }}>
           <text fg={theme.amber} attributes={TextAttributes.BOLD}>WORLD SLOTS</text>
           {slots.length === 0 ? <text fg={theme.dim}>— fresh world —</text> : null}
           {slots.map((slot, index) => <SlotRow key={slot.root} slot={slot} index={index} selected={state.mode === "select" && state.selected === index} now={now} />)}

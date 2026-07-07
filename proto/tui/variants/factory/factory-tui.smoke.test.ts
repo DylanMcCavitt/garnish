@@ -2,6 +2,8 @@ import { describe, expect, test } from "bun:test";
 import type { HarnessEvent, HarnessEventPayload, MachineKind } from "../../../harness/types";
 import { FACTORY_RESEARCH_TRACK, FACTORY_VARIANT_PLAN, type FactoryState, type PowerState, type TaskItem, type WorkMode } from "../../../factory/types";
 import { agentsPaneView, circuitPaneView, deriveStage, emptyFactoryHud, factoryFloor, hiddenFactoryNewsTabs, hudFromFactoryState, initialFactoryDeckState, inventoryPaneView, nextActionHint, powerMeter, queueStripLine, reduceFactoryHud, settingsPaneView, skillsPaneView, stepDeck, touchSeriesLine } from "./model";
+import { FACTORY_THEME, theme } from "./factory-theme";
+import { feedLine } from "./feed";
 
 let seq = 0;
 function event(payload: HarnessEventPayload): HarnessEvent {
@@ -300,5 +302,63 @@ describe("factory TUI model", () => {
     expect(hiddenFactoryNewsTabs("skills", events, 1, true)).toEqual({ floor: true, circuit: true });
     expect(hiddenFactoryNewsTabs("skills", events, 1, false)).toEqual({});
     expect(hiddenFactoryNewsTabs("skills", events, events.length, true)).toEqual({});
+  });
+});
+
+describe("factory theme and feed", () => {
+  test("exports pinned palette tokens and compatible aliases", () => {
+    expect(FACTORY_THEME).toMatchObject({
+      bg: "#0B0B0D",
+      panel: "#15151B",
+      panelAlt: "#1C1C24",
+      border: "#3A3F4B",
+      grid: "#23232B",
+      text: "#D8DEE9",
+      dim: "#7A8290",
+      copper: "#E8823C",
+      amber: "#F0B429",
+      green: "#7CCB6B",
+      red: "#E5484D",
+      cyan: "#58C7F3",
+      purple: "#B48CFF",
+    });
+    expect(theme.primary).toBe(FACTORY_THEME.text);
+    expect(theme.primaryDim).toBe(FACTORY_THEME.dim);
+    expect(theme.accent).toBe(FACTORY_THEME.copper);
+  });
+
+  test("feedLine assigns role badges per transcript source", () => {
+    expect(feedLine({ id: "u", kind: "user", title: "Player · player", body: "/mine", tone: "accent" }).badge).toBe("YOU");
+    expect(feedLine({ id: "t", kind: "user", title: "Player · tutor", body: "tip", tone: "normal" }).badge).toBe("SPRIG");
+    expect(feedLine({ id: "b", kind: "user", title: "Player · steering", body: "BELT brief", tone: "normal" }).badge).toBe("BELT");
+    expect(feedLine({ id: "a", kind: "assistant", title: "Sprig", body: "done" }).badge).toBe("SPRIG");
+  });
+
+  test("feedLine renders tool cards approval lines and blocked teaching", () => {
+    expect(feedLine({ id: "call", kind: "tool", title: "Tool · edit", body: "src/ore/item-4.ts  +22/-14", tone: "dim" })).toMatchObject({
+      badge: "TOOL",
+      card: true,
+      body: "⚙ edit  src/ore/item-4.ts +22/-14",
+    });
+    expect(feedLine({ id: "ok", kind: "tool", title: "Approval · approved", body: "once", tone: "accent" })).toMatchObject({
+      body: "⚿ approved · once",
+      tone: "good",
+      gutter: FACTORY_THEME.green,
+    });
+    expect(feedLine({ id: "pattern", kind: "tool", title: "Approval · approved", body: "allow edit src/**", tone: "accent" })).toMatchObject({
+      body: "⚿ approved · pattern allow edit src/**",
+      tone: "good",
+      gutter: FACTORY_THEME.green,
+    });
+    expect(feedLine({ id: "deny", kind: "tool", title: "Approval · denied", body: "no", tone: "bad" })).toMatchObject({
+      body: "⚿ denied · no",
+      tone: "bad",
+      gutter: FACTORY_THEME.red,
+    });
+    expect(feedLine({ id: "block", kind: "blocked", title: "Teaching block · edit", body: "unlock the circuit", tone: "bad" })).toMatchObject({
+      card: true,
+      body: "lesson · unlock the circuit",
+      gutter: FACTORY_THEME.red,
+    });
   });
 });

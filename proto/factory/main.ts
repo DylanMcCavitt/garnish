@@ -11,6 +11,10 @@ import { GREETER_BUG_FAMILY } from "./ore";
 import type { FactoryState, HandFix, TaskItem, WiredFactory } from "./types";
 import { listWorldSlots, worldRoot } from "./menu";
 import { wireFactory } from "./wire";
+import type { FactoryFlow } from "../tui/variants/factory/flows/types";
+import { foremanFlow } from "../tui/variants/factory/flows/foreman";
+import { coldFlow } from "../tui/variants/factory/flows/cold";
+import { ghostFlow } from "../tui/variants/factory/flows/ghost";
 
 const script: ScriptedTurn[] = [
   { text: "Try `grep -n friend src/ore/item-2.ts`, paste the output, then apply the one-line greeting fix." },
@@ -39,6 +43,9 @@ const saveRoot = process.env.GARNISH_PROTO_HOME ?? join(homedir(), ".garnish-pro
 const sandbox = sandboxAvailability();
 const bypassWorldName = worldNameFromArgs(process.argv.slice(2));
 const bypassWorld = bypassWorldName === null ? null : worldRoot(saveRoot, bypassWorldName);
+const FLOWS: Record<string, FactoryFlow> = { foreman: foremanFlow, cold: coldFlow, ghost: ghostFlow };
+const flowId = flowIdFromArgs(process.argv.slice(2)) ?? "cold";
+const flow = FLOWS[flowId] ?? coldFlow;
 const factoryBus = createLateBus();
 let tuiPrompter: ((req: ApprovalRequest) => Promise<ApprovalDecision>) | null = null;
 let tui: FactoryTuiHandle | null = null;
@@ -61,6 +68,22 @@ function worldNameFromArgs(args: string[]): string | null {
     if (arg.startsWith("--world=")) {
       const value = arg.slice("--world=".length);
       if (value.trim().length === 0) throw new Error("--world requires a name");
+      return value;
+    }
+  }
+  return null;
+}
+function flowIdFromArgs(args: string[]): string | null {
+  for (let index = 0; index < args.length; index += 1) {
+    const arg = args[index];
+    if (arg === "--flow") {
+      const value = args[index + 1];
+      if (value === undefined || value.trim().length === 0) throw new Error("--flow requires an id (foreman|cold|ghost)");
+      return value;
+    }
+    if (arg.startsWith("--flow=")) {
+      const value = arg.slice("--flow=".length);
+      if (value.trim().length === 0) throw new Error("--flow requires an id (foreman|cold|ghost)");
       return value;
     }
   }
@@ -296,7 +319,7 @@ async function wireWorld(world: { root: string; name: string }): Promise<void> {
   factoryBus.attach(next.sink.bus);
   tui?.showFactory();
   setTimeout(() => {
-    transcript("SPRIG: bare harness online — ore waits. Type /mine to hand-craft item-1 (hints live under the input).");
+    for (const line of flow.bootLines) transcript(line);
   }, 800);
 }
 
@@ -326,6 +349,7 @@ tui = startTui({
   onCommand,
   readArtifact,
   settingsView,
+  flow,
   worlds: {
     list: () => listWorldSlots(saveRoot),
     create: (name) => worldRoot(saveRoot, name),

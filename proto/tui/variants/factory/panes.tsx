@@ -4,9 +4,8 @@ import { appendFileSync } from "node:fs";
 import type { FactoryState } from "../../../factory/types";
 import type { StatusModel } from "../../juice";
 import type { StartTuiOpts } from "../../index";
-import { PixelSpriteView } from "../../pixel";
-import { PIXEL_SPRITES } from "../../pixel-sprites";
-import { theme } from "../../theme";
+import { MachineGlyphView, MACHINE_GLYPHS } from "./machine-glyphs";
+import { theme } from "./factory-theme";
 import { Component, type ReactNode } from "react";
 import {
   agentsPaneView,
@@ -23,13 +22,13 @@ import {
   type FloorNode,
 } from "./model";
 
-const spriteByFloorNode: Record<FloorNode["id"], keyof typeof PIXEL_SPRITES> = {
-  ore: "orePatch",
-  miner: "minerDrill",
-  belt: "routingBelt",
+const spriteByFloorNode: Record<FloorNode["id"], keyof typeof MACHINE_GLYPHS> = {
+  ore: "ore",
+  miner: "miner",
+  belt: "belt",
   assembler: "assembler",
-  circuit: "circuitPole",
-  ship: "powerBolt",
+  circuit: "circuit",
+  ship: "ship",
 };
 
 function beltLane(dot: { itemId: string; offset: number } | null, built: boolean): string {
@@ -43,7 +42,7 @@ function FloorNodeView({ node, dot, frame }: { node: FloorNode; dot: { itemId: s
   const color = node.active ? theme.amber : node.built ? theme.primary : theme.dim;
   return (
     <box style={{ flexDirection: "row", marginBottom: node.id === "ship" ? 0 : 1 }}>
-      <PixelSpriteView sprite={PIXEL_SPRITES[spriteByFloorNode[node.id]]} dim={!node.built} />
+      <MachineGlyphView sprite={MACHINE_GLYPHS[spriteByFloorNode[node.id]]} dim={!node.built} />
       <box style={{ flexDirection: "column", paddingLeft: 1, flexGrow: 1 }}>
         <text fg={color} attributes={node.built ? TextAttributes.BOLD : TextAttributes.DIM}>{activePulse} {node.label}</text>
         <text fg={node.built ? theme.dim : theme.amber}>{node.detail}</text>
@@ -67,7 +66,7 @@ function FloorPage({ hud, status, frame }: { hud: FactoryHudState; status: Statu
         ))}
       </box>
       <box style={{ flexDirection: "row", minHeight: 3, backgroundColor: hud.brownoutFlash ? theme.red : undefined }}>
-        <PixelSpriteView sprite={PIXEL_SPRITES.powerBolt} dim={!hud.power.shiftActive && !hud.brownoutFlash} />
+        <MachineGlyphView sprite={MACHINE_GLYPHS.bolt} dim={!hud.power.shiftActive && !hud.brownoutFlash} />
         <box style={{ flexDirection: "column", paddingLeft: 1, justifyContent: "center" }}>
           <text fg={meterColor} attributes={hud.brownoutFlash ? TextAttributes.BOLD : undefined}>{powerMeter(hud, 14)}</text>
         </box>
@@ -85,7 +84,7 @@ function TabBar({ active, flash, news }: { active: FactoryDeckTabId; flash: bool
           const dot = news[tab.id] ? "•" : "";
           const cell = selected ? `[${tab.number}${tab.label}${dot}]` : ` ${tab.number}${tab.label}${dot} `;
           return (
-            <text key={tab.id} fg={selected ? theme.bg : theme.primary} bg={selected ? (flash ? theme.amber : theme.accent) : undefined} attributes={selected ? TextAttributes.BOLD : undefined}>
+            <text key={tab.id} fg={selected ? theme.bg : theme.text} bg={selected ? (flash ? theme.amber : theme.copper) : undefined} attributes={selected ? TextAttributes.BOLD : undefined}>
               {cell}
             </text>
           );
@@ -100,7 +99,7 @@ function InventoryPage({ factoryState }: { factoryState: FactoryState }) {
   const view = inventoryPaneView(factoryState);
   return (
     <box style={{ flexDirection: "column" }}>
-      <text fg={theme.accent} attributes={TextAttributes.BOLD}>▦ INVENTORY</text>
+      <text fg={theme.copper} attributes={TextAttributes.BOLD}>▦ INVENTORY</text>
       <text fg={theme.amber}>SCIENCE red × {view.sciencePacks.red ?? 0}</text>
       <text fg={theme.dim}>ORE {view.oreRemaining} raw · {view.queuedOre} queued</text>
       <text fg={theme.primary} attributes={TextAttributes.BOLD}>SHIPPED</text>
@@ -116,7 +115,7 @@ function SkillsPage({ factoryState, readArtifact }: { factoryState: FactoryState
   const skills = skillsPaneView(factoryState, readArtifact);
   return (
     <box style={{ flexDirection: "column" }}>
-      <text fg={theme.accent} attributes={TextAttributes.BOLD}>✦ SKILLS</text>
+      <text fg={theme.copper} attributes={TextAttributes.BOLD}>✦ SKILLS</text>
       {skills.length === 0 ? <text fg={theme.dim}>No skill assembler built.</text> : null}
       {skills.map((skill) => (
         <box key={skill.id} style={{ flexDirection: "column", marginBottom: 1 }}>
@@ -133,7 +132,7 @@ function AgentsPage({ factoryState, status, meta }: { factoryState: FactoryState
   const view = agentsPaneView(factoryState, status.status, meta?.provider, meta?.model);
   return (
     <box style={{ flexDirection: "column" }}>
-      <text fg={theme.accent} attributes={TextAttributes.BOLD}>● AGENTS</text>
+      <text fg={theme.copper} attributes={TextAttributes.BOLD}>● AGENTS</text>
       <text fg={theme.amber}>{view.missionStatus} · {view.providerModel}</text>
       <text fg={theme.dim}>CURRENT {view.currentItemId ?? "none"}</text>
       {view.machines.length === 0 ? <text fg={theme.dim}>No agent machinery built.</text> : null}
@@ -146,7 +145,7 @@ function CircuitPage({ factoryState, readArtifact }: { factoryState: FactoryStat
   const view = circuitPaneView(factoryState, readArtifact);
   return (
     <box style={{ flexDirection: "column" }}>
-      <text fg={theme.accent} attributes={TextAttributes.BOLD}>⬚ CIRCUIT</text>
+      <text fg={theme.copper} attributes={TextAttributes.BOLD}>⬚ CIRCUIT</text>
       <text fg={theme.amber}>PATTERNS × {view.patternCount}</text>
       {view.machines.map((machine) => <text key={machine.id} fg={theme.primary}>◆ {machine.label}{machine.artifact ? ` · ${machine.artifact}` : ""}</text>)}
       <text fg={theme.dim}>{view.artifact.path ?? ".garnish/policies/circuit.txt"}</text>
@@ -159,7 +158,7 @@ function SettingsPage({ rows }: { rows: Array<[string, string]> }) {
   const settings = settingsPaneView(rows);
   return (
     <box style={{ flexDirection: "column" }}>
-      <text fg={theme.accent} attributes={TextAttributes.BOLD}>⚙ SETTINGS</text>
+      <text fg={theme.copper} attributes={TextAttributes.BOLD}>⚙ SETTINGS</text>
       {settings.length === 0 ? <text fg={theme.dim}>Settings unavailable.</text> : null}
       {settings.map(([label, value]) => <text key={label} fg={theme.primary}>{label.padEnd(10, " ")} · {value}</text>)}
     </box>
@@ -168,7 +167,7 @@ function SettingsPage({ rows }: { rows: Array<[string, string]> }) {
 
 export function TranscriptRail({ unread }: { unread: number }) {
   return (
-    <box title="Feed" titleColor={theme.dim} style={{ width: 8, border: true, borderColor: theme.border, alignItems: "center", justifyContent: "center", flexDirection: "column", backgroundColor: theme.panel }}>
+    <box title="Feed" titleColor={theme.dim} style={{ width: 8, border: true, borderColor: theme.border, alignItems: "center", justifyContent: "center", flexDirection: "column", backgroundColor: theme.panelAlt }}>
       {"FEED".split("").map((letter) => <text key={letter} fg={theme.dim} attributes={TextAttributes.BOLD}>{letter}</text>)}
       <text fg={theme.amber}>+{unread}</text>
     </box>
@@ -197,15 +196,15 @@ export function FactoryDeck({ deck, hud, factoryState, status, frame, flash, new
 
   if (deck.collapsed) {
     return (
-      <box title="Deck" titleColor={theme.accent} style={{ width: 5, border: true, borderColor: theme.border, flexDirection: "column", alignItems: "center", backgroundColor: theme.panel }}>
-        {factoryDeckTabs.map((tab) => <text key={tab.id} fg={tab.id === deck.active ? theme.accent : theme.dim}>{tab.initial}{news[tab.id] ? "•" : " "}</text>)}
+      <box title="Deck" titleColor={theme.copper} style={{ width: 5, border: true, borderColor: theme.border, flexDirection: "column", alignItems: "center", backgroundColor: theme.panelAlt }}>
+        {factoryDeckTabs.map((tab) => <text key={tab.id} fg={tab.id === deck.active ? theme.copper : theme.dim}>{tab.initial}{news[tab.id] ? "•" : " "}</text>)}
       </box>
     );
   }
 
   const activeTab = factoryDeckTabs.find((tab) => tab.id === deck.active);
   return (
-    <box title={`PANE DECK · ${activeTab?.label ?? ""} [${activeTab?.number ?? ""}/6]`} titleColor={flash ? theme.amber : theme.accent} style={{ width: "40%", minWidth: 45, border: true, borderColor: flash ? theme.amber : theme.border, paddingLeft: 1, paddingRight: 1, flexDirection: "column", backgroundColor: theme.panel }}>
+    <box title={`PANE DECK · ${activeTab?.label ?? ""} [${activeTab?.number ?? ""}/6]`} titleColor={flash ? theme.amber : theme.copper} style={{ width: "40%", minWidth: 45, border: true, borderColor: flash ? theme.amber : theme.border, paddingLeft: 1, paddingRight: 1, flexDirection: "column", backgroundColor: theme.panel }}>
       <TabBar active={deck.active} flash={flash} news={news} />
       <PaneBoundary paneKey={deck.active}>
         {deck.active === "floor" ? <FloorPage hud={hud} status={status} frame={frame} /> : null}

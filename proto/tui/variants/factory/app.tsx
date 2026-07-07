@@ -1,21 +1,20 @@
 /** @jsxImportSource @opentui/react */
 import { TextAttributes } from "@opentui/core";
 import { useKeyboard, useTimeline } from "@opentui/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import type { ApprovalDecision, HarnessEvent } from "../../../harness/types";
 import type { FactoryState } from "../../../factory/types";
 import { ApprovalModal, stepApprovalModal, type ApprovalModalState } from "../../modal";
 import type { StartTuiOpts } from "../../index";
 import { emptyStatus, reduceStatus, momentFromEvent, decayMoments, type GameMoment, type MissionStatus, type StatusModel } from "../../juice";
-import { Transcript, emptyTranscript, reduceTranscript, type TranscriptModel } from "../../transcript";
-import { theme } from "../../theme";
+import { emptyTranscript, reduceTranscript, type TranscriptModel } from "../../transcript";
+import { theme } from "./factory-theme";
 import {
   emptyFactoryHud,
   hiddenFactoryNewsTabs,
   hudFromFactoryState,
   initialFactoryDeckState,
   nextActionHint,
-  queueStripLine,
   stageFromState,
   stepDeck,
   touchSeriesLine,
@@ -23,7 +22,9 @@ import {
   type FactoryHudState,
   type FactoryStage,
 } from "./model";
+import { FactoryFeed } from "./feed";
 import { FactoryDeck, TranscriptRail } from "./panes";
+import type { FactoryFlow } from "./flows/types";
 
 export interface ApprovalController {
   subscribe(fn: (state: ApprovalModalState | null) => void): () => void;
@@ -36,6 +37,7 @@ export type FactoryAppOpts = StartTuiOpts & {
   factoryState(): FactoryState;
   readArtifact(path: string): string | null;
   settingsView(): Array<[string, string]>;
+  flow: FactoryFlow;
 };
 
 const statusColors: Record<MissionStatus, string> = {
@@ -71,14 +73,16 @@ function stageLabel(stage: FactoryStage): string {
   if (stage === 1) return "STAGE 1 · queue strip online";
   return "STAGE 0 · bare chat";
 }
-
 function Header({ meta, stage, hud, flash }: { meta: StartTuiOpts["meta"]; stage: FactoryStage; hud: FactoryHudState; flash: boolean }) {
   const provider = meta?.model ? `${meta.provider}/${meta.model}` : meta?.provider ?? "provider pending";
   const shift = hud.power.shiftActive ? `SHIFT ${hud.power.shiftShipped} shipped` : "SHIFT idle";
   return (
     <box style={{ height: 3, flexDirection: "row", backgroundColor: theme.bg, paddingLeft: 1, paddingRight: 1 }}>
       <box style={{ flexGrow: 1, flexDirection: "column" }}>
-        <text fg={flash ? theme.red : theme.primary} attributes={TextAttributes.BOLD}>GARNISH · FACTORY · {stageLabel(stage)}</text>
+        <box style={{ flexDirection: "row" }}>
+          <text fg={flash ? theme.red : theme.copper} attributes={TextAttributes.BOLD}>GARNISH · FACTORY </text>
+          <text fg={theme.bg} bg={flash ? theme.red : theme.amber} attributes={TextAttributes.BOLD}> {stageLabel(stage)} </text>
+        </box>
         <text fg={theme.dim}>{workspaceLabel(meta?.workspace)} · {provider}</text>
       </box>
       <box style={{ width: 30, flexDirection: "column", alignItems: "flex-end" }}>
@@ -90,10 +94,22 @@ function Header({ meta, stage, hud, flash }: { meta: StartTuiOpts["meta"]; stage
 }
 
 function QueueBand({ hud }: { hud: FactoryHudState }) {
+  const visibleItems = hud.items.length > 0 ? hud.items.slice(-8) : [];
   return (
     <box style={{ height: 4, flexDirection: "row", border: true, borderColor: theme.border, backgroundColor: theme.panel, paddingLeft: 1, paddingRight: 1 }}>
       <box style={{ flexGrow: 1, flexDirection: "column" }}>
-        <text fg={theme.primary} attributes={TextAttributes.BOLD}>{queueStripLine(hud)}</text>
+        <box style={{ flexDirection: "row" }}>
+          <text fg={theme.dim} attributes={TextAttributes.BOLD}>QUEUE </text>
+          {visibleItems.length === 0 ? <text fg={theme.dim}>empty</text> : null}
+          {visibleItems.map((item) => {
+            const shipped = item.status === "shipped";
+            const active = item.status === "in-progress";
+            const marker = shipped ? "✓" : active ? "▶" : "▢";
+            const color = shipped ? theme.green : active ? theme.bg : theme.dim;
+            const bg = active ? theme.amber : undefined;
+            return <text key={item.itemId} fg={color} bg={bg}> {marker} {item.itemId} </text>;
+          })}
+        </box>
         <text fg={theme.dim}>{touchSeriesLine(hud)}</text>
       </box>
       <box style={{ width: 24, flexDirection: "column", alignItems: "flex-end" }}>
@@ -104,18 +120,18 @@ function QueueBand({ hud }: { hud: FactoryHudState }) {
   );
 }
 
-function HintRow({ hint }: { hint: string | null }) {
+function HintRow({ hint, label }: { hint: string | null; label: string }) {
   return hint ? (
     <box style={{ height: 1, flexDirection: "row", justifyContent: "center", backgroundColor: theme.bg }}>
-      <text fg={theme.amber} attributes={TextAttributes.DIM}>HINT {hint}</text>
+      <text fg={theme.amber} attributes={TextAttributes.DIM}>{label} {hint}</text>
     </box>
   ) : null;
 }
 
-function StatusInput({ status, input, setInput, focused, hint }: { status: StatusModel; input: string; setInput(value: string): void; focused: boolean; hint: string | null }) {
+function StatusInput({ status, input, setInput, focused, hint, hintLabel }: { status: StatusModel; input: string; setInput(value: string): void; focused: boolean; hint: string | null; hintLabel: string }) {
   return (
     <box style={{ flexDirection: "column" }}>
-      <HintRow hint={hint} />
+      <HintRow hint={hint} label={hintLabel} />
       <box style={{ border: true, borderColor: status.status === "AWAITING APPROVAL" ? theme.amber : theme.border, height: 3, paddingLeft: 1, paddingRight: 1, flexDirection: "row", alignItems: "center", backgroundColor: theme.panel }}>
         <text fg={statusColors[status.status]} attributes={TextAttributes.BOLD}>{status.pulse ? "●" : "○"} {status.status}  </text>
         <input focused={focused} placeholder="factory input · /help for commands" value={input} onInput={setInput} style={{ flexGrow: 1 }} />
@@ -124,13 +140,22 @@ function StatusInput({ status, input, setInput, focused, hint }: { status: Statu
   );
 }
 
-function BareChatInput({ input, setInput, focused, hint }: { input: string; setInput(value: string): void; focused: boolean; hint: string | null }) {
+function BareChatInput({ input, setInput, focused, hint, hintLabel }: { input: string; setInput(value: string): void; focused: boolean; hint: string | null; hintLabel: string }) {
   return (
     <box style={{ flexDirection: "column" }}>
-      <HintRow hint={hint} />
+      <HintRow hint={hint} label={hintLabel} />
       <box style={{ border: true, borderColor: theme.border, height: 3, paddingLeft: 1, paddingRight: 1, flexDirection: "row", alignItems: "center", backgroundColor: theme.bg }}>
         <input focused={focused} placeholder="say what you want done" value={input} onInput={setInput} style={{ flexGrow: 1 }} />
       </box>
+    </box>
+  );
+}
+
+function BannerSlot({ content }: { content: ReactNode }) {
+  if (!content) return null;
+  return (
+    <box style={{ minHeight: 1, maxHeight: 2, flexDirection: "column", backgroundColor: theme.bg }}>
+      {content}
     </box>
   );
 }
@@ -255,6 +280,8 @@ export function FactoryApp(opts: FactoryAppOpts) {
   const factoryState = opts.factoryState();
   const stage = stageFromState(factoryState);
   const renderHint = commandHint ?? nextActionHint(factoryState);
+  const hintLabel = opts.flow.hintLabel;
+  const banner = opts.flow.Banner ? opts.flow.Banner({ state: factoryState, stage, frame }) : null;
   const flash = Date.now() < tabFlashUntil || hud.brownoutFlash || moments.some((moment) => moment.ttl > 10);
   const news = useMemo(() => hiddenFactoryNewsTabs(deck.active, events, collapsedAt, deck.collapsed), [deck.active, deck.collapsed, events, collapsedAt]);
   const settingsRows = opts.settingsView();
@@ -262,8 +289,9 @@ export function FactoryApp(opts: FactoryAppOpts) {
   if (stage === 0) {
     return (
       <box style={{ width: "100%", height: "100%", flexDirection: "column", backgroundColor: theme.bg }}>
-        <Transcript model={transcript} />
-        <BareChatInput input={input} setInput={handleInput} focused={modal === null} hint={renderHint} />
+        <BannerSlot content={banner} />
+        <FactoryFeed model={transcript} />
+        <BareChatInput input={input} setInput={handleInput} focused={modal === null} hint={renderHint} hintLabel={hintLabel} />
         <ApprovalModal state={modal} />
       </box>
     );
@@ -285,12 +313,13 @@ export function FactoryApp(opts: FactoryAppOpts) {
           <TranscriptRail unread={transcript.entries.length + (transcript.assistantDraft ? 1 : 0) + (transcript.thinkingDraft ? 1 : 0)} />
         ) : (
           <box style={{ flexGrow: 1, flexDirection: "column", minWidth: 35 }}>
-            <Transcript model={transcript} />
+            <BannerSlot content={banner} />
+            <FactoryFeed model={transcript} />
           </box>
         )}
         {stage === 2 ? <FactoryDeck deck={deck} hud={hud} factoryState={factoryState} status={status} frame={frame} flash={flash} news={news} readArtifact={opts.readArtifact} settingsRows={settingsRows} meta={opts.meta} /> : null}
       </box>
-      <StatusInput status={status} input={input} setInput={handleInput} focused={modal === null} hint={renderHint} />
+      <StatusInput status={status} input={input} setInput={handleInput} focused={modal === null} hint={renderHint} hintLabel={hintLabel} />
       <box style={{ height: 1, flexDirection: "row", justifyContent: "center", backgroundColor: theme.bg }}>
         <text fg={theme.dim}>[1-6] panes · [/] cycle · \ deck · - queue · 0 feed rail · a/p/d/r approvals · Esc abort · Ctrl+C quit</text>
       </box>

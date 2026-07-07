@@ -26,7 +26,13 @@
     "proto:factory": "bun proto/factory/main.ts",
     "proto:factory:demo": "bun proto/factory/demo.ts",
     "demo:mp4:factory": "vhs scripts/real-demo-factory.tape",
-    "demo:mp4:factory:tui": "vhs scripts/real-demo-factory-tui.tape"
+    "demo:mp4:factory:tui": "vhs scripts/real-demo-factory-tui.tape",
+    "proto:factory:foreman": "bun proto/factory/main.ts --flow foreman",
+    "proto:factory:cold": "bun proto/factory/main.ts --flow cold",
+    "proto:factory:ghost": "bun proto/factory/main.ts --flow ghost",
+    "demo:mp4:factory:foreman": "vhs scripts/real-demo-factory-foreman.tape",
+    "demo:mp4:factory:cold": "vhs scripts/real-demo-factory-cold.tape",
+    "demo:mp4:factory:ghost": "vhs scripts/real-demo-factory-ghost.tape"
   },
   "devDependencies": {
     "@types/bun": "^1.3.14",
