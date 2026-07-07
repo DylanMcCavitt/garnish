@@ -55,7 +55,12 @@ bun run proto:demo     # scripted headless walkthrough — no key, no TTY needed
 bun run proto          # interactive TUI, scripted model (no key needed)
 bun run proto:live     # interactive TUI, real provider (needs ANTHROPIC_API_KEY or OPENAI_API_KEY)
 bun test ./proto       # slice smoke tests (Bun needs the ./ prefix; bare `proto` is a name filter)
+bun run proto:factory:demo  # proto #4: Factorio first-hour slice, headless (16 beats)
+bun run proto:factory       # proto #4 interactive: /mine /fix /paste /build /forge /wire /power /feed
 ```
 
 State is scratch-only: progression/session files live under `.garnish-proto/`
 (gitignored) inside a scaffolded temp workspace. Wipe freely.
+
+Proto #4 (Factorio pivot) lives in `proto/factory/` + `proto/tui/variants/factory/`;
+its retro is `proto/findings/factory-first-hour.md`.

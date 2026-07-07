@@ -121,6 +121,18 @@ export interface GarnishTool extends ToolDescriptor {
 // ---------------------------------------------------------------------------
 // Harness events (ADR-13) — the public contract of the curriculum
 // ---------------------------------------------------------------------------
+// --- Factory (proto #4) shared vocab ---
+
+/** What kind of player intervention a touch was. `power` touches carry itemId: null. */
+export type TouchKind =
+  | "prompt" // player chat message steering work on an item
+  | "paste-back" // human-as-tool-runtime: player executed a proposed call, pasted results
+  | "hand-edit" // player edited a workspace file by hand
+  | "hand-command" // player ran a workspace command by hand
+  | "approval" // player answered an approval prompt (mode !== "auto")
+  | "power"; // player fed the grid / power intervention (factory-level)
+
+export type MachineKind = "bare-agent" | "routing-belt" | "skill" | "policy-circuit";
 
 export interface HarnessEventBase {
   id: string;
@@ -163,6 +175,16 @@ export type HarnessEventPayload =
   | { type: "file.edited"; path: string; kind: "write" | "edit"; summary: string }
   | { type: "quest.completed"; questId: string; xp: number }
   | { type: "unlock.applied"; unlockId: string; tools: string[] }
+  // --- Factory (proto #4): items, touches, machines, research, power ---
+  | { type: "item.enqueued"; itemId: string; familyId: string; variantId: string; title: string }
+  | { type: "item.started"; itemId: string; mode: "hand" | "agent" }
+  | { type: "item.shipped"; itemId: string; touches: number; science: string }
+  | { type: "touch.recorded"; itemId: string | null; kind: TouchKind; detail?: string }
+  | { type: "machine.built"; machineId: string; kind: MachineKind; label: string; artifact?: string }
+  | { type: "research.completed"; researchId: string; label: string; unlocks: MachineKind; shipped: number }
+  | { type: "shift.started"; budgetTokens: number }
+  | { type: "shift.ended"; itemsShipped: number; brownouts: number; touches: number }
+  | { type: "power.brownout"; usedTokens: number; budgetTokens: number; itemId: string | null }
   | { type: "error"; message: string }
   | { type: "compaction" }; // reserved, unimplemented
 
@@ -291,8 +313,8 @@ export interface HarnessConfig {
 }
 
 export interface Harness {
-  /** enqueue a player message and run turns until the loop goes idle */
-  send(text: string): Promise<void>;
+  /** enqueue a user message (default source "player") and run turns until the loop goes idle */
+  send(text: string, source?: UserSource): Promise<void>;
   /** abort the in-flight turn (one AbortController per turn) */
   abort(): void;
   readonly config: HarnessConfig;

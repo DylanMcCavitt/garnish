@@ -83,6 +83,7 @@ export interface EvaluationContext {
   readonly probes: Probes;
   readonly events?: readonly VerifierEvent[];
   readonly currentSessionId?: string;
+  readonly currentItemId?: string;
   readonly paths?: Readonly<Record<string, string>>;
   readonly eventRefs?: Readonly<Record<string, VerifierEvent>>;
   readonly mcpServers?: readonly string[];
@@ -387,6 +388,21 @@ function evaluateEventCheck(check: EventCheck, ctx: EvaluationContext): CheckRes
     }
   }
 
+  let requiredItemId: string | undefined;
+  if (check.sameItem === true) {
+    requiredItemId = boundary === undefined ? ctx.currentItemId : itemIdForEvent(boundary.event);
+    if (requiredItemId === undefined) {
+      return {
+        status: "fail",
+        evidence: {
+          kind: "event",
+          message: "sameItem requested but no item anchor was available",
+          details: { after: check.after, currentItemId: ctx.currentItemId },
+        },
+      };
+    }
+  }
+
   const matchedEvents: VerifierEvent[] = [];
   for (let index = startIndex; index < events.length; index += 1) {
     const event = events[index];
@@ -394,6 +410,9 @@ function evaluateEventCheck(check: EventCheck, ctx: EvaluationContext): CheckRes
       continue;
     }
     if (requiredSessionId !== undefined && sessionIdForEvent(event) !== requiredSessionId) {
+      continue;
+    }
+    if (requiredItemId !== undefined && itemIdForEvent(event) !== requiredItemId) {
       continue;
     }
     if (eventMatches(check.match, event)) {
@@ -414,6 +433,7 @@ function evaluateEventCheck(check: EventCheck, ctx: EvaluationContext): CheckRes
           matchedEvents,
           boundary: boundary?.event,
           sameSession: requiredSessionId,
+          sameItem: requiredItemId,
         },
       },
     };
@@ -430,6 +450,7 @@ function evaluateEventCheck(check: EventCheck, ctx: EvaluationContext): CheckRes
         matchedEvent,
         boundary: boundary?.event,
         sameSession: requiredSessionId,
+        sameItem: requiredItemId,
       },
     },
   };
@@ -871,6 +892,15 @@ function sessionIdForEvent(event: VerifierEvent): string | undefined {
   const payloadSessionId = payloadValue(event, ["session_id", "sessionId"]);
   if (typeof payloadSessionId === "string" && payloadSessionId.length > 0) {
     return payloadSessionId;
+  }
+
+  return undefined;
+}
+
+function itemIdForEvent(event: VerifierEvent): string | undefined {
+  const payloadItemId = payloadValue(event, ["itemId"]);
+  if (typeof payloadItemId === "string" && payloadItemId.length > 0) {
+    return payloadItemId;
   }
 
   return undefined;

@@ -22,7 +22,11 @@
     "proto:arcade": "bun proto/main.ts --ui arcade",
     "demo:mp4:expedition": "vhs scripts/real-demo-expedition.tape",
     "demo:mp4:dungeon": "vhs scripts/real-demo-dungeon.tape",
-    "demo:mp4:arcade": "vhs scripts/real-demo-arcade.tape"
+    "demo:mp4:arcade": "vhs scripts/real-demo-arcade.tape",
+    "proto:factory": "bun proto/factory/main.ts",
+    "proto:factory:demo": "bun proto/factory/demo.ts",
+    "demo:mp4:factory": "vhs scripts/real-demo-factory.tape",
+    "demo:mp4:factory:tui": "vhs scripts/real-demo-factory-tui.tape"
   },
   "devDependencies": {
     "@types/bun": "^1.3.14",

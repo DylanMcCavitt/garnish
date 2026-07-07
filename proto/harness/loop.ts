@@ -10,6 +10,7 @@ import type {
   ToolResult,
   ToolResultMessage,
   UserMessage,
+  UserSource,
 } from "./types";
 
 const contextDelimiter = "--- garnish ephemeral tutor context ---";
@@ -29,8 +30,8 @@ export function createHarness(config: HarnessConfig): Harness {
     return (messages ?? []).length > 0;
   };
 
-  async function send(text: string): Promise<void> {
-    emitUser({ role: "user", source: "player", text });
+  async function send(text: string, source: UserSource = "player"): Promise<void> {
+    emitUser({ role: "user", source, text });
 
     let keepGoing = true;
     while (keepGoing) {

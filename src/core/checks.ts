@@ -99,6 +99,7 @@ export const EventCheckSchema = z.strictObject({
   match: EventMatchSchema,
   after: EventAfterSchema.optional(),
   sameSession: z.boolean().optional(),
+  sameItem: z.boolean().optional(),
 });
 export type EventCheck = z.infer<typeof EventCheckSchema>;
 
