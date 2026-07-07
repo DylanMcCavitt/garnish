@@ -24,6 +24,10 @@ const SPECS: SpriteSpec[] = [
   { name: "bossGoodbyeGreeter", file: "boss-goodbye-greeter.png", size: 20 },
   { name: "emblemUnlock", file: "emblem-unlock.png", size: 12 },
   { name: "emblemBoss", file: "emblem-boss.png", size: 12 },
+  { name: "heart", file: "heart.png", size: 10 },
+  { name: "door", file: "door.png", size: 12 },
+  { name: "medal", file: "medal.png", size: 12 },
+  { name: "coin", file: "coin.png", size: 10 },
 ];
 
 const ASSETS = join(import.meta.dir, "..", "proto", "assets");

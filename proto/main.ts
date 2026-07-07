@@ -1,9 +1,9 @@
 /**
  * PROTOTYPE — THROWAWAY. Act II/III: interactive TUI entry.
  *
- *   bun proto/main.ts               scripted model (no key needed)
- *   bun proto/main.ts --live        real provider (env key; anthropic default)
- *   bun proto/main.ts --live --provider openai
+ *   bun proto/main.ts                          scripted model (no key needed)
+ *   bun proto/main.ts --ui dungeon             pick a TUI variant (expedition|dungeon|arcade)
+ *   bun proto/main.ts --live [--provider openai]  real provider (env key; anthropic default)
  */
 import { getStoredAuth } from "./auth";
 import type { ApprovalDecision, ApprovalRequest, ProviderName, ScriptedTurn, StreamFn } from "./harness/types";
@@ -12,7 +12,10 @@ import { createProgression } from "./game";
 import { runOnboarding, type ResumeStats } from "./onboarding";
 import { anthropicStream, openaiStream, resolveAuth } from "./providers";
 import { loadProfile, resetSave, resolveSaveRoot } from "./save";
-import { startTui } from "./tui";
+import { startTui as startBaseTui } from "./tui";
+import { startTui as startArcadeTui } from "./tui/variants/arcade";
+import { startTui as startDungeonTui } from "./tui/variants/dungeon";
+import { startTui as startExpeditionTui } from "./tui/variants/expedition";
 import { wireHarness } from "./wire";
 
 const args = new Set(Bun.argv.slice(2));
@@ -20,6 +23,19 @@ const live = args.has("--live");
 let provider: "anthropic" | "openai" = args.has("--provider=openai") || (Bun.argv.includes("--provider") && Bun.argv[Bun.argv.indexOf("--provider") + 1] === "openai") ? "openai" : "anthropic";
 const saveRoot = resolveSaveRoot();
 if (args.has("--reset")) resetSave(saveRoot);
+const UI_VARIANTS = {
+  base: startBaseTui,
+  expedition: startExpeditionTui,
+  dungeon: startDungeonTui,
+  arcade: startArcadeTui,
+} as const;
+const uiFlag = Bun.argv.includes("--ui") ? Bun.argv[Bun.argv.indexOf("--ui") + 1] : Bun.argv.find((a) => a.startsWith("--ui="))?.slice(5);
+const uiName = (uiFlag ?? process.env.GARNISH_PROTO_UI ?? "base") as keyof typeof UI_VARIANTS;
+if (!(uiName in UI_VARIANTS)) {
+  console.error(`unknown --ui "${uiName}" — options: ${Object.keys(UI_VARIANTS).join(", ")}`);
+  process.exit(1);
+}
+const startTui = UI_VARIANTS[uiName];
 const profile = loadProfile(saveRoot);
 const resumeState = profile === null ? null : createProgression({ root: saveRoot, onUnlock() {} }).state();
 const resume: ResumeStats | null = resumeState === null ? null : { quests: resumeState.completedQuests.length, xp: resumeState.xpTotal };
