@@ -17,7 +17,7 @@ Tracker: Linear
 
 ## Related projects
 
-- Garnish Standalone — purpose-built harness & TUI (DECIDED 2026-07-02, state: Planned):
+- Garnish Standalone — purpose-built harness & TUI (DECIDED 2026-07-02, state: Building):
   https://linear.app/dylanmccavitt/project/garnish-standalone-purpose-built-harness-and-tui-98f6de260a93
   Brief + decision record: https://linear.app/dylanmccavitt/document/brief-garnish-standalone-purpose-built-harness-and-tui-2527da9a5034
   Research spike (2026-07-02): https://linear.app/dylanmccavitt/document/research-spike-garnish-standalone-harness-architecture-2026-07-02-4a7d1435bfd3
@@ -25,27 +25,39 @@ Tracker: Linear
   ARD v2 (ACCEPTED 2026-07-04): https://linear.app/dylanmccavitt/document/ard-v2-garnish-standalone-architecture-decisions-c71d90cbecef
   Prototype retro (2026-07-06): https://linear.app/dylanmccavitt/document/prototype-retro-garnish-standalone-map-seed-run-2026-07-06-7f955a42c984
   — throwaway map-seed prototype of the full v2 spec on branch `prototype/garnish-standalone`
-  (never merges; demo: `bun run proto:demo` / `bun run proto`, walkthrough in `PROTOTYPE.md`,
-  Cursor Cloud-ready). All 12 demo beats pass; spec held. PRD/ARD v2 carry "Prototype
-  amendments (2026-07-06)" sections; re-scope comments posted on LOO-155/156/159/160/161/162/
-  164/165/166/170/171/173/174/179. Delete or absorb the proto/ tree once re-scopes land.
+  (never merges; proto tree deleted 2026-07-08, tombstone 196fbeb). All demo beats passed;
+  spec held. PRD/ARD v2 carry "Prototype amendments (2026-07-06)" sections.
   FACTORIO PIVOT (DECIDED 2026-07-06): game design superseded — the factory vision (start
   bare like pi, automate yourself out of the loop machine-by-machine; UI is the progress bar;
   tokens are electricity; ore = procedural task families; graduation = export the factory).
   Decision ledger (9 grilled Qs): https://linear.app/dylanmccavitt/document/decision-record-factorio-pivot-2026-07-06-the-factory-vision-for-9646047ca1b0
-  Harness substrate (M0/M1: LOO-157, 159-165) survives verbatim; M2-M4 to be re-stamped
-  after proto #4 (first-hour vertical slice, new thread). The three TUI variants
-  (expedition/dungeon/arcade, commit aa036f3) are scratched; findings files remain reference.
-  Implementation issues (stamped 2026-07-04): 25 dependency-ordered issues LOO-155..LOO-179
-  under project milestones M0-M4, wired with Linear blocked-by relations.
-  - Unblocked (Todo): LOO-155 OpenTUI React/Solid spike, LOO-156 Bun+Seatbelt spike,
-    LOO-157 auth, LOO-158 delete omp surfaces, LOO-159 event taxonomy/bus/session log
+  MAP-SEED RUN COMPLETE (2026-07-07): proto #4-#5.2 answered Q9 (crown, with the in-flow
+  machine-building condition) and the founder picked the FOREMAN onboarding flow.
+  Factory retro: https://linear.app/dylanmccavitt/document/prototype-retro-factory-first-hour-run-proto-4-52-2026-07-07-74183470612a
+  All prototypes deleted per map-seed discipline (prototype branch tombstone 196fbeb;
+  substrate reference at 8773476). The prototype branch never merges.
+  PRD v3 (DRAFT for acceptance, 2026-07-08): https://linear.app/dylanmccavitt/document/prd-v3-garnish-the-factory-game-about-automating-yourself-out-of-the-edcc06551ddf
+  ARD v3 (DRAFT for acceptance, 2026-07-08): https://linear.app/dylanmccavitt/document/ard-v3-garnish-factory-game-architecture-decisions-150fb0c951c4
+  v3 supersedes the v2 game-design layer only; the v2 harness substrate (loop, providers,
+  events, tools, approvals, sandbox, verifier, persistence, TUI substrate) survives with
+  prototype amendments (ADR-10..21 dispositions in ARD v3; new ADR-22..28 for the factory).
+  The three earlier TUI variants (expedition/dungeon/arcade) and the cold/ghost onboarding
+  flows are dead; findings live in the retro docs.
+  Implementation issues: 25 dependency-ordered issues LOO-155..LOO-179 under project
+  milestones M0-M4, wired with Linear blocked-by relations. M0/M1 survive as stamped
+  (2026-07-04); M2-M4 (LOO-166..179) re-stamped 2026-07-08 against factory nouns.
+  - Done: LOO-155 OpenTUI spike, LOO-156 Bun+Seatbelt spike (findings verdicts on issues)
+  - In review: LOO-158 delete omp surfaces (PR #22, first build PR of the factory era)
+  - Unblocked (Todo): LOO-157 auth, LOO-159 event taxonomy/bus/session log
   - M0 loop+providers: LOO-160 loop core, LOO-162 Anthropic adapter, LOO-161 OpenAI adapter
   - M1 tools+safety: LOO-163 core tools, LOO-164 approvals engine, LOO-165 Seatbelt sandbox
-  - M2 TUI: LOO-166 foundation, LOO-168 transcript, LOO-167 approval modal, LOO-169 CLI rebind
-  - M3 rebind+L0/L1: LOO-170 verifier, LOO-171 progression, LOO-172 tutor, LOO-173 gates,
-    LOO-174 L0-L1 packs+surfaces, LOO-176 headless e2e, LOO-175 exit gate (HITL)
-  - M4: LOO-177 scorecards, LOO-178 graduation export, LOO-179 curriculum re-scope (HITL)
+  - M2 factory TUI: LOO-166 staged UI foundation, LOO-168 feed/transcript, LOO-167 approval
+    modal + pattern wiring, LOO-169 CLI rebind
+  - M3 factory core+first hour: LOO-170 verifier (+sameItem), LOO-171 factory engine/
+    progression, LOO-172 FOREMAN, LOO-173 gates, LOO-174 ore families + machine ladder,
+    LOO-176 headless e2e (touch-descent beats), LOO-175 exit gate: hour-0 vs hour-N (HITL)
+  - M4: LOO-177 scorecards-as-power-bill, LOO-178 factory export, LOO-179 curriculum
+    re-scope to machine ladder (HITL)
   Decision: fully own harness — own agent loop + TUI, omp dropped. Repeals ARD §1/ADR-8/9
   for v-next. Evolve this repo; no fresh repo. Main bus (packs, verifier, progression,
   gates, curriculum) carries over. v1 omp-coupled work (LOO-148/149/150,
