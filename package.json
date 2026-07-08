@@ -4,13 +4,11 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./cli": "./src/cli.ts",
-    "./extension": "./src/extension.ts"
+    "./cli": "./src/cli.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "bun test",
-    "test:e2e": "bun test tests/e2e/",
     "garnish": "bun src/bin.ts"
   },
   "devDependencies": {

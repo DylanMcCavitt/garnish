@@ -560,8 +560,7 @@ function eventMatches(match: EventMatch, event: VerifierEvent): boolean {
   if (event.name !== match.event) {
     return false;
   }
-  // Live 16.2.13 tool events carry `toolName`, not `tool` (LOO-118 capture 11,
-  // confirmed in the LOO-139 live walkthrough); fixtures may use either.
+  // Live tool events may carry either `toolName` or `tool`; fixtures may use either.
   if (match.tool !== undefined && !eventStringFieldMatches(event, ["tool", "toolName", "tool_name"], match.tool)) {
     return false;
   }
@@ -603,12 +602,6 @@ function eventMatches(match: EventMatch, event: VerifierEvent): boolean {
   }
   if (match.resumed !== undefined && payloadValue(event, ["resumed"]) !== match.resumed) {
     return false;
-  }
-  if (match.extension_loaded !== undefined) {
-    const loaded = payloadValue(event, ["extension_loaded", "extensionLoaded"]);
-    if (loaded !== match.extension_loaded) {
-      return false;
-    }
   }
   if (match.size_reduced !== undefined) {
     const reduced = payloadValue(event, ["size_reduced", "sizeReduced"]);

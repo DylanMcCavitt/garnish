@@ -82,7 +82,6 @@ export const EventMatchSchema = z.strictObject({
   count: IntPredicateSchema.optional(),
   min_assistant_turns: z.number().int().positive().optional(),
   resumed: z.boolean().optional(),
-  extension_loaded: z.boolean().optional(),
   size_reduced: z.boolean().optional(),
   reason: StringPredicateSchema.optional(),
   headless: z.boolean().optional(),

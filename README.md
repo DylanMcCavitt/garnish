@@ -1,6 +1,6 @@
 # Garnish
 
-Garnish is a gamified onboarding layer for agentic coding harnesses. It starts a learner in a deliberately small Pi harness, then unlocks tools, skills, MCP servers, subagents, and automation as they complete verified quests.
+Garnish is a gamified onboarding layer for agentic coding harnesses. It starts a learner in a deliberately small standalone harness, then unlocks tools, skills, MCP servers, subagents, and automation as they complete verified quests.
 
 Status: planning / pre-M0.
 
@@ -12,8 +12,8 @@ Status: planning / pre-M0.
 
 ## Current decisions
 
-- v1 target harness: Pi (Oh My Pi)
-- Distribution: Garnish installs and launches a certified Pi runtime; learner global `omp` is ignored
+- v1 target harness: standalone Garnish harness
+- Distribution: Garnish state is provisioned by the standalone harness; the portable CLI reads that state
 - Tracker: Linear
 - Verification: deterministic checks only in v1; no LLM-graded quest completion
 - Theme: gamer-native — Tutorial Island, Skill Tree, Loadout, The Party, Macros, Final Boss
