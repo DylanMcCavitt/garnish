@@ -38,3 +38,10 @@ Repo-specific skills and agents live in `.agents/skills/` and `.agents/agents/`.
   scratch dir to keep test runs isolated. Use `garnish init --no-launch` to skip
   spawning the interactive TUI, and pipe answers (provider / speedrun / sandbox) for
   non-interactive init, e.g. `printf 'anthropic\nn\n\n' | bun run garnish init --no-launch`.
+
+## Review finding lifecycle
+
+- Reply in the original review thread whenever a finding is fixed, blocked, deferred, rejected, or otherwise updated.
+- Include the disposition, relevant commit, verification, and any remaining work.
+- A finding is incomplete until its thread has a current status reply, even if the code changed or the comment became outdated.
+- Do not resolve review threads without explicit authorization.
