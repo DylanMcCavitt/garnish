@@ -7,7 +7,6 @@ import { QuestSchema } from "./quest";
 const semver = /^\d+\.\d+\.\d+(?:[-+][0-9A-Za-z.-]+)?$/;
 
 export const PackRequiresSchema = z.strictObject({
-  adapters: z.array(z.literal("pi")).default(["pi"]),
   features: z.array(FeatureIdSchema).default([]),
 });
 export type PackRequires = z.infer<typeof PackRequiresSchema>;
@@ -23,7 +22,7 @@ export const PackMetadataSchema = z.strictObject({
   title: z.string().min(1),
   description: z.string().min(1).optional(),
   version: z.string().regex(semver, "version must be semver"),
-  requires: PackRequiresSchema.default({ adapters: ["pi"], features: [] }),
+  requires: PackRequiresSchema.default({ features: [] }),
   levels: z.array(LevelSchema).min(1),
 });
 export type PackMetadata = z.infer<typeof PackMetadataSchema>;

@@ -4,7 +4,7 @@ level: tutorial-island
 title: Player 1 connected
 xp: 20
 required: true
-prereqs: [install-certified-pi]
+prereqs: [start-standalone-harness]
 unlocks: []
 checks:
   - type: event

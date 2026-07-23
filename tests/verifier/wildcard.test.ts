@@ -112,13 +112,13 @@ test("non-wildcard paths keep exact single-value semantics", async () => {
   const check = {
     type: "json_path",
     file: "state.json",
-    path: "$.runtime.certifiedVersion",
+    path: "$.activeLevel",
     assert: "non_empty",
   } satisfies Check;
-  const files = { "state.json": JSON.stringify({ runtime: { certifiedVersion: "16.2.13" } }) };
+  const files = { "state.json": JSON.stringify({ activeLevel: "tutorial-island" }) };
 
   const result = await evaluateCheck(check, ctx(files));
 
   expect(result.status).toBe("pass");
-  expect(result.evidence.details?.value).toBe("16.2.13");
+  expect(result.evidence.details?.value).toBe("tutorial-island");
 });

@@ -19,7 +19,7 @@ const AGENT_DIR = "/tmp/garnish-agent";
 const STATE_FILE = `${AGENT_DIR}/garnish/state.json`;
 const CONFIG_FILE = `${AGENT_DIR}/config.yml`;
 
-const certifiedState = JSON.stringify({ runtime: { certifiedVersion: "16.2.13" } });
+const activeState = JSON.stringify({ activeLevel: "tutorial-island" });
 const keyedConfig = ["providers:", "  anthropic:", "    apiKeyRef: ANTHROPIC_API_KEY"].join("\n");
 const keylessConfig = "providers: {}";
 
@@ -104,15 +104,15 @@ test("L0 pack loads with the tutorial-island level active and all four quests", 
   expect(level?.order).toBe(0);
   expect(graph.quests.map((quest) => `${quest.id}`).sort()).toEqual([
     "connect-agent",
-    "install-certified-pi",
     "second-turn",
+    "start-standalone-harness",
     "status-screen",
   ]);
   expect(level?.unlocks.map(String).sort()).toEqual(["tool:file", "tool:shell"]);
   expect(graph.prereqEdges.map((edge) => `${edge.from}->${edge.to}`).sort()).toEqual([
     "connect-agent->second-turn",
     "connect-agent->status-screen",
-    "install-certified-pi->connect-agent",
+    "start-standalone-harness->connect-agent",
   ]);
 });
 
@@ -120,16 +120,16 @@ test("required flags and XP match the quest inventory", async () => {
   const graph = await l0Graph();
   const byId = new Map(graph.quests.map((quest) => [`${quest.id}`, quest]));
 
-  expect(byId.get("install-certified-pi")).toMatchObject({ required: true, xp: 10 });
+  expect(byId.get("start-standalone-harness")).toMatchObject({ required: true, xp: 10 });
   expect(byId.get("connect-agent")).toMatchObject({ required: true, xp: 20 });
   expect(byId.get("second-turn")).toMatchObject({ required: true, xp: 10 });
   expect(byId.get("status-screen")).toMatchObject({ required: false, xp: 10 });
 });
 
-test("install-certified-pi passes with session_start plus certified runtime state", async () => {
-  const quest = await questById("install-certified-pi");
+test("start-standalone-harness passes with session_start plus active harness state", async () => {
+  const quest = await questById("start-standalone-harness");
   const ctx = fixtureContext({
-    files: { [STATE_FILE]: certifiedState },
+    files: { [STATE_FILE]: activeState },
     events: [event("session_start", 1)],
   });
 
@@ -138,19 +138,19 @@ test("install-certified-pi passes with session_start plus certified runtime stat
   expect(result.status).toBe("pass");
 });
 
-test("install-certified-pi fails without the session_start event", async () => {
-  const quest = await questById("install-certified-pi");
-  const ctx = fixtureContext({ files: { [STATE_FILE]: certifiedState } });
+test("start-standalone-harness fails without the session_start event", async () => {
+  const quest = await questById("start-standalone-harness");
+  const ctx = fixtureContext({ files: { [STATE_FILE]: activeState } });
 
   const result = await evaluateQuest(quest, ctx);
 
   expect(result.status).toBe("fail");
 });
 
-test("install-certified-pi fails when the runtime version is absent", async () => {
-  const quest = await questById("install-certified-pi");
+test("start-standalone-harness fails when the active level is absent", async () => {
+  const quest = await questById("start-standalone-harness");
   const ctx = fixtureContext({
-    files: { [STATE_FILE]: JSON.stringify({ runtime: {} }) },
+    files: { [STATE_FILE]: JSON.stringify({}) },
     events: [event("session_start", 1)],
   });
 

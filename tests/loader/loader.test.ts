@@ -82,7 +82,7 @@ test("valid minimal pack loads into deterministic graph JSON", async () => {
           unlocks: ["tool:file"],
         },
       ],
-      requires: { adapters: ["pi"], features: [] },
+      requires: { features: [] },
       title: "Valid Minimal Pack",
       version: "0.1.0",
     },
@@ -111,7 +111,7 @@ test("valid minimal pack loads into deterministic graph JSON", async () => {
       },
       {
         checks: [{ match: { event: "session_start" }, type: "event" }],
-        description: "Install the certified Garnish runtime.",
+        description: "Start the standalone Garnish engine.",
         id: "install-engine",
         level: "tutorial-island",
         prereqs: [],

@@ -16,12 +16,7 @@ import {
 import type { ProgressionGraph } from "../progression";
 import type { ProgressionStore } from "./index";
 
-/**
- * Durable Garnish state under {agent_dir}/garnish/, written by `garnish init` and read
- * by both the CLI composition root and the bundled Pi extension entry. Everything here
- * is synchronous on purpose: the extension module must initialize without awaiting
- * (LOO-118 spike), and the tutor bridge skips context injection for async stores.
- */
+/** Durable Garnish state under {agent_dir}/garnish/, provisioned by the standalone harness. */
 
 export const GraphFileSchema = z.object({
   levels: z.array(
@@ -47,7 +42,6 @@ export const GraphFileSchema = z.object({
 export const StateFileSchema = z.object({
   activeLevel: z.string().optional(),
   packs: z.array(z.string()).optional(),
-  runtime: z.object({ certifiedVersion: z.string() }).optional(),
   sandboxDir: z.string().optional(),
 });
 
@@ -58,12 +52,12 @@ export interface InstalledGarnishState {
   readonly eventsPath: string;
 }
 
-/** Load the init-provisioned graph/quests/state snapshot; throws when not initialized. */
+/** Load the provisioned graph/quests/state snapshot; throws when not initialized. */
 export function loadInstalledState(agentDir: string): InstalledGarnishState {
   const garnishDir = join(agentDir, "garnish");
   const graphPath = join(garnishDir, "graph.json");
   if (!existsSync(graphPath)) {
-    throw new Error(`Garnish is not initialized (missing ${graphPath}). Run \`garnish init\` first.`);
+    throw new Error(`Garnish is not initialized (missing ${graphPath}). Provision it with the standalone harness first.`);
   }
 
   const graph: ProgressionGraph = GraphFileSchema.parse(JSON.parse(readFileSync(graphPath, "utf8")));

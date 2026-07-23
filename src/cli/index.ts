@@ -1,15 +1,6 @@
-import {
-  catalogFeatureIds,
-  handshake,
-  renderGateConfig,
-  v1GateCatalog,
-  writeGateConfig,
-  type GateCatalog,
-  type GateConfigEffects,
-  type RuntimePaths,
-} from "../adapter";
 import type { FeatureId, LevelId, ProgressionEvent, Quest, UnlockEvent } from "../core";
 import {
+  deriveUnlocks,
   foldEvents,
   type ProgressionGraph,
   type ProgressionState,
@@ -31,16 +22,9 @@ export interface CliDeps {
   readonly quests?: readonly Quest[];
   readonly store: ProgressionStore;
   readonly now: () => string;
-  readonly catalog?: GateCatalog;
-  readonly runtimePaths?: RuntimePaths;
-  readonly gateEffects?: GateConfigEffects;
 }
 
-export interface DoctorDeps {
-  readonly runtimeInstalled: () => MaybePromise<boolean>;
-  readonly reportedVersion: () => MaybePromise<string | undefined>;
-  readonly isolatedConfigPresent: () => MaybePromise<boolean>;
-}
+export interface DoctorDeps {}
 
 type QuestDisplayState = "complete" | "active" | "available" | "locked";
 
@@ -50,27 +34,20 @@ interface QuestLine {
   readonly isNext: boolean;
 }
 
-export function renderStatus(
-  state: ProgressionState,
-  graph: ProgressionGraph,
-  quests?: readonly Quest[],
-): string {
+export async function statusCommand(deps: CliDeps): Promise<CommandOutcome> {
+  const state = foldEvents(await deps.store.readEvents(), deps.graph);
   const lines: string[] = [];
-  const currentLevel = state.currentLevel === null ? undefined : findLevel(graph, `${state.currentLevel}`);
+  const currentLevel = state.currentLevel === null ? undefined : findLevel(deps.graph, `${state.currentLevel}`);
   const levelLabel = currentLevel === undefined ? "all levels complete" : `Level ${currentLevel.order} — ${currentLevel.id}`;
 
   lines.push(`Garnish — ${levelLabel}`);
   lines.push(`XP: ${state.xpTotal}`);
-
   if (state.badges.length > 0) {
-    const badgeText = state.badges
-      .map((award) => (award.levelId === undefined ? `${award.badge}` : `${award.badge} (${award.levelId})`))
-      .join(", ");
-    lines.push(`Badges: ${badgeText}`);
+    lines.push(`Badges: ${state.badges.map((award) => award.badge).join(", ")}`);
   }
 
-  const questLines = computeQuestLines(state, graph, quests);
-  for (const level of [...graph.levels].sort((left, right) => left.order - right.order)) {
+  const questLines = computeQuestLines(state, deps.graph, deps.quests);
+  for (const level of [...deps.graph.levels].sort((left, right) => left.order - right.order)) {
     lines.push("");
     lines.push(`Level ${level.order}: ${level.id}${state.completedLevels.includes(level.id) ? " ✓" : ""}`);
     for (const entry of questLines.filter((line) => `${line.quest.level}` === `${level.id}`)) {
@@ -85,12 +62,7 @@ export function renderStatus(
   lines.push("");
   lines.push(next === undefined ? "Next: nothing — all required quests complete." : `Next: ${next.quest.id}`);
 
-  return lines.join("\n");
-}
-
-export async function statusCommand(deps: CliDeps): Promise<CommandOutcome> {
-  const state = foldEvents(await deps.store.readEvents(), deps.graph);
-  return { text: renderStatus(state, deps.graph, deps.quests), exitCode: 0 };
+  return { text: lines.join("\n"), exitCode: 0 };
 }
 
 export async function questCommand(deps: CliDeps): Promise<CommandOutcome> {
@@ -103,20 +75,22 @@ export async function questCommand(deps: CliDeps): Promise<CommandOutcome> {
 
   const quest = (deps.quests ?? []).find((candidate) => `${candidate.id}` === `${next.quest.id}`);
   const lines: string[] = [`Active quest: ${next.quest.id}`];
-
   if (quest !== undefined) {
     lines.push(`Title: ${quest.title}`);
-    lines.push(`XP: ${quest.xp}${quest.required ? "" : "  (optional)"}`);
-    lines.push("");
-    lines.push(quest.description);
+    lines.push(`XP: ${quest.xp}`);
+    if (quest.description.length > 0) {
+      lines.push("");
+      lines.push(quest.description);
+    }
     lines.push("");
     lines.push("Checks:");
     for (const check of quest.checks) {
-      lines.push(`  - ${describeCheck(check)}`);
+      lines.push(`- ${describeCheck(check)}`);
     }
   } else {
     lines.push(`XP: ${next.quest.xp ?? 0}`);
-    lines.push("(full quest text unavailable — pack quests not provided)");
+    lines.push("");
+    lines.push("(full quest unavailable — pack quests not provided)");
   }
 
   return { text: lines.join("\n"), exitCode: 0 };
@@ -128,8 +102,8 @@ export interface UnlockOptions {
 }
 
 export async function unlockCommand(deps: CliDeps, options: UnlockOptions): Promise<CommandOutcome> {
-  if (options.all !== true && options.level === undefined) {
-    return { text: "unlock: pass --all or --level <id|N>", exitCode: 2 };
+  if (!options.all && options.level === undefined) {
+    return { text: "Usage: garnish unlock --all | unlock --level <id|N>", exitCode: 2 };
   }
 
   const events = await deps.store.readEvents();
@@ -138,7 +112,7 @@ export async function unlockCommand(deps: CliDeps, options: UnlockOptions): Prom
   const unlocks: UnlockEvent[] = [];
 
   if (options.all === true) {
-    for (const feature of catalogFeatureIds(deps.catalog ?? v1GateCatalog)) {
+    for (const feature of graphFeatureIds(deps.graph)) {
       if (!state.unlockSet.features.includes(feature)) {
         unlocks.push(featureUnlock(feature, at));
       }
@@ -169,14 +143,13 @@ export async function unlockCommand(deps: CliDeps, options: UnlockOptions): Prom
   }
 
   await deps.store.appendEvents(unlocks);
-
   const updated = foldEvents([...events, ...unlocks], deps.graph);
-  if (deps.runtimePaths !== undefined && deps.gateEffects !== undefined) {
-    const rendered = renderGateConfig(updated.unlockSet, deps.catalog ?? v1GateCatalog);
-    await writeGateConfig(deps.runtimePaths, rendered, deps.gateEffects);
+  const derivedUnlocks = deriveUnlocks(updated, deps.graph);
+  if (derivedUnlocks.length > 0) {
+    await deps.store.appendEvents(derivedUnlocks);
   }
 
-  const summary = unlocks
+  const summary = [...unlocks, ...derivedUnlocks]
     .map((event) => (event.target.type === "feature" ? `feature ${event.target.id}` : `level ${event.target.id}`))
     .join(", ");
   return {
@@ -185,41 +158,15 @@ export async function unlockCommand(deps: CliDeps, options: UnlockOptions): Prom
   };
 }
 
-export async function doctorCommand(deps: DoctorDeps): Promise<CommandOutcome> {
-  const lines: string[] = ["Garnish doctor"];
-  let exitCode = 0;
-
-  const installed = await deps.runtimeInstalled();
-  lines.push(`Certified runtime installed: ${installed ? "yes" : "NO"}`);
-  if (!installed) {
-    exitCode = 1;
-    lines.push("  → Run `garnish init` to install the certified Pi runtime.");
-  }
-
-  const reported = await deps.reportedVersion();
-  const shake = handshake(reported);
-  if (shake.status === "ok") {
-    lines.push(`Version handshake: ok (${shake.reportedVersion})`);
-  } else {
-    exitCode = 1;
-    lines.push(`Version handshake: MISMATCH (reported ${shake.reportedVersion}, certified ${shake.certifiedVersion})`);
-    for (const guidance of shake.doctor) {
-      lines.push(`  → ${guidance}`);
-    }
-  }
-
-  const configPresent = await deps.isolatedConfigPresent();
-  lines.push(`Isolated Garnish config: ${configPresent ? "present" : "MISSING"}`);
-  if (!configPresent) {
-    exitCode = 1;
-    lines.push("  → Run `garnish init` (or `garnish unlock --level 0`) to regenerate the gated config.");
-  }
-
-  if (exitCode === 0) {
-    lines.push("All checks passed.");
-  }
-
-  return { text: lines.join("\n"), exitCode };
+export async function doctorCommand(_deps: DoctorDeps = {}): Promise<CommandOutcome> {
+  return {
+    text: [
+      "Garnish doctor",
+      "The embedded setup doctor was superseded by the standalone harness.",
+      "Use the standalone harness health checks for setup and runtime diagnostics.",
+    ].join("\n"),
+    exitCode: 1,
+  };
 }
 
 export interface MainDeps {
@@ -228,8 +175,7 @@ export interface MainDeps {
 }
 
 export async function main(argv: readonly string[], deps: MainDeps): Promise<CommandOutcome> {
-  const [command, ...rest] = argv;
-
+  const [command = "status", ...rest] = argv;
   switch (command) {
     case "status":
       return statusCommand(deps.cli);
@@ -250,21 +196,23 @@ export function usage(): string {
     "garnish <command>",
     "",
     "Commands:",
-    "  status            show level, XP, badges, and per-quest progress",
+    "  status            show level, XP, and quest progress",
     "  quest             show the active quest's full text and checks",
-    "  unlock --all      unlock everything (escape hatch; no XP awarded)",
+    "  unlock --all      unlock everything without awarding XP",
     "  unlock --level N  unlock one level by id or order",
     "  cheat             alias for unlock",
-    "  doctor            diagnose runtime, version handshake, and config",
+    "  doctor            explain the standalone-harness diagnostics handoff",
   ].join("\n");
 }
 
-function parseUnlockArgs(args: readonly string[]): UnlockOptions {
+export function parseUnlockArgs(args: readonly string[]): UnlockOptions {
   const options: { all?: boolean; level?: string } = {};
   for (let index = 0; index < args.length; index += 1) {
     if (args[index] === "--all") {
       options.all = true;
-    } else if (args[index] === "--level") {
+      continue;
+    }
+    if (args[index] === "--level") {
       options.level = args[index + 1];
       index += 1;
     }
@@ -279,8 +227,6 @@ function computeQuestLines(
 ): QuestLine[] {
   const orderedLevels = [...graph.levels].sort((left, right) => left.order - right.order);
   const completedQuests = new Set<string>(state.completedQuests.map(String));
-  // The graph is canonically id-sorted; prereqs (from the full quest data, when
-  // available) keep the "next" pointer off quests whose prerequisites are still open.
   const prereqsById = new Map<string, readonly string[]>(
     (quests ?? []).map((quest) => [`${quest.id}`, quest.prereqs.map(String)]),
   );
@@ -303,9 +249,8 @@ function computeQuestLines(
         lines.push({ quest, state: "locked", isNext: false });
         continue;
       }
-      const prereqsMet = (prereqsById.get(`${quest.id}`) ?? []).every((prereq) =>
-        completedQuests.has(prereq),
-      );
+      const prereqs = prereqsById.get(`${quest.id}`) ?? [];
+      const prereqsMet = prereqs.every((prereq) => completedQuests.has(prereq));
       const isNext = !nextAssigned && quest.required && prereqsMet;
       if (isNext) {
         nextAssigned = true;
@@ -318,11 +263,25 @@ function computeQuestLines(
 }
 
 function findLevel(graph: ProgressionGraph, selector: string): ProgressionGraph["levels"][number] | undefined {
-  if (/^\d+$/.test(selector)) {
-    const order = Number.parseInt(selector, 10);
-    return graph.levels.find((level) => level.order === order);
+  return graph.levels.find((level) => `${level.order}` === selector) ?? graph.levels.find((level) => `${level.id}` === selector);
+}
+
+function graphFeatureIds(graph: ProgressionGraph): FeatureId[] {
+  const features = new Set<FeatureId>();
+  for (const level of graph.levels) {
+    for (const feature of level.unlocks ?? []) {
+      features.add(feature);
+    }
   }
-  return graph.levels.find((level) => `${level.id}` === selector);
+  for (const edge of graph.unlockEdges ?? []) {
+    features.add(edge.feature);
+  }
+  for (const quest of graph.quests) {
+    for (const feature of quest.unlocks ?? []) {
+      features.add(feature);
+    }
+  }
+  return [...features].sort((left, right) => `${left}`.localeCompare(`${right}`));
 }
 
 function featureUnlock(feature: FeatureId, at: string): UnlockEvent {

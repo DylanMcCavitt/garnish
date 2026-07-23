@@ -10,4 +10,4 @@ checks:
   - type: event
     match: { event: session_start }
 ---
-Install the certified Garnish runtime.
+Start the standalone Garnish engine.
